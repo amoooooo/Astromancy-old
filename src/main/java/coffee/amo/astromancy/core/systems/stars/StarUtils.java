@@ -1,63 +1,27 @@
 package coffee.amo.astromancy.core.systems.stars;
 
-import coffee.amo.astromancy.core.systems.stars.classification.*;
-import coffee.amo.astromancy.core.systems.stars.types.BinaryStar;
-import coffee.amo.astromancy.core.systems.stars.types.SimpleStar;
-import coffee.amo.astromancy.core.systems.stars.types.StarType;
+import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
 
 import java.util.List;
 import java.util.Random;
 
 public class StarUtils {
-    public static final List<AbstractStar> STAR_CLASSES = List.of(
-            new BrightGiant(),
-            new Crimson(),
-            new Dark(),
-            new Pure(),
-            new Null(),
-            new Crimson(),
-            new Giant(),
-            new Hell(),
-            new HyperGiant(),
-            new SuperGiant(),
-            new WhiteDwarf(),
-            new MainSequence(),
-            new SubDwarf(),
-            new SubGiant()
-    );
-    public static StarType generateRandomStar() {
-        // generate a random star type
-        StarType starType = new Random().nextInt(2) == 0 ? new BinaryStar(
-                STAR_CLASSES.get(new Random().nextInt(STAR_CLASSES.size())),
-                STAR_CLASSES.get(new Random().nextInt(STAR_CLASSES.size()))
-        ) : new SimpleStar(
-                STAR_CLASSES.get(new Random().nextInt(STAR_CLASSES.size()))
-        );
-        if(starType == StarTypes.SIMPLE_STAR){
-            starType.star.name = "fgk";
-            starType.star.classification = "AAA";
-            starType.star.constellation = "BBB";
-            starType.star.luminosityClass = "CCC";
-            starType.star.luminosity = "DDD";
-            starType.star.mass = new Random().nextInt(100);
-            starType.star.strength = new Random().nextInt(100);
-        } else if(starType instanceof BinaryStar){
-            ((BinaryStar) starType).star1.name = "fgk";
-            ((BinaryStar) starType).star1.classification = "AAA";
-            ((BinaryStar) starType).star1.constellation = "BBB";
-            ((BinaryStar) starType).star1.luminosityClass = "CCC";
-            ((BinaryStar) starType).star1.luminosity = "DDD";
-            ((BinaryStar) starType).star1.mass = new Random().nextInt(100);
-            ((BinaryStar) starType).star1.strength = new Random().nextInt(100);
-            ((BinaryStar) starType).star2.name = "rhhr";
-            ((BinaryStar) starType).star2.classification = "bu5 ";
-            ((BinaryStar) starType).star2.constellation = " sh";
-            ((BinaryStar) starType).star2.luminosityClass = "s ye5";
-            ((BinaryStar) starType).star2.luminosity = " ys5e";
-            ((BinaryStar) starType).star2.mass = new Random().nextInt(100);
-            ((BinaryStar) starType).star2.strength = new Random().nextInt(100);
-        }
+    private static final List<String> names = List.of("Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega");
+    private static final List<String> constellations = List.of("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Bootes", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagittarius", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
+    private static final List<String> luminosityClasses = List.of("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C", "CI", "CII", "CIII", "CIV", "CV", "CVI", "CVII", "CVIII", "CIX", "CX", "CXI", "CXII", "CXIII", "CXIV", "CXV", "CX");
 
-        return starType;
+    public static Star generateRandomStar() {
+        // generate and return random star
+        Random random = new Random();
+        int randomInt = random.nextInt(StarClass.values().length);
+        Star star = new Star(StarClass.values()[randomInt]);
+        star.constellation = constellations.get(random.nextInt(constellations.size()));
+        star.luminosity = luminosityClasses.get(random.nextInt(luminosityClasses.size()));
+        star.name = names.get(random.nextInt(names.size())) + " " + names.get(random.nextInt(names.size())) + " " + star.luminosity;
+        star.mass = random.nextInt(100) + 1;
+        star.strength = random.nextInt(100) + 1;
+        return star;
     }
+    // generate star based on StarClass
+
 }

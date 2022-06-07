@@ -13,6 +13,6 @@ public enum StarClass {
     CRIMSON,
     PURE,
     DARK,
-    NULL,
+    EMPTY,
     HELL
 }

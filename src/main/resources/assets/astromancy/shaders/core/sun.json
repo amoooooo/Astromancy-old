@@ -1,0 +1,16 @@
+{
+  "blend": {
+    "func": "normal",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "ortus:generic",
+  "fragment": "astromancy:sun",
+  "attributes": [ "Position" ],
+  "samplers": [
+    { "name": "Sampler0" }
+  ],
+  "uniforms": [
+
+  ]
+}
