@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "coffee.amo.astromancy.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "astromancy.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
