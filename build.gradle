@@ -172,6 +172,7 @@ repositories {
         name 'Curios maven'
         url "https://maven.theillusivec4.top/"
     }
+    maven { url = 'https://ldtteam.jfrog.io/ldtteam/modding' }
     maven {
         name 'JEI maven'
         url "https://dvs1.progwml6.com/files/maven"
@@ -208,6 +209,10 @@ dependencies {
     implementation fg.deobf("curse.maven:shimmer-627824:3808077")
     compileOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.193:api')
     runtimeOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.193')
+
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:api")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:vanillaapi")
 
     def registrate = "com.tterrag.registrate:Registrate:MC1.18.2-1.0.25"
     implementation fg.deobf(registrate)

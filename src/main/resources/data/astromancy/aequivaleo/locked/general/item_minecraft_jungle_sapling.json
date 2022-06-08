@@ -1,0 +1,33 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:jungle_sapling"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:jungle_sapling\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "astromancy:conjunction"
+    },
+    {
+      "amount": 2.0,
+      "type": "astromancy:quintile"
+    },
+    {
+      "amount": 4.0,
+      "type": "astromancy:sextile"
+    }
+  ]
+}

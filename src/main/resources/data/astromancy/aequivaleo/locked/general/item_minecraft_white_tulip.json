@@ -1,0 +1,33 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:white_tulip"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:white_tulip\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "astromancy:semisextile"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:sextile"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:square"
+    }
+  ]
+}

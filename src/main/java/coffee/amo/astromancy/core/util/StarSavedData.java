@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -16,7 +17,12 @@ public class StarSavedData extends SavedData {
     private final List<Quadrant> quadrants;
 
     public StarSavedData() {
-        this.quadrants = new ArrayList<>();
+        this.quadrants = List.of(
+                Quadrants.STARS,
+                Quadrants.PENTACLES,
+                Quadrants.SWORDS,
+                Quadrants.WANDS
+        );
     }
 
     // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT

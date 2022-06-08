@@ -1,0 +1,33 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:string"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:string\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "astromancy:conjunction"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:semisextile"
+    },
+    {
+      "amount": 2.0,
+      "type": "astromancy:sextile"
+    }
+  ]
+}

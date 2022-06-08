@@ -39,9 +39,6 @@ public class StarUtils {
         star.setName(star.getConstellation().name  + " " + RomanNumeralHelper.toRoman(star.getLuminosity()) + " [" + X + " of " + star.getQuadrants().getFirst().name + ", " + Y + " of " + star.getQuadrants().getSecond().name + "]");
         star.setMass( level.random.nextInt(100) + 1);
         star.setStrength(level.random.nextInt(100) + 1);
-        if (StarSavedData.get().findStarFromName(star.getName()) != null) {
-            return generateStar(level);
-        }
         return star;
     }
 

@@ -1,0 +1,37 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:deepslate_iron_ore"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:deepslate_iron_ore\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 2.0,
+      "type": "astromancy:conjunction"
+    },
+    {
+      "amount": 2.0,
+      "type": "astromancy:quintile"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:sextile"
+    },
+    {
+      "amount": 4.0,
+      "type": "astromancy:trioctile"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 package coffee.amo.astromancy;
 
+import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
@@ -11,6 +12,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
@@ -37,7 +39,9 @@ public class Astromancy {
     public Astromancy() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::client);
         BlockRegistration.register();
+        AspectiRegistry.register();
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
@@ -49,6 +53,10 @@ public class Astromancy {
 
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
+    }
+
+    private void client(final FMLClientSetupEvent event) {
+        // do something that can only be done on the client
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

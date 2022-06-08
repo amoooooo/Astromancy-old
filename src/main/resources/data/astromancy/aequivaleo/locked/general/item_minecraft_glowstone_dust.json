@@ -1,0 +1,37 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:glowstone_dust"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:glowstone_dust\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 2.0,
+      "type": "astromancy:conjunction"
+    },
+    {
+      "amount": 4.0,
+      "type": "astromancy:decile"
+    },
+    {
+      "amount": 2.0,
+      "type": "astromancy:sextile"
+    },
+    {
+      "amount": 2.0,
+      "type": "astromancy:trioctile"
+    }
+  ]
+}

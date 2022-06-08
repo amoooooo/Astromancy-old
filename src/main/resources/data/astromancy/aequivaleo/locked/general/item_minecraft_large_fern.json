@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:large_fern"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:large_fern\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "astromancy:opposition"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:quintile"
+    }
+  ]
+}

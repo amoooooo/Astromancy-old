@@ -59,7 +59,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
     @Override
     public void render(ArmillarySphereBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
-        float fac = ((pBlockEntity.getLevel().getGameTime() + pPartialTick) * 2 + 2) * (pBlockEntity.toggled ? 1 : 0);
+        float fac = (((pBlockEntity.getLevel().getGameTime() + pPartialTick) * 2 + 2) * (pBlockEntity.toggled ? 1 : 0));// * ((float)pBlockEntity.ticksActive/600);
         VertexConsumer consumer = DELAYED_RENDER.getBuffer(BEAM_TYPE);
         ps.translate(0.5,1.5,0.5);
         ps.scale(0.5f,0.5f,0.5f);

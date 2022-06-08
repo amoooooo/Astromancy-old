@@ -1,0 +1,11 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "astromancy:astrolabe",
+  "fragment": "astromancy:astrolabe",
+  "attributes": {
+  }
+}

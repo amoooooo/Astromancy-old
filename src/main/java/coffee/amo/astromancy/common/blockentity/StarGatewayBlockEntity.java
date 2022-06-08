@@ -32,8 +32,9 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
             //serverLevel.getDataStorage().set(worldPosition.toString(), );
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {
-            player.sendMessage(new TextComponent(star.getName()), player.getUUID());
+            player.sendMessage(new TextComponent(StarSavedData.get().findStarFromName(star.getName()).getName()), player.getUUID());
             Quadrant quadrant = Quadrants.findQuadrantFromConstellation(star.getConstellation());
+            System.out.println(StarSavedData.get().containsStar(star));
             player.sendMessage(new TextComponent("Quadrant: " + quadrant.getName()), player.getUUID());
             return InteractionResult.SUCCESS;
         }

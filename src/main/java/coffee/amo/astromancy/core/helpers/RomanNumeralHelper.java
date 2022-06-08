@@ -20,6 +20,7 @@ public class RomanNumeralHelper {
         map.put(5, "V");
         map.put(4, "IV");
         map.put(1, "I");
+        map.put(0, "O");
         return map;
     });
 

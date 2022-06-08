@@ -1,0 +1,33 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:sea_pickle"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:sea_pickle\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "astromancy:decile"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:octile"
+    },
+    {
+      "amount": 1.0,
+      "type": "astromancy:quincunx"
+    }
+  ]
+}
