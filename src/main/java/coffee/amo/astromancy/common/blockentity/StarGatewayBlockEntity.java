@@ -2,6 +2,8 @@ package coffee.amo.astromancy.common.blockentity;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -31,6 +33,8 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {
             player.sendMessage(new TextComponent(StarSavedData.get().findStar(star.uuid.toString()).getString()), player.getUUID());
+            Quadrant quadrant = Quadrants.findQuadrantFromConstellation(star.constellation);
+            player.sendMessage(new TextComponent("Quadrant: " + quadrant.getName()), player.getUUID());
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;

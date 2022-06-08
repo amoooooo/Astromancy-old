@@ -34,6 +34,7 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if (player.getItemInHand(hand).isEmpty() && !player.isShiftKeyDown()) {
             toggled = !toggled;
+
             return InteractionResult.SUCCESS;
         } else if (player.getItemInHand(hand).isEmpty() && player.isShiftKeyDown()) {
             if (!inventory.isEmpty()) {

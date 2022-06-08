@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 
 public class RenderTypeRegistry extends OrtusRenderTypeRegistry{
-    public static final RenderType SUN = OrtusRenderTypeRegistry.createGenericRenderType(Astromancy.MODID, "sun", BLOCK, VertexFormat.Mode.QUADS, ShaderRegistry.SUN.shard, StateShards.ADDITIVE_TRANSPARENCY, TextureAtlas.LOCATION_PARTICLES);
+    public static final RenderType SUN = OrtusRenderTypeRegistry.createGenericRenderType(Astromancy.MODID, "sun", POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, ShaderRegistry.SUN.shard, StateShards.ADDITIVE_TRANSPARENCY, TextureAtlas.LOCATION_PARTICLES);
 
     public RenderTypeRegistry(String p_110161_, Runnable p_110162_, Runnable p_110163_) {
         super(p_110161_, p_110162_, p_110163_);

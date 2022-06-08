@@ -18,6 +18,7 @@ public class StarSavedData extends SavedData {
         this.stars = new ArrayList<>();
     }
 
+    // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT
     public CompoundTag save(CompoundTag pCompoundTag) {
         ListTag tag = new ListTag();
         for (Star star : stars) {
@@ -27,6 +28,7 @@ public class StarSavedData extends SavedData {
         return pCompoundTag;
     }
 
+    // TODO: Read the jank from above properly
     public StarSavedData load(CompoundTag pCompoundTag) {
         ListTag tag = pCompoundTag.getList("stars", Tag.TAG_COMPOUND);
         for (int i = 0; i < tag.size(); i++) {
@@ -65,5 +67,14 @@ public class StarSavedData extends SavedData {
             }
         }
         return null;
+    }
+
+    public boolean containsStarWithName(String name) {
+        for (Star star : stars) {
+            if (star.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

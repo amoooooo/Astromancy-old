@@ -1,5 +1,7 @@
 package coffee.amo.astromancy.core.systems.stars;
 
+import coffee.amo.astromancy.core.systems.stars.classification.Constellation;
+import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
 import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
 import net.minecraft.nbt.CompoundTag;
 
@@ -12,7 +14,7 @@ public class Star {
     public String luminosity;
     public float strength;
     public float mass;
-    public String constellation;
+    public Constellation constellation;
 
     public Star(StarClass type) {
         this.type = type;
@@ -22,7 +24,7 @@ public class Star {
     public StarClass getType() {
         return type;
     }
-    public String getConstellation() {
+    public Constellation getConstellation() {
         return constellation;
     }
     public String getLuminosity() {
@@ -40,7 +42,7 @@ public class Star {
         compoundTag.putString("uuid", uuid.toString());
         compoundTag.putString("name", name);
         compoundTag.putString("type", type.toString());
-        compoundTag.putString("constellation", constellation);
+        compoundTag.putString("constellation", constellation.name);
         compoundTag.putString("luminosity", luminosity);
         compoundTag.putFloat("strength", strength);
         compoundTag.putFloat("mass", mass);
@@ -51,7 +53,7 @@ public class Star {
         Star star = new Star(StarClass.valueOf(tag.getString("type")));
         star.uuid = UUID.fromString(tag.getString("uuid"));
         star.name = tag.getString("name");
-        star.constellation = tag.getString("constellation");
+        star.constellation = Constellations.findByName(tag.getString("constellation"));
         star.luminosity = tag.getString("luminosity");
         star.strength = tag.getFloat("strength");
         star.mass = tag.getFloat("mass");
@@ -63,9 +65,6 @@ public class Star {
         return
                 "Name: '" + name + '\'' +
                 ", Type:" + type +
-                ", Luminosity: '" + luminosity + '\'' +
-                ", Strength: " + strength +
-                ", Mass: " + mass +
-                ", Constellation: '" + constellation + '\'';
+                ", Constellation: '" + constellation.name + '\'';
     }
 }
