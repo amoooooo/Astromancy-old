@@ -27,13 +27,13 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if(!level.isClientSide && star == null) {
-            star = StarUtils.generateRandomStar();
+            star = StarUtils.generateStar(level);
             StarSavedData.get().addStar(star);
             //serverLevel.getDataStorage().set(worldPosition.toString(), );
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {
-            player.sendMessage(new TextComponent(StarSavedData.get().findStar(star.uuid.toString()).getString()), player.getUUID());
-            Quadrant quadrant = Quadrants.findQuadrantFromConstellation(star.constellation);
+            player.sendMessage(new TextComponent(star.getName()), player.getUUID());
+            Quadrant quadrant = Quadrants.findQuadrantFromConstellation(star.getConstellation());
             player.sendMessage(new TextComponent("Quadrant: " + quadrant.getName()), player.getUUID());
             return InteractionResult.SUCCESS;
         }
@@ -44,7 +44,7 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
         if(star != null) {
-            pTag.putString("star_uuid", star.uuid.toString());
+            pTag.putString("star_name", star.getName());
         }
     }
 
@@ -52,7 +52,7 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
     public void load(CompoundTag pTag) {
         super.load(pTag);
         if(pTag.contains("star_uuid")) {
-            star = StarSavedData.get().findStar(pTag.getString("star_uuid"));
+            star = StarSavedData.get().findStarFromName(pTag.getString("star_name"));
         }
     }
 }

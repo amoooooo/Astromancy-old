@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -12,19 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
-    private final List<Star> stars;
+    private final List<Quadrant> quadrants;
 
     public StarSavedData() {
-        this.stars = new ArrayList<>();
+        this.quadrants = new ArrayList<>();
     }
 
     // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT
     public CompoundTag save(CompoundTag pCompoundTag) {
         ListTag tag = new ListTag();
-        for (Star star : stars) {
-            tag.add(star.toNbt());
+        for (Quadrant quadrant : quadrants) {
+            tag.add(quadrant.toNbt());
         }
-        pCompoundTag.put("stars", tag);
+        pCompoundTag.put("quadrants", tag);
         return pCompoundTag;
     }
 
@@ -33,8 +34,8 @@ public class StarSavedData extends SavedData {
         ListTag tag = pCompoundTag.getList("stars", Tag.TAG_COMPOUND);
         for (int i = 0; i < tag.size(); i++) {
             CompoundTag starTag = tag.getCompound(i);
-            Star star = Star.fromNbt(starTag);
-            stars.add(star);
+            Quadrant quadrant = Quadrant.fromNbt(starTag);
+            quadrants.add(quadrant);
         }
         return this;
     }
@@ -43,38 +44,32 @@ public class StarSavedData extends SavedData {
         return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(p -> new StarSavedData().load(p), StarSavedData::new, "astromancy_stars");
     }
 
+    public void addQuadrant(Quadrant quadrant) {
+        quadrants.add(quadrant);
+        this.setDirty();
+    }
+
     public void addStar(Star star) {
-        stars.add(star);
+        Quadrant quadrant = star.getQuadrant();
+        if(quadrant != null) {
+            quadrant.addStar(star);
+            this.setDirty();
+        }
+    }
+
+    public void removeQuadrant(Quadrant quadrant) {
+        quadrants.remove(quadrant);
         this.setDirty();
     }
 
-    public void removeStar(Star star) {
-        stars.remove(star);
-        this.setDirty();
-    }
-
-    public List<Star> getStars() {
-        return stars;
+    public List<Quadrant> getStars() {
+        return quadrants;
     }
 
     public boolean containsStar(Star star) {
-        return stars.contains(star);
+        return quadrants.stream().anyMatch(quadrant -> quadrant.containsStar(star));
     }
-    public Star findStar(String uuid){
-        for(Star star : stars){
-            if(star.uuid.toString().equals(uuid)){
-                return star;
-            }
-        }
-        return null;
-    }
-
-    public boolean containsStarWithName(String name) {
-        for (Star star : stars) {
-            if (star.name.equals(name)) {
-                return true;
-            }
-        }
-        return false;
+    public Star findStarFromName(String name) {
+        return quadrants.stream().flatMap(quadrant -> quadrant.getStars().stream()).filter(star -> star.getName().equals(name)).findFirst().orElse(null);
     }
 }

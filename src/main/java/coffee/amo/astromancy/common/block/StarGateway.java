@@ -21,13 +21,7 @@ import java.util.stream.Stream;
 
 public class StarGateway<T extends StarGatewayBlockEntity> extends OrtusEntityBlock<T> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    public final VoxelShape SHAPE = Stream.of(
-            Block.box(8, 5, 7, 9, 6, 16),
-            Block.box(0, 0, 16, 16, 16, 16),
-            Block.box(7, 6, 7, 8, 8, 16),
-            Block.box(8, 8, 7, 9, 11, 16),
-            Block.box(7, 11, 7, 8, 13, 16)
-    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+    public final VoxelShape SHAPE = Block.box(3, 0, 4, 13, 15, 12);
     public StarGateway(Properties properties) {
         super(properties);
     }

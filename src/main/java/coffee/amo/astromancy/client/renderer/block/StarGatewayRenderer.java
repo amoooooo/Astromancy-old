@@ -27,7 +27,7 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
         ps.pushPose();
         VertexConsumer sunConsumer = DELAYED_RENDER.getBuffer(sunType);
         ps.translate(0,1.5,0);
-        //VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat().setColor(Color.WHITE).renderQuad(sunConsumer, ps, 1);
+        VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat().setColor(Color.WHITE).renderQuad(sunConsumer, ps, 1);
         ps.popPose();
     }
 }

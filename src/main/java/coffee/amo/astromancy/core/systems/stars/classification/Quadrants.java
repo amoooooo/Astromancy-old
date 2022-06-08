@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class Quadrants {
     public static final Quadrant PENTACLES = new Quadrant(Direction.EAST, "Pentacles").addConstellations(
@@ -48,5 +49,9 @@ public class Quadrants {
             }
         }
         return null;
+    }
+
+    public static Constellation randomConstellationInQuadrant(Quadrant quadrant, Level level){
+        return quadrant.constellations.get(level.random.nextInt(quadrant.constellations.size()));
     }
 }

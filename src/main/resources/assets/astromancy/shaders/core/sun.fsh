@@ -1,11 +1,13 @@
 #version 330
 
 uniform sampler2D Sampler0;
-
 in vec2 UV0;
+//in vec3 Position;
 
 uniform vec2 InSize;
 uniform float GameTime;
+//uniform mat4 ModelViewMat;
+//uniform mat4 ProjMat;
 
 out vec4 fragColor;
 
@@ -34,8 +36,9 @@ float snoise(vec3 uv, float res)	// by trisomie21
 
 float freqs[4];
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void main()
 {
+    //gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
     freqs[0] = texture( Sampler0, vec2( 0.01, 0.25 ) ).x;
     freqs[1] = texture( Sampler0, vec2( 0.07, 0.25 ) ).x;
     freqs[2] = texture( Sampler0, vec2( 0.15, 0.25 ) ).x;
@@ -49,7 +52,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec3 orangeRed		= vec3( 0.8, 0.35, 0.1 );
     float time		= GameTime * 0.1;
     float aspect	= InSize.x/InSize.y;
-    vec2 uv			= fragCoord.xy / InSize.xy;
+    vec2 uv			= UV0.xy / InSize.xy;
     vec2 p 			= -0.5 + uv;
     p.x *= aspect;
 
