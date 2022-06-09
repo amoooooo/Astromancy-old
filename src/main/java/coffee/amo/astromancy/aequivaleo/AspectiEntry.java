@@ -41,7 +41,7 @@ public class AspectiEntry {
     public TextComponent getTooltip(){
         TextComponent tooltip = new TextComponent("");
         for(AspectiInstance instance : aspecti){
-            tooltip.append(new TextComponent(AspectiMap.getAspectiSymbol(instance.type.aspecti)).withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
+            tooltip.append(new TextComponent(instance.type.aspecti.symbol()).withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
             tooltip.append(new TextComponent(AspectiMap.convertDoubleToSmallString((int) instance.amount)));
             tooltip.append(" ");
         }
