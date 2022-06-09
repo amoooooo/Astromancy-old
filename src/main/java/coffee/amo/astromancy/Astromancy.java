@@ -2,6 +2,7 @@ package coffee.amo.astromancy;
 
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
+import coffee.amo.astromancy.core.registration.ItemRegistry;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +43,7 @@ public class Astromancy {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::client);
         BlockRegistration.register();
         AspectiRegistry.register();
+        ItemRegistry.register();
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
