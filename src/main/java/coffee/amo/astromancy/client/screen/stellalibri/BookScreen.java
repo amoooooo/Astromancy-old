@@ -33,21 +33,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sammy.ortus.systems.rendering.particle.screen.base.ScreenParticle.RenderOrder.BEFORE_TOOLTIPS;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 
 public class BookScreen extends Screen {
     public static final VFXBuilders.ScreenVFXBuilder BUILDER = VFXBuilders.createScreen().setPosTexDefaultFormat();
 
     public static final ResourceLocation FRAME_TEXTURE = Astromancy.astromancy("textures/gui/book/frame.png");
-    public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/background.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/eldritch_tab_thing.png");
 
     public int bookWidth = 256;
     public int bookHeight = 230;
     public int bookInsideWidth = 224;
     public int bookInsideHeight = 194;
 
-    public final int parallax_width = 1024;
-    public final int parallax_height = 2560;
+    public final int parallax_width = 512;
+    public final int parallax_height = 512;
     public static BookScreen screen;
     public float xOffset;
     public float yOffset;
@@ -55,8 +57,8 @@ public class BookScreen extends Screen {
     public float cachedYOffset;
     public boolean ignoreNextMouseInput;
 
-    public static ArrayList<BookEntry> entries = new ArrayList<>();
-    public static ArrayList<BookObject> objects = new ArrayList<>();
+    public static ArrayList<BookEntry> ENTRIES = new ArrayList<>();
+    public static ArrayList<BookObject> OBJECTS = new ArrayList<>();
 
     protected BookScreen() {
         super(new TranslatableComponent("astromancy.gui.book.title"));
@@ -67,16 +69,16 @@ public class BookScreen extends Screen {
     }
 
     public static void setupEntries(){
-        entries.clear();
+        ENTRIES.clear();
         Item EMPTY = ItemStack.EMPTY.getItem();
 
-        entries.add(new BookEntry("introduction", ItemRegistry.STELLA_LIBRI.get(), 0, 0)
+        ENTRIES.add(new BookEntry("introduction", ItemRegistry.STELLA_LIBRI.get(), 0, 0)
                 .setObjectSupplier(ImportantEntryObject::new)
                 .addPage(new HeadlineTextPage("introduction", "introduction,a")));
     }
 
-    public void setupObjects(){
-        objects.clear();
+    public void setupObjects() {
+        OBJECTS.clear();
         this.width = minecraft.getWindow().getGuiScaledWidth();
         this.height = minecraft.getWindow().getGuiScaledHeight();
         int guiLeft = (width - bookWidth) / 2;
@@ -85,70 +87,72 @@ public class BookScreen extends Screen {
         int coreY = guiTop + bookInsideHeight;
         int width = 40;
         int height = 48;
-        for(BookEntry entry : entries){
-            objects.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height));
+        for (BookEntry entry : ENTRIES) {
+            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height));
         }
-        faceObject(objects.get(0));
+        faceObject(OBJECTS.get(0));
     }
 
-    public void faceObject(BookObject object){
+    public void faceObject(BookObject object) {
         this.width = minecraft.getWindow().getGuiScaledWidth();
         this.height = minecraft.getWindow().getGuiScaledHeight();
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         xOffset = -object.posX + guiLeft + bookInsideWidth;
-        yOffset = object.posY + guiTop + bookInsideHeight;
+        yOffset = -object.posY + guiTop + bookInsideHeight;
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        renderBackground(pPoseStack);
-        super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
 
-        renderBackground(BACKGROUND_TEXTURE, pPoseStack, 0.1f, 0.4f);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        renderBackground(BACKGROUND_TEXTURE, poseStack, 0.1f, 0.4f);
+        GL11.glEnable(GL_SCISSOR_TEST);
         cut();
 
-        renderEntries(pPoseStack, pMouseX, pMouseY, pPartialTick);
-        ScreenParticleHandler.renderParticles(ScreenParticle.RenderOrder.BEFORE_TOOLTIPS);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        renderEntries(poseStack, mouseX, mouseY, partialTicks);
+        ScreenParticleHandler.renderParticles(BEFORE_TOOLTIPS);
+        GL11.glDisable(GL_SCISSOR_TEST);
 
-        renderTexture(FRAME_TEXTURE, pPoseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
-        lateEntryRender(pPoseStack, pMouseX, pMouseY, pPartialTick);
+        //renderTransparentTexture(FADE_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
+        renderTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
+        lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
+    }
+
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        xOffset += dragX;
+        yOffset += dragY;
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
-    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
-        xOffset += pDragX;
-        yOffset += pDragY;
-        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
-    }
-
-    @Override
-    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         cachedXOffset = xOffset;
         cachedYOffset = yOffset;
-        return super.mouseClicked(pMouseX, pMouseY, pButton);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
-        if(ignoreNextMouseInput){
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (ignoreNextMouseInput) {
             ignoreNextMouseInput = false;
-            return super.mouseReleased(pMouseX, pMouseY, pButton);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
         if (xOffset != cachedXOffset || yOffset != cachedYOffset) {
-            return super.mouseReleased(pMouseX, pMouseY, pButton);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
-        for(BookObject object : objects){
-            if (object.isHovering(xOffset, yOffset, pMouseX, pMouseY)){
-                object.click(xOffset, yOffset, pMouseX, pMouseY);
+        for (BookObject object : OBJECTS) {
+            if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
+                object.click(xOffset, yOffset, mouseX, mouseY);
                 break;
             }
         }
-        return super.mouseReleased(pMouseX, pMouseY, pButton);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -157,26 +161,27 @@ public class BookScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if(Minecraft.getInstance().options.keyInventory.matches(pKeyCode, pScanCode)){
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
             onClose();
             return true;
         }
-        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks){
-        for(int i = objects.size() - 1; i >= 0; i--){
-            BookObject object = objects.get(i);
+    public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+        for (int i = OBJECTS.size() - 1; i >= 0; i--) {
+            BookObject object = OBJECTS.get(i);
             boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
+            object.isHovering = isHovering;
             object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
             object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
         }
     }
 
     public void lateEntryRender(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        for (int i = objects.size() - 1; i >= 0; i--) {
-            BookObject object = objects.get(i);
+        for (int i = OBJECTS.size() - 1; i >= 0; i--) {
+            BookObject object = OBJECTS.get(i);
             object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
         }
     }
@@ -222,11 +227,12 @@ public class BookScreen extends Screen {
         GL11.glScissor(insideLeft * scale, insideTop * scale, bookInsideWidth * scale, (bookInsideHeight + 1) * scale); // do not ask why the 1 is needed please
     }
 
-    public static void renderTexture(ResourceLocation texture, PoseStack poseStack, int x, int y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight) {
+
+    public static void renderTexture(ResourceLocation texture, PoseStack poseStack, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight) {
         BUILDER.setPositionWithWidth(x, y, width, height)
                 .setShaderTexture(texture)
-                .setUVWithWidth(uOffset, vOffset, textureWidth, textureHeight)
-                .begin()
+                .setUVWithWidth(u, v, width, height, textureWidth, textureHeight)
+                .begin() //TODO: move this begin & end call to start of rendering all textures, and end of rendering all textures in the book
                 .blit(poseStack)
                 .end();
     }
@@ -261,6 +267,7 @@ public class BookScreen extends Screen {
     public static void renderItem(PoseStack poseStack, Ingredient ingredient, int posX, int posY, int mouseX, int mouseY) {
         renderItem(poseStack, List.of(ingredient.getItems()), posX, posY, mouseX, mouseY);
     }
+
     public static void renderItem(PoseStack poseStack, List<ItemStack> stacks, int posX, int posY, int mouseX, int mouseY) {
         if (stacks.size() == 1) {
             renderItem(poseStack, stacks.get(0), posX, posY, mouseX, mouseY);
@@ -274,6 +281,7 @@ public class BookScreen extends Screen {
             screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
         }
     }
+
     public static void renderItem(PoseStack poseStack, ItemStack stack, int posX, int posY, int mouseX, int mouseY) {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, posX, posY);
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
@@ -281,6 +289,7 @@ public class BookScreen extends Screen {
             screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
         }
     }
+
     public static void renderItemList(PoseStack poseStack, List<ItemStack> items, int left, int top, int mouseX, int mouseY, boolean vertical) {
         int slots = items.size();
         renderItemFrames(poseStack, left, top, vertical, slots);
@@ -297,6 +306,7 @@ public class BookScreen extends Screen {
             BookScreen.renderItem(poseStack, stack, oLeft, oTop, mouseX, mouseY);
         }
     }
+
     public static void renderItemFrames(PoseStack poseStack, int left, int top, boolean vertical, int slots) {
         if (vertical) {
             top -= 10 * (slots - 1);
@@ -385,16 +395,16 @@ public class BookScreen extends Screen {
     private static void renderRawText(PoseStack stack, String text, int x, int y, float glow) {
         Font font = Minecraft.getInstance().font;
         //182, 61, 183  227, 39, 228
-//        int r = (int) Mth.lerp(glow, 182, 227);
-//        int g = (int) Mth.lerp(glow, 61, 39);
-//        int b = (int) Mth.lerp(glow, 183, 228);
+        int r = (int) Mth.lerp(glow, 182, 227);
+        int g = (int) Mth.lerp(glow, 61, 39);
+        int b = (int) Mth.lerp(glow, 183, 228);
 
-        font.draw(stack, text, x - 1, y, color(96, 236, 227, 214));
-        font.draw(stack, text, x + 1, y, color(128, 165, 149, 142));
-        font.draw(stack, text, x, y - 1, color(128, 208, 197, 183));
+        font.draw(stack, text, x - 1, y, color(96, 255, 210, 243));
+        font.draw(stack, text, x + 1, y, color(128, 240, 131, 232));
+        font.draw(stack, text, x, y - 1, color(128, 255, 183, 236));
         font.draw(stack, text, x, y + 1, color(96, 236, 110, 226));
 
-        font.draw(stack, text, x, y, color(255, 111, 97, 105));
+        font.draw(stack, text, x, y, color(255, r, g, b));
     }
 
     public static float getTextGlow(float offset) {
