@@ -7,8 +7,8 @@ import coffee.amo.astromancy.aequivaleo.compound.AspectiCompoundType;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.aspecti.AspectiMap;
-import com.mojang.datafixers.util.Pair;
 import com.sammy.ortus.helpers.BlockHelper;
+import com.sammy.ortus.helpers.util.Pair;
 import com.sammy.ortus.systems.blockentity.ItemHolderBlockEntity;
 import com.sammy.ortus.systems.blockentity.OrtusBlockEntityInventory;
 import net.minecraft.core.BlockPos;
@@ -69,36 +69,36 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
         requirementBool = true;
     }
 
-    public List<Pair<Aspecti, Integer>> getMatchFromInventory(){
-        List<Pair<Aspecti, Integer>> match = new ArrayList<>();
-        for(ItemStack itemStack : inventory.getStacks()){
-            if(itemStack.isEmpty()){
-                continue;
-            }
-            AspectiEntry entry = AspectiHelper.getEntry(level.dimension(), itemStack);
-            for(AspectiInstance instance : entry.aspecti){
-                for(Pair<Aspecti, Integer> requirement : requirements){
-                    if(requirement.getFirst() == instance.type.aspecti){
-                        requirements.add(new Pair<>(instance.type.aspecti, requirement.getSecond () + (int)Math.ceil(instance.amount)));
-                        requirements.remove(requirement);
-                    } else {
-                        match.add(new Pair<>(instance.type.aspecti, (int)Math.ceil(instance.amount)));
+    public boolean checkInventoryForRequirements(){
+        List<Pair<Aspecti, Integer>> totalRequirements = new ArrayList<>();
+        for(int i = 0; i < inventory.getSlots(); i++){
+            ItemStack item = inventory.getStackInSlot(i);
+            List<AspectiInstance> instance = AspectiHelper.getEntry(level.dimension(), item).aspecti;
+            for(AspectiInstance inst : instance){
+                for(Pair<Aspecti, Integer> current : totalRequirements){
+                    if(current.getFirst().equals(inst.type.aspecti)){
+                        current.setSecond((int) (current.getSecond() + inst.amount));
+                    }
+                    else {
+                        totalRequirements.add(Pair.of(inst.type.aspecti, (int)Math.ceil(inst.amount)));
                     }
                 }
             }
         }
-        return match;
-    }
-
-public boolean checkMatch(List<Pair<Aspecti, Integer>> match){
-        for(Pair<Aspecti, Integer> pair : match){
-            for(Pair<Aspecti, Integer> requirement : requirements){
-                if(pair.getFirst().equals(requirement.getFirst()) && pair.getSecond() >= requirement.getSecond()){
-                    return true;
+        boolean match = false;
+        for(Pair<Aspecti, Integer> req : requirements){
+            for(Pair<Aspecti, Integer> total : totalRequirements){
+                if(total.getFirst().equals(req.getFirst())){
+                    if(total.getSecond() >= req.getSecond()){
+                        match = true;
+                    } else if (total.getSecond() < req.getSecond()){
+                        match = false;
+                    }
                 }
             }
         }
-        return false;
+        System.out.println(totalRequirements);
+        return match;
     }
 
     @Override
@@ -106,7 +106,7 @@ public boolean checkMatch(List<Pair<Aspecti, Integer>> match){
         if (player.getItemInHand(hand).isEmpty() && !player.isShiftKeyDown() && inventory.getSlots() == 12) {
             toggled = !toggled;
             System.out.println(requirements);
-            if(checkMatch(getMatchFromInventory())){
+            if(checkInventoryForRequirements()){
                 player.sendMessage(new TextComponent("Match!"), player.getUUID());
             }
             return InteractionResult.SUCCESS;

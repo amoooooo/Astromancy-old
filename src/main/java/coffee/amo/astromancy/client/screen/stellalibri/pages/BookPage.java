@@ -31,13 +31,13 @@ public class BookPage
     {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        BookScreen.renderTexture(BACKGROUND, poseStack,guiLeft, guiTop,1,1,screen.bookWidth-147, screen.bookHeight,512,512);
+        BookScreen.renderTexture(BACKGROUND, poseStack,guiLeft, guiTop,1,1,screen.bookWidth-73, screen.bookHeight,128,128);
     }
     public void renderBackgroundRight(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks)
     {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        BookScreen.renderTexture(BACKGROUND, poseStack,guiLeft+147, guiTop,148,1,screen.bookWidth-147, screen.bookHeight,512,512);
+        BookScreen.renderTexture(BACKGROUND, poseStack,guiLeft+147, guiTop,148,1,screen.bookWidth-73, screen.bookHeight,128,128);
     }
     public int guiLeft()
     {

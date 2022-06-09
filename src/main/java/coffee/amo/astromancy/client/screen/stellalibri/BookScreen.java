@@ -108,8 +108,7 @@ public class BookScreen extends Screen {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-
-        renderBackground(BACKGROUND_TEXTURE, poseStack, 0.1f, 0.4f);
+        renderBackground(BACKGROUND_TEXTURE, poseStack, 0.1f, 0.1f);
         GL11.glEnable(GL_SCISSOR_TEST);
         cut();
 
@@ -118,7 +117,7 @@ public class BookScreen extends Screen {
         GL11.glDisable(GL_SCISSOR_TEST);
 
         //renderTransparentTexture(FADE_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
-        renderTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
+        renderTransparentTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 256, 256);
         lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
     }
 
@@ -318,23 +317,23 @@ public class BookScreen extends Screen {
             int offset = i * 20;
             int oLeft = left + (vertical ? 0 : offset);
             int oTop = top + (vertical ? offset : 0);
-            renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft, oTop, 75, 192, 20, 20, 512, 512);
+            renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft, oTop, 0, 255, 26, 26, 256, 256);
 
             if (vertical) {
                 //bottom fade
                 if (slots > 1 && i != slots - 1) {
-                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, left + 1, oTop + 19, 75, 213, 18, 2, 512, 512);
+                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, left + 1, oTop + 19, 75, 213, 18, 2, 256, 256);
                 }
                 //bottommost fade
                 if (i == slots - 1) {
-                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 1, oTop + 19, 75, 216, 18, 2, 512, 512);
+                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 1, oTop + 19, 75, 216, 18, 2, 256, 256);
                 }
             } else {
                 //bottom fade
-                renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 1, top + 19, 75, 216, 18, 2, 512, 512);
+                renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 1, top + 19, 75, 216, 18, 2, 256, 256);
                 if (slots > 1 && i != slots - 1) {
                     //side fade
-                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 19, top, 96, 192, 2, 20, 512, 512);
+                    renderTexture(EntryScreen.BOOK_TEXTURE, poseStack, oLeft + 19, top, 96, 192, 2, 20, 256, 256);
                 }
             }
         }
