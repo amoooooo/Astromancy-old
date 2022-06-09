@@ -1,5 +1,7 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
+import coffee.amo.astromancy.core.systems.stars.Star;
+
 import java.util.List;
 
 public class Constellations {
@@ -53,6 +55,15 @@ public class Constellations {
     public static Constellation findByName(String name) {
         for (Constellation constellation : constellations) {
             if (constellation.name.equals(name)) {
+                return constellation;
+            }
+        }
+        return null;
+    }
+
+    public static Constellation findByStar(Star star) {
+        for (Constellation constellation : constellations) {
+            if (constellation.containsStar(star)) {
                 return constellation;
             }
         }

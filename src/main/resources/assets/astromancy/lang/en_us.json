@@ -1,4 +1,5 @@
 {
   "block.astromancy.armillary_sphere": "Armillary Sphere",
-  "block.astromancy.star_gateway": "Star Gateway"
+  "block.astromancy.star_gateway": "Star Gateway",
+  "item.astromancy.arcana_sequence": "Arcana Sequence"
 }

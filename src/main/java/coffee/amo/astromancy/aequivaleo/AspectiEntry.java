@@ -2,7 +2,6 @@ package coffee.amo.astromancy.aequivaleo;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.compound.AspectiCompoundType;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiMap;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import net.minecraft.network.chat.TextComponent;
 
@@ -42,7 +41,7 @@ public class AspectiEntry {
         TextComponent tooltip = new TextComponent("");
         for(AspectiInstance instance : aspecti){
             tooltip.append(new TextComponent(instance.type.aspecti.symbol()).withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
-            tooltip.append(new TextComponent(AspectiMap.convertDoubleToSmallString((int) instance.amount)));
+            tooltip.append(new TextComponent(AspectiHelper.convertDoubleToSmallString((int) instance.amount)));
             tooltip.append(" ");
         }
         return tooltip;

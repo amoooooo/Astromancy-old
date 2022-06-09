@@ -51,6 +51,15 @@ public class Quadrants {
         return null;
     }
 
+    public static Quadrant findQuadrantFromName(String name){
+        for(Quadrant quadrant : QUADRANTS){
+            if(quadrant.name.equals(name)){
+                return quadrant;
+            }
+        }
+        return null;
+    }
+
     public static Constellation randomConstellationInQuadrant(Quadrant quadrant, Level level){
         return quadrant.constellations.get(level.random.nextInt(quadrant.constellations.size()));
     }

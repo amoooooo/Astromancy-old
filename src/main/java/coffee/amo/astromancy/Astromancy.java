@@ -1,5 +1,6 @@
 package coffee.amo.astromancy;
 
+import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
@@ -44,6 +45,7 @@ public class Astromancy {
         BlockRegistration.register();
         AspectiRegistry.register();
         ItemRegistry.register();
+        AstromancyPacketHandler.init();
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading

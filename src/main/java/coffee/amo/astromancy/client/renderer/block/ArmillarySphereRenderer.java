@@ -4,15 +4,13 @@ import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.blockentity.ArmillarySphereBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.sammy.ortus.setup.OrtusRenderTypeRegistry;
-import com.sammy.ortus.systems.rendering.VFXBuilders;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -21,17 +19,19 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 
-import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP;
 import static com.sammy.ortus.handlers.RenderHandler.DELAYED_RENDER;
 
 public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySphereBlockEntity> {
 
     private final static ResourceLocation BEAM = Astromancy.astromancy("textures/vfx/light_trail.png");
     private final static RenderType BEAM_TYPE = OrtusRenderTypeRegistry.ADDITIVE_TEXTURE.apply(BEAM);
+
+    private final Font font;
 
     private final Vector3f[] offsets = new Vector3f[]{
             new Vector3f(1.1f, 0, -1.1f),
@@ -51,61 +51,34 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
             new Vector3f(-0.9f, 0, 0.9f),
             new Vector3f(-0.9f, 0, -0.9f)
     };
-    public ArmillarySphereRenderer(BlockEntityRendererProvider.Context context) {
 
+    public ArmillarySphereRenderer(BlockEntityRendererProvider.Context context) {
+        this.font = context.getFont();
     }
 
-    // TODO: fix line/do cube
     @Override
     public void render(ArmillarySphereBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
-        float fac = (((pBlockEntity.getLevel().getGameTime() + pPartialTick) * 2 + 2) * (pBlockEntity.toggled ? 1 : 0));// * ((float)pBlockEntity.ticksActive/600);
+        float fac = ((((pBlockEntity.ticksActive) + pPartialTick) * 2 + 2)) * (pBlockEntity.toggled ? 1 : 0);
+        //fac *=  ((float)pBlockEntity.ticksActive / 10.0f);
+        float scale = Math.max(1 - (pBlockEntity.ticksActive / 300.0f), 0.1f);
+        float speed = 1 + (pBlockEntity.ticksActive / 150.0f);
         VertexConsumer consumer = DELAYED_RENDER.getBuffer(BEAM_TYPE);
-        ps.translate(0.5,1.5,0.5);
-        ps.scale(0.5f,0.5f,0.5f);
-        ps.mulPose(Vector3f.XN.rotationDegrees(fac));
-        ps.mulPose(Vector3f.YP.rotationDegrees(fac));
-        for(int i = 0; i < 4; i++) {
-            if(pBlockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem()) {
-                ps.pushPose();
-                drawLineBetween(pBufferSource, ps, new Vec3(offsets[i]), new Vec3(offsets[(i+1)%4]), 0.01f, 255, 255, 255, 255);
-                ps.translate(offsets[i].x(), offsets[i].y(), offsets[i].z());
-                ps.mulPose(Vector3f.YN.rotationDegrees(fac));
-                Minecraft.getInstance().getItemRenderer().renderStatic(pBlockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, pBufferSource, 1);
-                ps.popPose();
-            }
+        double distance = Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos()));
+        double distanceFactor = Math.max(0, Math.max(0, distance / 10.0));
+        Color color = new Color(1,1,1,1-(float)distanceFactor);
+        if (pBlockEntity.requirementBool) {
+            drawRequirements(ps, pBufferSource, pBlockEntity, distanceFactor, color);
         }
-        ps.mulPose(Vector3f.ZP.rotationDegrees(90));
-        ps.mulPose(Vector3f.ZP.rotationDegrees(fac * 1.3f));
-        for(int i = 4; i < 8; i++){
-            if(pBlockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem()) {
-                ps.pushPose();
-                drawLineBetween(pBufferSource, ps, new Vec3(offsets2[i-4]), new Vec3(offsets2[(i-4+1)%4]), 0.01f, 255, 255, 255, 255);
-                ps.translate(offsets2[i-4].x(), offsets2[i-4].y(), offsets2[i-4].z());
-                ps.mulPose(Vector3f.ZN.rotationDegrees(fac * 1.3f));
-                ps.scale(0.8f,0.8f,0.8f);
-                Minecraft.getInstance().getItemRenderer().renderStatic(pBlockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, pBufferSource, 1);
-                ps.popPose();
-            }
+        if(pBlockEntity.star != null){
+            drawStar(ps, pBufferSource, pBlockEntity, distanceFactor, color);
         }
-        ps.mulPose(Vector3f.XP.rotationDegrees(90));
-        ps.mulPose(Vector3f.XP.rotationDegrees(fac * 1.5f));
-        for(int i = 8; i < 12; i++){
-            if(pBlockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem()) {
-                ps.pushPose();
-                drawLineBetween(pBufferSource, ps, new Vec3(offsets3[i-8]), new Vec3(offsets3[(i-8+1)%4]), 0.01f, 255, 255, 255, 255);
-                ps.translate(offsets3[i-8].x(), offsets3[i-8].y(), offsets3[i-8].z());
-                ps.mulPose(Vector3f.XN.rotationDegrees(fac * 1.5f));
-                ps.scale(0.8f,0.8f,0.8f);
-                Minecraft.getInstance().getItemRenderer().renderStatic(pBlockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, pBufferSource, 1);
-                ps.popPose();
-            }
+        if(!pBlockEntity.inventory.isEmpty()){
+            drawTiers(ps, pBufferSource, pBlockEntity, distanceFactor, color, scale, speed, fac);
         }
         ps.popPose();
     }
-
-    private static void drawLineBetween(MultiBufferSource buffer, PoseStack mstack, Vec3 local, Vec3 target, float lineWidth, int r, int g, int b, int a)
-    {
+    private static void drawLineBetween(MultiBufferSource buffer, PoseStack mstack, Vec3 local, Vec3 target, float lineWidth, int r, int g, int b, int a) {
         VertexConsumer builder = buffer.getBuffer(RenderType.leash());
 
         //Calculate yaw
@@ -131,17 +104,175 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         float halfWidth = lineWidth / 2F;
 
         //Draw horizontal quad
-        builder.vertex(matrix, -halfWidth, 0,        0).color(r, g, b, a).uv2(0xF000F0).endVertex();
-        builder.vertex(matrix,  halfWidth, 0,        0).color(r, g, b, a).uv2(0xF000F0).endVertex();
-        builder.vertex(matrix,  halfWidth, 0, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, -halfWidth, 0, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, halfWidth, 0, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, halfWidth, 0, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
         builder.vertex(matrix, -halfWidth, 0, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
 
         //Draw vertical Quad
-        builder.vertex(matrix, 0, -halfWidth,        0).color(r, g, b, a).uv2(0xF000F0).endVertex();
-        builder.vertex(matrix, 0,  halfWidth,        0).color(r, g, b, a).uv2(0xF000F0).endVertex();
-        builder.vertex(matrix, 0,  halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, -halfWidth, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, halfWidth, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
         builder.vertex(matrix, 0, -halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
 
         mstack.popPose();
+    }
+    private void drawCurrent(MultiBufferSource buffer, PoseStack ps, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color) {
+        ps.pushPose();
+        ps.translate(0.5, 1.5, 0.5);
+        ps.mulPose(Vector3f.XP.rotation(135));
+        Vec3 player = Minecraft.getInstance().player.getEyePosition();
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.5, blockEntity.getBlockPos().getZ() + 0.5);
+
+        Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
+        Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
+        Vec3 d = player.subtract(center);
+
+        // Find angle between start & end in yaw
+        float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
+
+        // Find angle between start & end in pitch
+        float pitch = (float) Math.toDegrees(Math.atan2(Math.sqrt(d.z * d.z + d.x * d.x), d.y) + Math.PI);
+
+        Quaternion Q = Quaternion.ONE.copy();
+
+        // doubling to account for how quats work
+        Q.mul(new Quaternion(new Vector3f(0.0f, 1.0f, 0.0f), -yaw * 2, true));
+        Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
+        //Q.mul(-1);
+        ps.mulPose(Q);
+        ps.scale(0.01f * (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor));
+        //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
+        for (String requirement : blockEntity.pairToStringList(blockEntity.getMatchFromInventory())) {
+            ps.translate(-font.width(requirement) / 2.0f, 0, 0);
+            font.draw(ps, requirement, 0, 0, color.getRGB());
+            ps.translate(font.width(requirement) / 2.0f, 0, 0);
+            ps.translate(0, font.lineHeight, 0);
+        }
+        ps.popPose();
+    }
+
+    private void drawRequirements(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color){
+        drawCurrent(buffer, ps, blockEntity, distanceFactor, color);
+        ps.pushPose();
+        ps.translate(0.5, 0.5, 0.5);
+        ps.mulPose(Vector3f.XP.rotation(135));
+        Vec3 player = Minecraft.getInstance().player.getEyePosition();
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.5, blockEntity.getBlockPos().getZ() + 0.5);
+
+        Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
+        Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
+        Vec3 d = player.subtract(center);
+
+        // Find angle between start & end in yaw
+        float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
+
+        // Find angle between start & end in pitch
+        float pitch = (float) Math.toDegrees(Math.atan2(Math.sqrt(d.z * d.z + d.x * d.x), d.y) + Math.PI);
+
+        Quaternion Q = Quaternion.ONE.copy();
+
+        // doubling to account for how quats work
+        Q.mul(new Quaternion(new Vector3f(0.0f, 1.0f, 0.0f), -yaw * 2, true));
+        Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
+        //Q.mul(-1);
+        ps.mulPose(Q);
+        ps.translate(0,0,-0.5);
+        ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
+        //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
+        for (String requirement : blockEntity.requirementsToStringList()) {
+            ps.translate(-font.width(requirement) / 2.0f, 0, 0);
+            font.draw(ps, requirement, 0, 0, color.getRGB());
+            ps.translate(font.width(requirement) / 2.0f, 0, 0);
+            ps.translate(0, font.lineHeight, 0);
+        }
+        ps.popPose();
+    }
+
+    private void drawStar(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color){
+        ps.pushPose();
+        ps.translate(0.5, 1.0f, 0.5);
+        ps.mulPose(Vector3f.XP.rotation(135));
+        Vec3 player = Minecraft.getInstance().player.getEyePosition();
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.5, blockEntity.getBlockPos().getZ() + 0.5);
+
+        Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
+        Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
+        Vec3 d = player.subtract(center);
+
+        // Find angle between start & end in yaw
+        float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
+
+        // Find angle between start & end in pitch
+        float pitch = (float) Math.toDegrees(Math.atan2(Math.sqrt(d.z * d.z + d.x * d.x), d.y) + Math.PI);
+
+        Quaternion Q = Quaternion.ONE.copy();
+
+        // doubling to account for how quats work
+        Q.mul(new Quaternion(new Vector3f(0.0f, 1.0f, 0.0f), -yaw * 2, true));
+        Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
+        //Q.mul(-1);
+        ps.mulPose(Q);
+        ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
+        //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
+        for (String requirement : blockEntity.star.getString()) {
+            ps.translate(-font.width(requirement) / 2.0f, 0, 0);
+            font.draw(ps, requirement, 0, 0, color.getRGB());
+            ps.translate(font.width(requirement) / 2.0f, 0, 0);
+            ps.translate(0, font.lineHeight, 0);
+        }
+        ps.popPose();
+    }
+
+    private void drawTiers(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color, float scale, float speed, float fac){
+        ps.pushPose();
+        ps.translate(0.5, Math.max(1.5 * scale, 0.5), 0.5);
+        ps.scale(scale, scale, scale);
+        ps.scale(0.5f, 0.5f, 0.5f);
+        ps.mulPose(Vector3f.XN.rotationDegrees(fac * speed));
+        ps.mulPose(Vector3f.YP.rotationDegrees(fac * speed));
+        for (int i = 0; i < 4; i++) {
+            if (blockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem() || blockEntity.toggled) {
+                ps.pushPose();
+                drawLineBetween(buffer, ps, new Vec3(offsets[i]), new Vec3(offsets[(i + 1) % 4]), 0.01f, 255, 255, 255, 255);
+                ps.translate(offsets[i].x(), offsets[i].y(), offsets[i].z());
+                ps.mulPose(Vector3f.YN.rotationDegrees(fac));
+                ps.translate(0, -0.175, 0);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                ps.popPose();
+            }
+        }
+        ps.mulPose(Vector3f.ZP.rotationDegrees(90));
+        ps.mulPose(Vector3f.ZP.rotationDegrees(fac * 1.3f * speed));
+        for (int i = 4; i < 8; i++) {
+            if (blockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem() || blockEntity.toggled) {
+                ps.pushPose();
+                drawLineBetween(buffer, ps, new Vec3(offsets2[i - 4]), new Vec3(offsets2[(i - 4 + 1) % 4]), 0.01f, 255, 255, 255, 255);
+                ps.translate(offsets2[i - 4].x(), offsets2[i - 4].y(), offsets2[i - 4].z());
+                ps.mulPose(Vector3f.ZN.rotationDegrees(fac * 1.3f));
+                ps.scale(0.8f, 0.8f, 0.8f);
+                ps.translate(0, -0.175, 0);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                ps.popPose();
+            }
+        }
+        ps.mulPose(Vector3f.XP.rotationDegrees(90));
+        ps.mulPose(Vector3f.XP.rotationDegrees(fac * 1.5f * speed));
+        for (int i = 8; i < 12; i++) {
+            if (blockEntity.inventory.items.get(i) != ItemStack.EMPTY.getItem() || blockEntity.toggled) {
+                ps.pushPose();
+                drawLineBetween(buffer, ps, new Vec3(offsets3[i - 8]), new Vec3(offsets3[(i - 8 + 1) % 4]), 0.01f, 255, 255, 255, 255);
+                ps.translate(offsets3[i - 8].x(), offsets3[i - 8].y(), offsets3[i - 8].z());
+                ps.mulPose(Vector3f.XN.rotationDegrees(fac * 1.5f));
+                ps.scale(0.8f, 0.8f, 0.8f);
+                ps.translate(0, -0.175, 0);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                ps.popPose();
+            }
+        }
+        ps.popPose();
     }
 }

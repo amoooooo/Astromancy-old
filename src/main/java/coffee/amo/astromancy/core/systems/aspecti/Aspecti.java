@@ -7,8 +7,8 @@ public enum Aspecti {
     TRINE("$"), // Tool
     SEXTILE("%"), // Versatile
     SEMISEXTILE("&"), // Half, split
-    QUINTILE("'"), // Compress, condense
-    QUINCUNX("("), // Life, living
+    QUINTILE("("), // Compress, condense
+    QUINCUNX("'"), // Life, living
     OCTILE(")"), // Combine
     TRIOCTILE("*"), // Power
     DECILE("+") // Weight

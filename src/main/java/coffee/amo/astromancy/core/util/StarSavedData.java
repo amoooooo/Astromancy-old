@@ -10,19 +10,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
-    private final List<Quadrant> quadrants;
+    private static final List<Quadrant> quadrants = List.of(
+            Quadrants.STARS,
+            Quadrants.PENTACLES,
+            Quadrants.SWORDS,
+            Quadrants.WANDS
+    );
 
     public StarSavedData() {
-        this.quadrants = List.of(
-                Quadrants.STARS,
-                Quadrants.PENTACLES,
-                Quadrants.SWORDS,
-                Quadrants.WANDS
-        );
+    }
+
+    public static StarSavedData get() {
+        return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(p -> new StarSavedData().load(p), StarSavedData::new, "astromancy_stars");
     }
 
     // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT
@@ -46,10 +48,6 @@ public class StarSavedData extends SavedData {
         return this;
     }
 
-    public static StarSavedData get(){
-        return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(p -> new StarSavedData().load(p), StarSavedData::new, "astromancy_stars");
-    }
-
     public void addQuadrant(Quadrant quadrant) {
         quadrants.add(quadrant);
         this.setDirty();
@@ -57,7 +55,7 @@ public class StarSavedData extends SavedData {
 
     public void addStar(Star star) {
         Quadrant quadrant = star.getQuadrant();
-        if(quadrant != null) {
+        if (quadrant != null) {
             quadrant.addStar(star);
             this.setDirty();
         }
@@ -75,6 +73,7 @@ public class StarSavedData extends SavedData {
     public boolean containsStar(Star star) {
         return quadrants.stream().anyMatch(quadrant -> quadrant.containsStar(star));
     }
+
     public Star findStarFromName(String name) {
         return quadrants.stream().flatMap(quadrant -> quadrant.getStars().stream()).filter(star -> star.getName().equals(name)).findFirst().orElse(null);
     }
