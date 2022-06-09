@@ -8,39 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class AspectiMap {
-    public static final Map<Aspecti, String> map = Util.make(() -> {
-                Map<Aspecti, String> map = new HashMap<>();
-                map.put(Aspecti.CONJUNCTION, "!");
-                map.put(Aspecti.OPPOSITION, "\"");
-                map.put(Aspecti.SQUARE, "#");
-                map.put(Aspecti.TRINE, "$");
-                map.put(Aspecti.SEXTILE, "%");
-                map.put(Aspecti.SEMISEXTILE, "&");
-                map.put(Aspecti.QUINTILE, "'");
-                map.put(Aspecti.QUINCUNX, "(");
-                map.put(Aspecti.OCTILE, ")");
-                map.put(Aspecti.TRIOCTILE, "*");
-                map.put(Aspecti.DECILE, "+");
-                return map;
-            }
-    );
-
-    // map of ints to Aspecti
-    public static final Map<Integer, Aspecti> intMap = Util.make(() -> {
-        Map<Integer, Aspecti> map = new HashMap<>();
-        map.put(0, Aspecti.CONJUNCTION);
-        map.put(1, Aspecti.OPPOSITION);
-        map.put(2, Aspecti.SQUARE);
-        map.put(3, Aspecti.TRINE);
-        map.put(4, Aspecti.SEXTILE);
-        map.put(5, Aspecti.SEMISEXTILE);
-        map.put(6, Aspecti.QUINTILE);
-        map.put(7, Aspecti.QUINCUNX);
-        map.put(8, Aspecti.OCTILE);
-        map.put(9, Aspecti.TRIOCTILE);
-        map.put(10, Aspecti.DECILE);
-        return map;
-    });
 
     public static final Map<Integer, String> small = Util.make(() -> {
         Map<Integer, String> map = new HashMap<>();
@@ -70,7 +37,4 @@ public class AspectiMap {
         return result.toString();
     }
 
-    public static String getAspectiSymbol(Aspecti aspecti){
-        return map.get(aspecti);
-    }
 }
