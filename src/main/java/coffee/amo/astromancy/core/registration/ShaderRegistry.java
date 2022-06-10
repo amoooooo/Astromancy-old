@@ -14,11 +14,13 @@ import java.io.IOException;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Astromancy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ShaderRegistry {
     public static ShaderHolder SUN = new ShaderHolder();
+    public static ShaderHolder ASTROLABE = new ShaderHolder();
 
-    @SubscribeEvent
-    public static void shaderRegistry(RegisterShadersEvent event) throws IOException {
-        registerShader(event, ExtendedShaderInstance.createShaderInstance(SUN, event.getResourceManager(), Astromancy.astromancy("sun"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
-    }
+//    @SubscribeEvent
+//    public static void shaderRegistry(RegisterShadersEvent event) throws IOException {
+//        registerShader(event, ExtendedShaderInstance.createShaderInstance(SUN, event.getResourceManager(), Astromancy.astromancy("sun"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
+//        registerShader(event, ExtendedShaderInstance.createShaderInstance(ASTROLABE, event.getResourceManager(), Astromancy.astromancy("astrolabe"), DefaultVertexFormat.POSITION_COLOR_TEX));
+//    }
     public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {
         event.registerShader(extendedShaderInstance, s -> ((ExtendedShaderInstance) s).getHolder().setInstance(((ExtendedShaderInstance) s)));
     }

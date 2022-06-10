@@ -1,62 +1,185 @@
 #version 150
 
-#moj_import <matrix.glsl>
+#moj_import <fog.glsl>
 
-uniform sampler2D Sampler0;
-uniform sampler2D Sampler1;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
+uniform vec2 InSize;
+in vec2 UV0;
 
 uniform float GameTime;
-uniform int EndPortalLayers;
+uniform int StarLayers;
+in float vertexDistance;
 
-in vec4 texProj0;
+// divisions of grid
+const float repeats = 30.;
 
-const vec3[] COLORS = vec3[](
-vec3(0.022087, 0.098399, 0.110818),
-vec3(0.011892, 0.095924, 0.089485),
-vec3(0.027636, 0.101689, 0.100326),
-vec3(0.046564, 0.109883, 0.114838),
-vec3(0.064901, 0.117696, 0.097189),
-vec3(0.063761, 0.086895, 0.123646),
-vec3(0.084817, 0.111994, 0.166380),
-vec3(0.097489, 0.154120, 0.091064),
-vec3(0.106152, 0.131144, 0.195191),
-vec3(0.097721, 0.110188, 0.187229),
-vec3(0.133516, 0.138278, 0.148582),
-vec3(0.070006, 0.243332, 0.235792),
-vec3(0.196766, 0.142899, 0.214696),
-vec3(0.047281, 0.315338, 0.321970),
-vec3(0.204675, 0.390010, 0.302066),
-vec3(0.080955, 0.314821, 0.661491)
-);
+// number of layers
+const float layers = 21.;
 
-const mat4 SCALE_TRANSLATE = mat4(
-0.5, 0.0, 0.0, 0.25,
-0.0, 0.5, 0.0, 0.25,
-0.0, 0.0, 1.0, 0.0,
-0.0, 0.0, 0.0, 1.0
-);
+// star colours
+const vec3 blue = vec3(51.,64.,195.)/255.;
+const vec3 cyan = vec3(117.,250.,254.)/255.;
+const vec3 white = vec3(255.,255.,255.)/255.;
+const vec3 yellow = vec3(251.,245.,44.)/255.;
+const vec3 red = vec3(247,2.,20.)/255.;
 
-mat4 end_portal_layer(float layer) {
-    mat4 translate = mat4(
-    1.0, 0.0, 0.0, 17.0 / layer,
-    0.0, 1.0, 0.0, (2.0 + layer / 1.5) * (GameTime * 1.5),
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-    );
+// spectrum function
+vec3 spectrum(vec2 pos){
+    pos.x *= 4.;
+    vec3 outCol = vec3(0);
+    if( pos.x > 0.){
+        outCol = mix(blue, cyan, fract(pos.x));
+    }
+    if( pos.x > 1.){
+        outCol = mix(cyan, white, fract(pos.x));
+    }
+    if( pos.x > 2.){
+        outCol = mix(white, yellow, fract(pos.x));
+    }
+    if( pos.x > 3.){
+        outCol = mix(yellow, red, fract(pos.x));
+    }
 
-    mat2 rotate = mat2_rotate_z(radians((layer * layer * 4321.0 + layer * 9.0) * 2.0));
+    return 1.-(pos.y * (1.-outCol));
+}
 
-    mat2 scale = mat2((4.5 - layer / 4.0) * 2.0);
+float N21(vec2 p){
+    p = fract(p*vec2(233.34, 851.73));
+    p+= dot(p, p+23.45);
+    return fract(p.x*p.y);
+}
 
-    return mat4(scale * rotate) * translate * SCALE_TRANSLATE;
+vec2 N22 (vec2 p){
+    float n = N21(p);
+    return vec2 (n, N21(p+n));
+}
+
+mat2 scale(vec2 _scale){
+    return mat2(_scale.x,0.0,
+    0.0,_scale.y);
+}
+
+// 2D Noise based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    // Four corners in 2D of a tile
+    float a = N21(i);
+    float b = N21(i + vec2(1.0, 0.0));
+    float c = N21(i + vec2(0.0, 1.0));
+    float d = N21(i + vec2(1.0, 1.0));
+
+    // Smooth Interpolation
+
+    // Cubic Hermine Curve.  Same as SmoothStep()
+    vec2 u = f*f*(3.0-2.0*f);
+
+    // Mix 4 coorners percentages
+    return mix(a, b, u.x) +
+    (c - a)* u.y * (1.0 - u.x) +
+    (d - b) * u.x * u.y;
+}
+
+float perlin2(vec2 uv, int octaves, float pscale){
+    float col = 1.;
+    float initScale = 4.;
+    for ( int l; l < octaves; l++){
+        float val = noise(uv*initScale);
+        if (col <= 0.01){
+            col = 0.;
+            break;
+        }
+        val -= 0.01;
+        val *= 0.5;
+        col *= val;
+        initScale *= pscale;
+    }
+    return col;
+}
+
+vec3 stars(vec2 uv, float offset){
+
+    float timeScale = -((GameTime * 0.1) + offset) / layers;
+
+    float trans = fract(timeScale);
+
+    float newRnd = floor(timeScale);
+
+    vec3 col = vec3(0.);
+
+
+    // translate uv then scale for center
+    uv -= vec2(0.5);
+    uv = scale( vec2(trans) ) * uv;
+    uv += vec2(0.5);
+
+    // create square aspect ratio
+    uv.x *= vec2(256,256).x / vec2(256,256).y;
+
+    // add nebula colours
+    float colR = N21(vec2(offset+newRnd));
+    float colB = N21(vec2(offset+newRnd*123.));
+
+    // generate perlin noise nebula on every third layer
+    if (mod(offset,3.) == 0.){
+        float perl = perlin2(uv+offset+newRnd,3,2.);
+        col += vec3(perl*colR,perl*0.1,perl*colB);
+    }
+
+    // create boxes
+    uv *= repeats;
+
+    // get position
+    vec2 ipos = floor(uv);
+
+    // return uv as 0 to 1
+    uv = fract(uv);
+
+    // calculate random xy and size
+    vec2 rndXY = N22(newRnd + ipos*(offset+1.))*0.9+0.05;
+    float rndSize = N21(ipos)*100.+200.;
+
+
+    vec2 j = (rndXY - uv)*rndSize;
+    float sparkle = 1./dot(j,j);
+
+    col += spectrum(fract(rndXY*newRnd*ipos)) * vec3(sparkle);
+
+
+    // visualize layers
+    /*if ((uv.x > 9. || uv.y > 0.99) && ipos.y == 8.){
+        col += vec3(1.,0.,0.)*smoothstep(1.,0.5,trans);
+    }
+    if (mod(offset,3.) == 0.){
+    	if (uv.x > 0.99 || uv.y > 0.99){
+        	col += vec3(1.,0.,0.)*smoothstep(0.2,0.1,trans);
+    	}
+    }*/
+
+    col *= smoothstep(1.,0.8,trans);
+    col *= smoothstep(0.,0.1,trans);
+    return col;
+
 }
 
 out vec4 fragColor;
 
-void main() {
-    vec3 color = textureProj(Sampler0, texProj0).rgb * COLORS[0];
-    for (int i = 0; i < EndPortalLayers; i++) {
-        color += textureProj(Sampler1, texProj0 * end_portal_layer(float(i + 1))).rgb * COLORS[i];
+void main()
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = UV0/vec2(1,1);
+
+    vec3 col = vec3(0.);
+
+    for (float i = 0.; i < layers; i++ ){
+        col += stars(uv, i);
     }
-    fragColor = vec4(color, 1.0);
+
+
+    // Output to screen
+    fragColor = vec4(UV0.x, UV0.y, 0,1);
 }

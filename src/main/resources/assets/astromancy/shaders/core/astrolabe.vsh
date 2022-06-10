@@ -1,16 +1,22 @@
 #version 150
 
-#moj_import <projection.glsl>
+#moj_import <fog.glsl>
 
-in vec3 Position;
+uniform sampler2D Sampler0;
 
-uniform mat4 ModelViewMat;
-uniform mat4 ProjMat;
+uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
 
-out vec4 texProj0;
+in float vertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in vec4 normal;
+
+out vec4 fragColor;
 
 void main() {
-    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
-
-    texProj0 = gl_Position;
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 }

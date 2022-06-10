@@ -2,11 +2,15 @@
   "required": true,
   "minVersion": "0.8",
   "package": "coffee.amo.astromancy.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "astromancy.refmap.json",
   "mixins": [
+    "LevelMixin"
   ],
   "client": [
+    "client.ClientLevelMixin",
+    "client.OverworldEffectsMixin",
+    "client.RenderSystemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
