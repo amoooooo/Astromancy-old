@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.common.blockentity;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.AspectiEntry;
 import coffee.amo.astromancy.aequivaleo.AspectiHelper;
 import coffee.amo.astromancy.aequivaleo.AspectiInstance;
@@ -7,6 +8,7 @@ import coffee.amo.astromancy.common.item.ArcanaSequence;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
+import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
@@ -18,6 +20,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TextComponentTagVisitor;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -201,6 +207,22 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
         List<String> list = new ArrayList<>();
         requirements.forEach((aspecti, integer) -> {
             list.add(aspecti.name() + ": " + integer);
+        });
+        return list;
+    }
+
+    public List<TextComponent> getAspectiInstances(){
+        List<TextComponent> list = new ArrayList<>();
+        requirements.forEach((aspecti, integer) -> {
+            list.add((TextComponent) new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(" " + integer.toString()).withStyle(style -> style.withFont(Style.DEFAULT_FONT))));
+        });
+        return list;
+    }
+
+    public List<TextComponent> pairToTextComponent(Map<Aspecti, Integer> match){
+        List<TextComponent> list = new ArrayList<>();
+        match.forEach((aspecti, integer) -> {
+            list.add((TextComponent) new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(" " + integer.toString()).withStyle(style -> style.withFont(Style.DEFAULT_FONT))));
         });
         return list;
     }

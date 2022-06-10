@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import com.sammy.ortus.helpers.util.Color;
 import com.sammy.ortus.setup.OrtusRenderTypeRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -16,13 +17,14 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
-import java.awt.*;
 
 import static com.sammy.ortus.handlers.RenderHandler.DELAYED_RENDER;
 
@@ -64,9 +66,9 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         float scale = Math.max(1 - (pBlockEntity.ticksActive / 300.0f), 0.1f);
         float speed = 1 + (pBlockEntity.ticksActive / 150.0f);
         VertexConsumer consumer = DELAYED_RENDER.getBuffer(BEAM_TYPE);
-        double distance = Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos()));
+        double distance = Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos())) > 10 ? 0 : Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos()));
         double distanceFactor = Math.max(0, Math.max(0, distance / 10.0));
-        Color color = new Color(1,1,1,1-(float)distanceFactor);
+        Color color = new Color(1,1,1,(1-(float)distanceFactor == 0 ? 0.001f : 1-(float)distanceFactor));
         if (pBlockEntity.requirementBool) {
             drawRequirements(ps, pBufferSource, pBlockEntity, distanceFactor, color);
         }
@@ -143,8 +145,8 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.mulPose(Q);
         ps.scale(0.01f * (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
-        for (String requirement : blockEntity.pairToStringList(blockEntity.getMatchFromInventory())) {
+        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
+        for (TextComponent requirement : blockEntity.pairToTextComponent(blockEntity.getMatchFromInventory())) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color.getRGB());
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
@@ -159,7 +161,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0.5, 0.5, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
         Vec3 player = Minecraft.getInstance().player.getEyePosition();
-        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.5, blockEntity.getBlockPos().getZ() + 0.5);
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 0.5, blockEntity.getBlockPos().getZ() + 0.5);
 
         Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
         Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
@@ -181,8 +183,8 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0,0,-0.5);
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
-        for (String requirement : blockEntity.requirementsToStringList()) {
+        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
+        for (TextComponent requirement : blockEntity.getAspectiInstances()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color.getRGB());
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
@@ -196,7 +198,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0.5, 1.0f, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
         Vec3 player = Minecraft.getInstance().player.getEyePosition();
-        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.5, blockEntity.getBlockPos().getZ() + 0.5);
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.0f, blockEntity.getBlockPos().getZ() + 0.5);
 
         Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
         Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
@@ -217,7 +219,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.mulPose(Q);
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.requirementsToStringList().size() / 2.0f, 0);
+        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
         for (String requirement : blockEntity.star.getString()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color.getRGB());
