@@ -3,6 +3,7 @@ package coffee.amo.astromancy.core.handlers;
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.blockentity.ArmillarySphereBlockEntity;
 import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
+import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
@@ -10,12 +11,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AstromancyPacketHandler {
@@ -62,6 +66,26 @@ public class AstromancyPacketHandler {
                 blockEntity.star = Star.fromNbt(packet.tag);
             }
         }) );
+
+        INSTANCE.registerMessage(ID++, SolarEclipsePacket.class, (packet, buffer) -> {
+            buffer.writeBoolean(packet.bool);
+        }, buffer -> {
+            return new SolarEclipsePacket(buffer.readBoolean());
+        }, (packet, context) -> andHandling(context, () -> {
+            NetworkEvent.Context ctx = context.get();
+            LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+            if(sideReceived != LogicalSide.CLIENT){
+                return;
+            }
+            if (!packet.initialized){
+                return;
+            }
+            Optional<Level> clientWorld = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
+            if(clientWorld.isEmpty()){
+                return;
+            }
+            SolarEclipseHandler.solarEclipseEnabledClient = packet.bool;
+        }));
     }
 
     private static void andHandling(final Supplier<NetworkEvent.Context> contextSupplier, final Runnable enqueuedWork) {
