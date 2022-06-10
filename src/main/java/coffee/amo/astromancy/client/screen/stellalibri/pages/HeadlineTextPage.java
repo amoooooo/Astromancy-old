@@ -13,7 +13,7 @@ public class HeadlineTextPage extends BookPage
     private final String translationKey;
     public HeadlineTextPage(String headlineTranslationKey, String translationKey)
     {
-        super(Astromancy.astromancy("textures/gui/book/pages/headline_page.png"));
+        super(Astromancy.astromancy("textures/gui/book/pages/entry.png"));
         this.headlineTranslationKey = headlineTranslationKey;
         this.translationKey = translationKey;
     }
@@ -32,8 +32,9 @@ public class HeadlineTextPage extends BookPage
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = new TranslatableComponent(headlineTranslationKey());
-        BookScreen.renderText(poseStack, component, guiLeft+75 - minecraft.font.width(component.getString())/2,guiTop+10);
-        BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+16,guiTop+31,120);
+        BookScreen.renderText(poseStack, component, guiLeft+64 - minecraft.font.width(component.getString())/2,guiTop+10);
+        BookScreen.renderTransparentTexture(BACKGROUND, poseStack, guiLeft+23, guiTop+19, 29, 184, 86, 3, 256, 256);
+        BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+19,guiTop+31,100);
     }
 
     @Override
@@ -42,7 +43,8 @@ public class HeadlineTextPage extends BookPage
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = new TranslatableComponent(headlineTranslationKey());
-        BookScreen.renderText(poseStack, component, guiLeft+218 - minecraft.font.width(component.getString())/2,guiTop+10);
-        BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+158,guiTop+31,120);
+        BookScreen.renderText(poseStack, component, guiLeft+190 - minecraft.font.width(component.getString())/2,guiTop+10);
+        BookScreen.renderTransparentTexture(BACKGROUND, poseStack, guiLeft+148, guiTop+19, 29, 184, 86, 3, 256, 256);
+        BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+138,guiTop+31,100);
     }
 }

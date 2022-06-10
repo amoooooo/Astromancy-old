@@ -1,5 +1,9 @@
 {
   "block.astromancy.armillary_sphere": "Armillary Sphere",
   "block.astromancy.star_gateway": "Star Gateway",
-  "item.astromancy.arcana_sequence": "Arcana Sequence"
+  "item.astromancy.arcana_sequence": "Arcana Sequence",
+  "astromancy.gui.book.entry.page.headline.introduction": "Introduction",
+  "astromancy.gui.book.entry.page.text.introduction.a": "HSDERIFG EHFGHESRIDUGHVS RIGY H;XERUGOSDRT JUHISKDRJG SODEF GODFJ GHUSR",
+  "astromancy.gui.book.entry.page.headline.introductiona": "Introduction B",
+  "astromancy.gui.book.entry.page.text.introduction.b": "DRFEIFUERGUNBSEL9 RYGLSE RUTGISRTYHGI SERHYGIS DRYHGI SEJFOEIUGTJ OSERHG/;AWOE JTUOAERJUHGIDEHNGK ERGSEHRF A;EOR GHISERYHGI ER JGFAWOJURG OERHYG"
 }

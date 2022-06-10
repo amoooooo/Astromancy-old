@@ -25,7 +25,7 @@ public class EntryScreen extends Screen {
     public static EntryObject openObject;
 
     public final int bookWidth = 256;
-    public final int bookHeight = 182;
+    public final int bookHeight = 181;
 
     public int grouping;
 
@@ -40,7 +40,7 @@ public class EntryScreen extends Screen {
         super.render(ps, mouseX, mouseY, partialTicks);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        renderTexture(BOOK_TEXTURE, ps, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
+        renderTexture(BOOK_TEXTURE, ps, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 256, 256);
         if (!openEntry.pages.isEmpty()) {
             int openPages = grouping * 2;
             for (int i = openPages; i < openPages + 2; i++) {
@@ -54,18 +54,18 @@ public class EntryScreen extends Screen {
                 }
             }
         }
-        renderTexture(BOOK_TEXTURE, ps, guiLeft - 13, guiTop + 150, 1, 193, 28, 18, 512, 512);
-        if (isHovering(mouseX, mouseY, guiLeft - 13, guiTop + 150, 28, 18)) {
-            renderTexture(BOOK_TEXTURE, ps, guiLeft - 13, guiTop + 150, 1, 232, 28, 18, 512, 512);
+        renderTexture(BOOK_TEXTURE, ps, guiLeft + 24, guiTop + 164, 1, 185, 11, 6, 256, 256);
+        if (isHovering(mouseX, mouseY, guiLeft + 24, guiTop + 164, 11, 6)) {
+            renderTexture(BOOK_TEXTURE, ps, guiLeft + 24, guiTop + 164, 1, 190, 11, 6, 256, 256);
         } else {
-            renderTexture(BOOK_TEXTURE, ps, guiLeft - 13, guiTop + 150, 1, 213, 28, 18, 512, 512);
+            renderTexture(BOOK_TEXTURE, ps, guiLeft + 24, guiTop + 164, 1, 185, 11, 6, 256, 256);
         }
         if (grouping < openEntry.pages.size() / 2f - 1) {
-            renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 15, guiTop + 150, 30, 193, 28, 18, 512, 512);
-            if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 15, guiTop + 150, 28, 18)) {
-                renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 15, guiTop + 150, 30, 232, 28, 18, 512, 512);
+            renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 32, guiTop + 164, 13, 185, 11, 6, 256, 256);
+            if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 32, guiTop + 164, 11, 6)) {
+                renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 32, guiTop + 164, 13, 190, 11, 6, 256, 256);
             } else {
-                renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 15, guiTop + 150, 30, 213, 28, 18, 512, 512);
+                renderTexture(BOOK_TEXTURE, ps, guiLeft + bookWidth - 32, guiTop + 164, 13, 185, 11, 6, 256, 256);
             }
         }
         if (!openEntry.pages.isEmpty()) {
@@ -88,11 +88,11 @@ public class EntryScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        if (isHovering(mouseX, mouseY, guiLeft - 13, guiTop + 150, 28, 18)) {
+        if (isHovering(mouseX, mouseY, guiLeft + 24, guiTop + 164, 11, 6)) {
             previousPage(true);
             return true;
         }
-        if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 15, guiTop + 150, 28, 18)) {
+        if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 32, guiTop + 164, 11, 6)) {
             nextPage();
             return true;
         }

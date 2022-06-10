@@ -46,7 +46,7 @@ public class BookScreen extends Screen {
     public int bookWidth = 256;
     public int bookHeight = 230;
     public int bookInsideWidth = 224;
-    public int bookInsideHeight = 194;
+    public int bookInsideHeight = 196;
 
     public final int parallax_width = 512;
     public final int parallax_height = 512;
@@ -74,7 +74,9 @@ public class BookScreen extends Screen {
 
         ENTRIES.add(new BookEntry("introduction", ItemRegistry.STELLA_LIBRI.get(), 0, 0)
                 .setObjectSupplier(ImportantEntryObject::new)
-                .addPage(new HeadlineTextPage("introduction", "introduction,a")));
+                .addPage(new HeadlineTextPage("introduction", "introduction.a"))
+                .addPage(new HeadlineTextPage("introductiona", "introduction.b"))
+                .addPage(new HeadlineTextPage("introductionb", "introduction.c")));
     }
 
     public void setupObjects() {
@@ -201,8 +203,8 @@ public class BookScreen extends Screen {
     public void renderBackground(ResourceLocation texture, PoseStack poseStack, float xModifier, float yModifier) {
         int guiLeft = (width - bookWidth) / 2; //TODO: literally just redo this entire garbage method, please
         int guiTop = (height - bookHeight) / 2;
-        int insideLeft = guiLeft + 17;
-        int insideTop = guiTop + 14;
+        int insideLeft = guiLeft + 15;
+        int insideTop = guiTop + 16;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
@@ -231,9 +233,7 @@ public class BookScreen extends Screen {
         BUILDER.setPositionWithWidth(x, y, width, height)
                 .setShaderTexture(texture)
                 .setUVWithWidth(u, v, width, height, textureWidth, textureHeight)
-                .begin() //TODO: move this begin & end call to start of rendering all textures, and end of rendering all textures in the book
-                .blit(poseStack)
-                .end();
+                .draw(poseStack);
     }
 
     public static void renderTransparentTexture(ResourceLocation texture, PoseStack poseStack, int x, int y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight) {
@@ -394,14 +394,11 @@ public class BookScreen extends Screen {
     private static void renderRawText(PoseStack stack, String text, int x, int y, float glow) {
         Font font = Minecraft.getInstance().font;
         //182, 61, 183  227, 39, 228
-        int r = (int) Mth.lerp(glow, 182, 227);
-        int g = (int) Mth.lerp(glow, 61, 39);
-        int b = (int) Mth.lerp(glow, 183, 228);
-
-        font.draw(stack, text, x - 1, y, color(96, 255, 210, 243));
-        font.draw(stack, text, x + 1, y, color(128, 240, 131, 232));
-        font.draw(stack, text, x, y - 1, color(128, 255, 183, 236));
-        font.draw(stack, text, x, y + 1, color(96, 236, 110, 226));
+        int r = (int) Mth.lerp(glow, 2, 16);
+        int g = (int) Mth.lerp(glow, 2, 16);
+        int b = (int) Mth.lerp(glow, 2, 16);
+        font.draw(stack, text, x + 1, y + 1, color(96, 128, 128, 128));
+        font.draw(stack, text, x - 1, y - 1, color(96, 255, 255, 255));
 
         font.draw(stack, text, x, y, color(255, r, g, b));
     }
