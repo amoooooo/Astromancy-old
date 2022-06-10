@@ -24,7 +24,7 @@ public class ArcanaSequence extends Item {
         if(!pLevel.isClientSide){
             if(pPlayer.getItemInHand(pUsedHand).getItem() == ItemRegistry.ARCANA_SEQUENCE.get()){
                 if(pPlayer.getItemInHand(pUsedHand).hasTag()){
-                    List<String> messages = Star.fromNbt((CompoundTag) pPlayer.getItemInHand(pUsedHand).getTag().get("star")).getString();
+                    List<String> messages = Star.fromNbt((CompoundTag) pPlayer.getItemInHand(pUsedHand).getTag().get("star")).getStringDetailed();
                     for(String message : messages){
                         pPlayer.sendMessage(new TextComponent(message), pPlayer.getUUID());
                     }

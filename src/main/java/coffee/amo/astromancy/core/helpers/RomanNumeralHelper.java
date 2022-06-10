@@ -25,6 +25,7 @@ public class RomanNumeralHelper {
     });
 
     public final static String toRoman(int number){
+        System.out.println("Attempting to convert: " + number + " to roman numerals");
         int l = map.floorKey(number);
         if (number == l) {
             return map.get(number);

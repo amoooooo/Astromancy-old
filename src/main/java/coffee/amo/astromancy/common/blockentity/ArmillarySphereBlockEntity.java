@@ -85,6 +85,15 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
                 requirementBool = false;
             }
         }
+        if(level.getDayTime() == 22500){
+            generateRequirements(level);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() ->
+                    new PacketDistributor.TargetPoint(
+                            this.getBlockPos().getX(),
+                            this.getBlockPos().getY(),
+                            this.getBlockPos().getZ(),
+                            128, this.level.dimension())), new ArmillarySpherePacket(this.worldPosition, requirements));
+        }
     }
 
     public void generateRequirements(Level level) {
@@ -132,7 +141,7 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
             if (checkMatch(getMatchFromInventory())) {
                 toggled = true;
                 playerUUID = player.getUUID();
-                player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 2f, 2f);
+                if(level.isClientSide) player.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 100f, 1f);
             }
 
             return InteractionResult.SUCCESS;

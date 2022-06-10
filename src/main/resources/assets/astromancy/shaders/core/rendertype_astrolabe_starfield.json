@@ -4,8 +4,8 @@
     "srcrgb": "srcalpha",
     "dstrgb": "1-srcalpha"
   },
-  "vertex": "astromancy:default",
-  "fragment": "astromancy:default",
+  "vertex": "astromancy:astrolabe",
+  "fragment": "astromancy:astrolabe",
   "attributes": [
     "Position",
     "Color",

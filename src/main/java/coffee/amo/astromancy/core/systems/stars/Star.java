@@ -114,6 +114,22 @@ public class Star {
         List<String> list = new ArrayList<>();
         list.add("Name: " + name);
         list.add("Constellation: " + constellation.name);
+        list.add("Type: " + type.getType());
+        return list;
+    }
+
+    public List<String> getStringDetailed() {
+        List<String> list = new ArrayList<>();
+        list.add("Name: " + name);
+        list.add("Constellation: " + constellation.name);
+        list.add("Type: " + type.getType());
+        list.add("Luminosity: " + luminosity);
+        list.add("Strength: " + strength);
+        list.add("Mass: " + mass);
+        list.add("Quadrant X: " + quadrantCoordinates.getFirst());
+        list.add("Quadrant Y: " + quadrantCoordinates.getSecond());
+        list.add("Quadrant 1: " + quadrants.getFirst().name);
+        list.add("Quadrant 2: " + quadrants.getSecond().name);
         return list;
     }
 

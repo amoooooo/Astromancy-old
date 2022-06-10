@@ -7,6 +7,7 @@ uniform float FogEnd;
 uniform vec4 FogColor;
 uniform vec2 InSize;
 in vec2 UV0;
+in vec2 texCoord0;
 
 uniform float GameTime;
 uniform int StarLayers;
@@ -103,7 +104,7 @@ float perlin2(vec2 uv, int octaves, float pscale){
 
 vec3 stars(vec2 uv, float offset){
 
-    float timeScale = -((GameTime * 0.1) + offset) / layers;
+    float timeScale = -((GameTime * 2400) + offset) / layers;
 
     float trans = fract(timeScale);
 
@@ -121,13 +122,14 @@ vec3 stars(vec2 uv, float offset){
     uv.x *= vec2(256,256).x / vec2(256,256).y;
 
     // add nebula colours
-    float colR = N21(vec2(offset+newRnd));
-    float colB = N21(vec2(offset+newRnd*123.));
+    float colR = 1.0;//N21(vec2(offset+newRnd));
+    float colB = 1.0;//N21(vec2(offset+newRnd*123.));
+    float colG = 1.0;//N21(vec2(offset+newRnd*123.));
 
     // generate perlin noise nebula on every third layer
     if (mod(offset,3.) == 0.){
         float perl = perlin2(uv+offset+newRnd,3,2.);
-        col += vec3(perl*colR,perl*0.1,perl*colB);
+        col += vec3(perl*colR,perl*colG,perl*colB);
     }
 
     // create boxes
@@ -171,15 +173,15 @@ out vec4 fragColor;
 void main()
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = UV0/vec2(1,1);
+    vec2 uv = texCoord0 / vec2(7,7);
 
     vec3 col = vec3(0.);
 
     for (float i = 0.; i < layers; i++ ){
-        col += stars(uv, i);
+        // col += stars(uv, i);
     }
 
 
     // Output to screen
-    fragColor = vec4(UV0.x, UV0.y, 0,1);
+    fragColor = vec4(col, 1);
 }
