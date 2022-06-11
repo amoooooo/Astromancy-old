@@ -59,7 +59,6 @@ public class Quadrants {
         }
         return null;
     }
-
     public static Constellation randomConstellationInQuadrant(Quadrant quadrant, Level level){
         return quadrant.constellations.get(level.random.nextInt(quadrant.constellations.size()));
     }

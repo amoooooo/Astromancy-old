@@ -2,6 +2,9 @@ package coffee.amo.astromancy.common.item;
 
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
+import coffee.amo.astromancy.core.systems.stars.StarUtils;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +32,12 @@ public class ArcanaSequence extends Item {
                         pPlayer.sendMessage(new TextComponent(message), pPlayer.getUUID());
                     }
                     return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
+                } else if(pPlayer.isShiftKeyDown()){
+                    for(Quadrant q : StarSavedData.get().getStars()){
+                        for(Star star : q.getStars()){
+                            pPlayer.sendMessage(new TextComponent(star.getType().getType()), pPlayer.getUUID());
+                        }
+                    }
                 }
             }
         }

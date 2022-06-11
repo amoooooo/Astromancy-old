@@ -13,11 +13,11 @@ public enum StarClass implements WeightedEntry {
     DWARF("Dwarf", 0.9f, 40),
     SUBDWARF("Subdwarf", 0.75f, 0),
     WHITE_DWARF("White Dwarf", 0.5f, 20),
-    CRIMSON("Crimson", 0, 5),
-    PURE("Pure", 0, 5),
-    DARK("Dark", 0, 5),
-    EMPTY("Empty", 0, 5),
-    HELL("Hell", 0, 5);
+    CRIMSON("Crimson", 1, 5),
+    PURE("Pure", 1, 5),
+    DARK("Dark", 1, 5),
+    EMPTY("Empty", 1, 5),
+    HELL("Hell", 1, 5);
 
     private final String type;
     private final float massMultiplier;

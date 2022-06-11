@@ -4,6 +4,7 @@ import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import com.mojang.datafixers.util.Pair;
+import com.sammy.ortus.helpers.util.Color;
 import net.minecraft.core.Direction;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.level.Level;
@@ -43,7 +44,16 @@ public class StarUtils {
         star.setName(star.getConstellation().name  + " " + RomanNumeralHelper.toRoman(star.getLuminosity()) + " [" + X + " of " + star.getQuadrants().getFirst().name + ", " + Y + " of " + star.getQuadrants().getSecond().name + "]");
         star.setMass( level.random.nextInt(101) * star.getType().getMassMultiplier());
         star.setStrength(level.random.nextInt(101)* star.getType().getMassMultiplier());
+        star.setColor(orangeOrBlue(level.random.nextInt(2)));
         return star;
+    }
+
+    public static Color orangeOrBlue(int chance){
+        if(chance == 1){
+            return new Color(252,157,61,255);
+        } else {
+            return new Color(80, 228, 252, 255);
+        }
     }
 
     public static Star findStarByArcana(int x, int y, Constellation constellation){
@@ -62,14 +72,14 @@ public class StarUtils {
         return Quadrants.randomConstellationInQuadrant(quadrant, level);
     }
 
-    public static Vec3 generatePosition(Vec3 center, Star star){
+    public static Vec3 generatePosition(Star star){
         Direction offsetDirection_x = star.getQuadrants().getFirst().direction;
         Direction offsetDirection_z = star.getQuadrants().getSecond().direction;
         int offset_x = star.getQuadrantCoordinates().getFirst();
         int offset_z = star.getQuadrantCoordinates().getSecond();
-        double x = center.x + offsetDirection_x.getStepX() * (offset_x/10.0f);
-        double z = center.z + offsetDirection_z.getStepZ() * (offset_z/10.0f);
-        double y = center.y + (1 * (star.getConstellation().getHeight() / 10.0f));
+        double x = (offsetDirection_x.getStepX() + (offset_x/10.0f));
+        double z = (offsetDirection_z.getStepZ() + (offset_z/10.0f));
+        double y = (1 * (star.getConstellation().getHeight() / 10.0f));
         return new Vec3(x, y, z);
     }
 }

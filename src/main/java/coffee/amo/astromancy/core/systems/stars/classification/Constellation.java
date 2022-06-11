@@ -17,6 +17,7 @@ public class Constellation {
     public Constellation(String name, int height) {
         starsByQuadrant = new Star[10][10];
         this.name = name;
+        this.height = height;
     }
 
     public CompoundTag toNbt(){

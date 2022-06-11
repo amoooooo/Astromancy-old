@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.systems.stars;
 
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import com.mojang.datafixers.util.Pair;
+import com.sammy.ortus.helpers.util.Color;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Star {
     private int luminosity;
     private float strength;
     private float mass;
+    private Color color;
     private Constellation constellation;
     private Pair<Quadrant, Quadrant> quadrants;
     private Pair<Integer, Integer> quadrantCoordinates;
@@ -31,6 +33,7 @@ public class Star {
         star.mass = tag.getFloat("mass");
         star.quadrantCoordinates = new Pair<>(tag.getInt("quadrantX"), tag.getInt("quadrantY"));
         star.quadrants = new Pair<>(Quadrants.findQuadrantFromName(tag.getString("quadrant1")), Quadrants.findQuadrantFromName(tag.getString("quadrant2")));
+        star.color = new Color(tag.getInt("red"), tag.getInt("green"), tag.getInt("blue"), tag.getInt("alpha"));
         return star;
     }
 
@@ -94,6 +97,14 @@ public class Star {
         this.quadrants = new Pair<>(quadrant1, quadrant2);
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public CompoundTag toNbt() {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putString("name", name);
@@ -106,6 +117,10 @@ public class Star {
         compoundTag.putInt("quadrantY", quadrantCoordinates.getSecond());
         compoundTag.putString("quadrant1", quadrants.getFirst().name);
         compoundTag.putString("quadrant2", quadrants.getSecond().name);
+        compoundTag.putInt("red", color.getRed());
+        compoundTag.putInt("green", color.getGreen());
+        compoundTag.putInt("blue", color.getBlue());
+        compoundTag.putInt("alpha", color.getAlpha());
         return compoundTag;
     }
 

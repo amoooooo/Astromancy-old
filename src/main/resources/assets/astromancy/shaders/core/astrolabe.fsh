@@ -17,7 +17,7 @@ in float vertexDistance;
 const float repeats = 30.;
 
 // number of layers
-const float layers = 21.;
+const float layers = 30.;
 
 // star colours
 const vec3 blue = vec3(51.,64.,195.)/255.;
@@ -104,7 +104,7 @@ float perlin2(vec2 uv, int octaves, float pscale){
 
 vec3 stars(vec2 uv, float offset){
 
-    float timeScale = -(((GameTime * 24000) * 0.001) + offset) / layers;
+    float timeScale = -(((GameTime * 24000) * 0.0001) + offset) / layers;
 
     float trans = fract(timeScale);
 

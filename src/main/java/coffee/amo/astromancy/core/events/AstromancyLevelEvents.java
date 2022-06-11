@@ -1,10 +1,16 @@
 package coffee.amo.astromancy.core.events;
 
+import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
+import coffee.amo.astromancy.core.packets.StarDataPacket;
+import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
@@ -27,6 +33,13 @@ public class AstromancyLevelEvents {
             } else if (time >= 13500 && time < 22500){
                 SolarEclipseHandler.setEnabled(se, false);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void sendStars(PlayerEvent.PlayerLoggedInEvent event) {
+        if(event.getEntity() instanceof ServerPlayer se) {
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get().getConstellations()));
         }
     }
 }

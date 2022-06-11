@@ -1,8 +1,7 @@
 package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
+import coffee.amo.astromancy.core.systems.stars.classification.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -10,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
@@ -59,6 +59,14 @@ public class StarSavedData extends SavedData {
             quadrant.addStar(star);
             this.setDirty();
         }
+    }
+
+    public List<Constellation> getConstellations() {
+        List<Constellation> constellations = new ArrayList<>();
+        for (Quadrant quadrant : quadrants) {
+            constellations.addAll(quadrant.constellations);
+        }
+        return constellations;
     }
 
     public void removeQuadrant(Quadrant quadrant) {

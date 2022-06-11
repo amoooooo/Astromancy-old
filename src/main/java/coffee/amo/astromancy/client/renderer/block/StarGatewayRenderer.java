@@ -35,16 +35,13 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
     @Override
     public void render(StarGatewayBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
-        ps.translate(0,1.5,0);
-        RenderHelper.renderInvertedCube(ps, pBufferSource, 5, sunType);
+        ps.translate(0.07f,1.01f,0.07f);
+        RenderHelper.renderInvertedCube(ps, pBufferSource, 4.85f, sunType);
         VertexConsumer starBuff = pBufferSource.getBuffer(RenderType.solid());
+        ps.translate(0, 1.5,0);
         for(Quadrant quadrant : StarSavedData.get().getStars()){
             for(Star star : quadrant.getStars()){
-                ps.pushPose();
-                Vec3 offset = StarUtils.generatePosition(new Vec3(pBlockEntity.getBlockPos().getX(), pBlockEntity.getBlockPos().getY(), pBlockEntity.getBlockPos().getZ()), star);
-                ps.translate(offset.x, offset.y, offset.z);
-                RenderHelper.renderFacingQuad(ps, 0.1f, starBuff, Color.WHITE);
-                ps.popPose();
+                RenderHelper.renderStar(ps, pBufferSource, star, pBlockEntity, pPartialTick);
             }
         }
         ps.popPose();
