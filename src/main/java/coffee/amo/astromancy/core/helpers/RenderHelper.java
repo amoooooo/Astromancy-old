@@ -70,6 +70,7 @@ public class RenderHelper {
         buff.vertex(ps.last().pose(), 0, 0, 0).color(0xFFFF55FF).uv(0,0).endVertex();
     }
 
+    // todo: use Hek's AT alternative, add blockpos arguments, use that for center
     public static void renderFacingQuad(PoseStack ps, float size, VertexConsumer buff, Color color) {
         Vec3 player = Minecraft.getInstance().player.getEyePosition();
         Vec3 center = new Vec3(ps.last().pose().m03 + 0.5, ps.last().pose().m13 + 1.0f, ps.last().pose().m23 + 0.5);
