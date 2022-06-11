@@ -4,8 +4,10 @@ import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.Direction;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Random;
@@ -58,5 +60,16 @@ public class StarUtils {
 
     public static Constellation generateConstellation(Quadrant quadrant, Level level){
         return Quadrants.randomConstellationInQuadrant(quadrant, level);
+    }
+
+    public static Vec3 generatePosition(Vec3 center, Star star){
+        Direction offsetDirection_x = star.getQuadrants().getFirst().direction;
+        Direction offsetDirection_z = star.getQuadrants().getSecond().direction;
+        int offset_x = star.getQuadrantCoordinates().getFirst();
+        int offset_z = star.getQuadrantCoordinates().getSecond();
+        double x = center.x + offsetDirection_x.getStepX() * (offset_x/10.0f);
+        double z = center.z + offsetDirection_z.getStepZ() * (offset_z/10.0f);
+        double y = center.y + (1 * (star.getConstellation().getHeight() / 10.0f));
+        return new Vec3(x, y, z);
     }
 }

@@ -104,7 +104,7 @@ float perlin2(vec2 uv, int octaves, float pscale){
 
 vec3 stars(vec2 uv, float offset){
 
-    float timeScale = -((GameTime * 2400) + offset) / layers;
+    float timeScale = -(((GameTime * 24000) * 0.001) + offset) / layers;
 
     float trans = fract(timeScale);
 
@@ -122,14 +122,14 @@ vec3 stars(vec2 uv, float offset){
     uv.x *= vec2(256,256).x / vec2(256,256).y;
 
     // add nebula colours
-    float colR = 1.0;//N21(vec2(offset+newRnd));
-    float colB = 1.0;//N21(vec2(offset+newRnd*123.));
-    float colG = 1.0;//N21(vec2(offset+newRnd*123.));
+    float colR = N21(vec2(offset+newRnd));
+    float colB = N21(vec2(offset+newRnd*123.));
+    float colG = N21(vec2(offset+newRnd*123.));
 
     // generate perlin noise nebula on every third layer
     if (mod(offset,3.) == 0.){
         float perl = perlin2(uv+offset+newRnd,3,2.);
-        col += vec3(perl*colR,perl*colG,perl*colB);
+        col += vec3(perl*0,perl*0,perl*0);
     }
 
     // create boxes
@@ -178,7 +178,7 @@ void main()
     vec3 col = vec3(0.);
 
     for (float i = 0.; i < layers; i++ ){
-        // col += stars(uv, i);
+        col += stars(uv, i);
     }
 
 

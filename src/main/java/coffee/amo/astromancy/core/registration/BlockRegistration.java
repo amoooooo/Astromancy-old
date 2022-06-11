@@ -2,8 +2,10 @@ package coffee.amo.astromancy.core.registration;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.block.ArmillarySphere;
+import coffee.amo.astromancy.common.block.Astrolabe;
 import coffee.amo.astromancy.common.block.StarGateway;
 import coffee.amo.astromancy.common.blockentity.ArmillarySphereBlockEntity;
+import coffee.amo.astromancy.common.blockentity.AstrolabeBlockEntity;
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.core.setup.content.item.tabs.ContentTab;
 import com.sammy.ortus.systems.block.OrtusBlockProperties;
@@ -30,6 +32,9 @@ public class BlockRegistration {
 
     public static final BlockEntry<StarGateway<StarGatewayBlockEntity>> STAR_GATEWAY = setupSimpleBlock("star_gateway",
             (p) -> new StarGateway<>(p).<StarGateway<StarGatewayBlockEntity>>setBlockEntity(BlockEntityRegistration.STAR_GATEWAY), MAGIC_PROPERTIES()).register();
+
+    public static final BlockEntry<Astrolabe<AstrolabeBlockEntity>> ASTROLABE = setupSimpleBlock("astrolabe",
+            (p) -> new Astrolabe<>(p).<Astrolabe<AstrolabeBlockEntity>>setBlockEntity(BlockEntityRegistration.ASTROLABE), MAGIC_PROPERTIES()).register();
 
     public static <T extends Block> BlockBuilder<T, Registrate> setupSimpleBlock(String name, NonNullFunction<BlockBehaviour.Properties, T> factory, OrtusBlockProperties properties) {
         return REGISTRATE.block(name, factory)

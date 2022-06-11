@@ -56,4 +56,9 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
             star = StarSavedData.get().findStarFromName(pTag.getString("star_name"));
         }
     }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
 }
