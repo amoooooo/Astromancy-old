@@ -25,7 +25,7 @@ public class Star {
     }
 
     public static Star fromNbt(CompoundTag tag) {
-        Star star = new Star(StarClass.valueOf(tag.getString("type")));
+        Star star = new Star(StarClass.fromString(tag.getString("type")));
         star.name = tag.getString("name");
         star.constellation = Constellations.findByName(tag.getString("constellation"));
         star.luminosity = tag.getInt("luminosity");
@@ -108,7 +108,7 @@ public class Star {
     public CompoundTag toNbt() {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putString("name", name);
-        compoundTag.putString("type", type.toString());
+        compoundTag.putString("type", type.getType());
         compoundTag.putString("constellation", constellation.name);
         compoundTag.putInt("luminosity", luminosity);
         compoundTag.putFloat("strength", strength);

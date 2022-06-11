@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import com.sammy.ortus.helpers.util.Color;
 import com.sammy.ortus.systems.rendering.VFXBuilders;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -28,8 +29,10 @@ import static com.sammy.ortus.handlers.RenderHandler.DELAYED_RENDER;
 public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlockEntity> {
     private static final ResourceLocation sunRL = Astromancy.astromancy("textures/vfx/white.png");
     private static final RenderType sunType = RenderTypeRegistry.astrolabeStarfield(sunRL);
+    private final Font font;
 
     public StarGatewayRenderer(BlockEntityRendererProvider.Context context) {
+        this.font = context.getFont();
     }
 
     @Override
@@ -41,7 +44,7 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
         ps.translate(0, 1.5,0);
         for(Quadrant quadrant : StarSavedData.get().getStars()){
             for(Star star : quadrant.getStars()){
-                RenderHelper.renderStar(ps, pBufferSource, star, pBlockEntity, pPartialTick);
+                RenderHelper.renderStar(ps, 0.035f, pBufferSource, star, pBlockEntity, pPartialTick, font, true);
             }
         }
         ps.popPose();
