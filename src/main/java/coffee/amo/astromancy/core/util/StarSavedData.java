@@ -61,7 +61,7 @@ public class StarSavedData extends SavedData {
         if (quadrant != null) {
             quadrant.addStar(star);
             this.setDirty();
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new StarDataPacket(StarSavedData.get().getStars()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new StarDataPacket(getStars()));
         }
     }
 
