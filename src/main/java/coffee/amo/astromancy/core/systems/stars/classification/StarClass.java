@@ -4,20 +4,20 @@ import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 
 public enum StarClass implements WeightedEntry {
-    HYPERGIANT("Hypergiant", 150, 10),
-    SUPERGIANT("Supergiant", 100, 20),
-    BRIGHT_GIANT("Bright Giant", 50, 30),
+    HYPERGIANT("Hypergiant", 50, 10),
+    SUPERGIANT("Supergiant", 35, 20),
+    BRIGHT_GIANT("Bright Giant", 30, 30),
     GIANT("Giant", 25, 40),
-    SUBGIANT("Subgiant", 10, 50),
-    MAIN_SEQUENCE("Main Sequence", 1, 70),
-    DWARF("Dwarf", 0.9f, 40),
-    SUBDWARF("Subdwarf", 0.75f, 0),
-    WHITE_DWARF("White Dwarf", 0.5f, 20),
-    CRIMSON("Crimson", 200, 5),
-    PURE("Pure", 1, 5),
-    DARK("Dark", 1, 5),
-    EMPTY("Empty", 1, 5),
-    HELL("Hell", 500, 5);
+    SUBGIANT("Subgiant", 15, 50),
+    MAIN_SEQUENCE("Main Sequence", 10, 70),
+    DWARF("Dwarf", 9, 40),
+    SUBDWARF("Subdwarf", 7.5f, 0),
+    WHITE_DWARF("White Dwarf", 5, 20),
+    CRIMSON("Crimson", 15, 5),
+    PURE("Pure", 10, 5),
+    DARK("Dark", 10, 5),
+    EMPTY("Empty", 10, 5),
+    HELL("Hell", 15, 5);
 
     private final String type;
     private final float massMultiplier;

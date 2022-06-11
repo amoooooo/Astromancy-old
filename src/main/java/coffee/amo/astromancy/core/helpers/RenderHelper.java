@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.helpers;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
+import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
@@ -109,23 +110,27 @@ public class RenderHelper {
     }
 
     public static void renderStar(PoseStack ps, float size, MultiBufferSource buff, Star star, BlockEntity blockEntity, float pPartialTick, Font font, boolean offsets) {
-        float massMult = star.getType().getMassMultiplier() == 1 ? 1 : star.getType().getMassMultiplier() /35.0f;
-        float multiplier = (float) Math.max(massMult, 0.5f);
+        float massMult = star.getType().getMassMultiplier() == 1 ? 1 : Math.min(star.getType().getMassMultiplier() / 27.5f, 1.5f);
+        float multiplier = Math.max(massMult, 0.5f);
         float fac = (blockEntity.getLevel().getGameTime() + pPartialTick) * multiplier;
         ps.pushPose();
         if(offsets){
             Vec3 offset = StarUtils.generatePosition(star);
-            ps.translate(offset.x * 1.5, offset.y * 5, offset.z * 1.5);
+            ps.translate(offset.x * 1.35, (offset.y + 0.1f + (star.getRandomOffset() * 5.0f)) * 5.5f, offset.z * 1.35);
         }
         ps.translate((size/2) * multiplier, (size/2) * multiplier, (size/2) * multiplier);
         renderText(ps, star.getName(), buff, font);
-        ps.mulPose(Vector3f.XP.rotationDegrees(fac));
+        //ps.mulPose(Vector3f.XP.rotationDegrees(fac));
         ps.mulPose(Vector3f.YP.rotationDegrees(fac));
         ps.mulPose(Vector3f.ZP.rotationDegrees(fac));
         ps.translate(-(size/2) * multiplier, -(size/2) * multiplier, -(size/2) * multiplier);
         RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderType.lightning(), getStarColor(star, blockEntity.getLevel()));
         ps.translate((size/5) * multiplier, (size/5) * multiplier, (size/5) * multiplier);
-        RenderHelper.renderInvertedCube(ps, buff, ((size/7)*4) * multiplier, RenderType.lightning(), getStarColor(star, blockEntity.getLevel()).mixWith(Color.WHITE, 0.35f));
+        if(star.getType() == StarClass.EMPTY){
+            RenderHelper.renderInvertedCube(ps, buff, ((size/7)*4) * multiplier, RenderType.lightning(), new Color(0,0,0,255));
+        } else {
+            RenderHelper.renderInvertedCube(ps, buff, ((size/7)*4) * multiplier, RenderType.lightning(), getStarColor(star, blockEntity.getLevel()).mixWith(Color.WHITE, 0.35f));
+        }
         //renderDisc(ps, 0.1f,buff, RenderType.lightning(), pPartialTick);
         ps.popPose();
     }
@@ -174,32 +179,24 @@ public class RenderHelper {
     private static Color getStarColor(Star star, Level level) {
         switch (star.getType()) {
             case HYPERGIANT:
-                return new Color(255, 183, 128, 255);
-
-            case SUPERGIANT:
-                return new Color(161, 236, 247, 255);
-            case BRIGHT_GIANT:
-                return new Color(161, 236, 247, 255);
             case GIANT:
-                return new Color(255, 183, 128, 255);
-            case SUBGIANT:
-                return new Color(161, 236, 247, 255);
             case MAIN_SEQUENCE:
-                return new Color(255, 183, 128, 255);
             case DWARF:
                 return new Color(255, 183, 128, 255);
+            case SUPERGIANT:
             case SUBDWARF:
+            case BRIGHT_GIANT:
+            case SUBGIANT:
                 return new Color(161, 236, 247, 255);
             case WHITE_DWARF:
+            case PURE:
                 return new Color(200, 200, 200, 255);
             case CRIMSON:
                 return new Color(235, 47, 75, 255);
-            case PURE:
-                return new Color(200, 200, 200, 255);
             case DARK:
                 return new Color(75, 2, 100, 255);
             case EMPTY:
-                return new Color(1, 1, 1, 255);
+                return new Color(75, 75, 75, 255);
             case HELL:
                 return new Color(255, 75, 0, 255);
             default:

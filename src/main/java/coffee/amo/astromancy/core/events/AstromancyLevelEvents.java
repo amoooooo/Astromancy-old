@@ -39,7 +39,7 @@ public class AstromancyLevelEvents {
     @SubscribeEvent
     public static void sendStars(PlayerEvent.PlayerLoggedInEvent event) {
         if(event.getEntity() instanceof ServerPlayer se) {
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get().getConstellations()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get().getStars()));
         }
     }
 }

@@ -45,6 +45,7 @@ public class StarUtils {
         star.setMass( level.random.nextInt(101) * star.getType().getMassMultiplier());
         star.setStrength(level.random.nextInt(101)* star.getType().getMassMultiplier());
         star.setColor(orangeOrBlue(level.random.nextInt(2)));
+        star.setRandomOffset(level.random.nextFloat(0.01f)-0.005f);
         return star;
     }
 

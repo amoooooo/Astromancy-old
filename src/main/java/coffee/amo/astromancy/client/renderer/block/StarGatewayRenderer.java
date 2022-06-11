@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.client.renderer.block;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.core.helpers.RenderHelper;
 import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
@@ -41,8 +42,8 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
         ps.translate(0.07f,1.01f,0.07f);
         RenderHelper.renderInvertedCube(ps, pBufferSource, 4.85f, sunType);
         VertexConsumer starBuff = pBufferSource.getBuffer(RenderType.solid());
-        ps.translate(0, 1.5,0);
-        for(Quadrant quadrant : StarSavedData.get().getStars()){
+        ps.translate(0, 1.55,0);
+        for(Quadrant quadrant : ClientConstellationHolder.getQuadrants()){
             for(Star star : quadrant.getStars()){
                 RenderHelper.renderStar(ps, 0.035f, pBufferSource, star, pBlockEntity, pPartialTick, font, true);
             }

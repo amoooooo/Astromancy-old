@@ -19,6 +19,7 @@ public class Star {
     private Constellation constellation;
     private Pair<Quadrant, Quadrant> quadrants;
     private Pair<Integer, Integer> quadrantCoordinates;
+    private float randomOffset;
 
     public Star(StarClass type) {
         this.type = type;
@@ -34,6 +35,7 @@ public class Star {
         star.quadrantCoordinates = new Pair<>(tag.getInt("quadrantX"), tag.getInt("quadrantY"));
         star.quadrants = new Pair<>(Quadrants.findQuadrantFromName(tag.getString("quadrant1")), Quadrants.findQuadrantFromName(tag.getString("quadrant2")));
         star.color = new Color(tag.getInt("red"), tag.getInt("green"), tag.getInt("blue"), tag.getInt("alpha"));
+        star.randomOffset = tag.getFloat("randomOffset");
         return star;
     }
 
@@ -105,6 +107,14 @@ public class Star {
         this.color = color;
     }
 
+    public float getRandomOffset() {
+        return randomOffset;
+    }
+
+    public void setRandomOffset(float randomOffset) {
+        this.randomOffset = randomOffset;
+    }
+
     public CompoundTag toNbt() {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putString("name", name);
@@ -121,6 +131,7 @@ public class Star {
         compoundTag.putInt("green", color.getGreen());
         compoundTag.putInt("blue", color.getBlue());
         compoundTag.putInt("alpha", color.getAlpha());
+        compoundTag.putFloat("randomOffset", randomOffset);
         return compoundTag;
     }
 
