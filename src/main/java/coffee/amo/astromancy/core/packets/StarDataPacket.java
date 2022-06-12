@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
+import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
@@ -46,6 +47,12 @@ public class StarDataPacket {
                 return;
             }
             ClientConstellationHolder.quadrants = packet.quadrants;
+            for(Quadrant q : packet.quadrants){
+                System.out.println("Quadrant: " + q.toString());
+                for(Star star : q.getStars()){
+                    System.out.println(star.getName());
+                }
+            }
             System.out.println("Parsed star data");
         });
         contextSupplier.get().setPacketHandled(true);
