@@ -372,4 +372,16 @@ public class AequivaleoInformationProvider extends ForcedInformationProvider {
     private static CompoundInstance octile(double d) { return new CompoundInstance(AspectiRegistry.OCTILE.get(), d); }
     private static CompoundInstance trioctile(double d) { return new CompoundInstance(AspectiRegistry.TRIOCTILE.get(), d); }
     private static CompoundInstance decile(double d) { return new CompoundInstance(AspectiRegistry.DECILE.get(), d); }
+    private static CompoundInstance sol(double d){ return new CompoundInstance(AspectiRegistry.SOL.get(), d); }
+    private static CompoundInstance luna(double d){ return new CompoundInstance(AspectiRegistry.LUNA.get(), d); }
+    private static CompoundInstance mercuria(double d){ return new CompoundInstance(AspectiRegistry.MERCURIA.get(), d); }
+    private static CompoundInstance venutio(double d){ return new CompoundInstance(AspectiRegistry.VENUTIO.get(), d); }
+    private static CompoundInstance martus(double d){ return new CompoundInstance(AspectiRegistry.MARTUS.get(), d); }
+    private static CompoundInstance jupilus(double d){ return new CompoundInstance(AspectiRegistry.JUPILUS.get(), d); }
+    private static CompoundInstance saturis(double d){ return new CompoundInstance(AspectiRegistry.SATURIS.get(), d); }
+    private static CompoundInstance urania(double d){ return new CompoundInstance(AspectiRegistry.URANIA.get(), d); }
+    private static CompoundInstance neptura(double d){ return new CompoundInstance(AspectiRegistry.NEPTURA.get(), d); }
+    private static CompoundInstance plutus(double d){ return new CompoundInstance(AspectiRegistry.PLUTUS.get(), d); }
+    private static CompoundInstance chiros(double d){ return new CompoundInstance(AspectiRegistry.CHIROS.get(), d); }
+    private static CompoundInstance lilithia(double d){ return new CompoundInstance(AspectiRegistry.LILITHIA.get(), d); }
 }

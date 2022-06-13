@@ -26,7 +26,7 @@ public class Quadrants {
             Constellations.THE_LOVERS,
             Constellations.THE_HIGH_PRIESTESS
     );
-    public static Quadrant STARS = new Quadrant(Direction.SOUTH, "Stars").addConstellations(
+    public static Quadrant CUPS = new Quadrant(Direction.SOUTH, "Cups").addConstellations(
             Constellations.THE_FOOL,
             Constellations.THE_MAGICIAN,
             Constellations.THE_HERMIT,
@@ -39,7 +39,7 @@ public class Quadrants {
             PENTACLES,
             SWORDS,
             WANDS,
-            STARS
+            CUPS
     };
 
     public static Quadrant findQuadrantFromConstellation(Constellation constellation){
