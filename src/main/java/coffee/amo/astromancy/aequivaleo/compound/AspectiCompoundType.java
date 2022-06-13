@@ -21,7 +21,7 @@ public class AspectiCompoundType extends ForgeRegistryEntry<ICompoundType> imple
     }
 
     /**
-     * The group this compound type belongs to.
+     * The group this compound classification belongs to.
      * Defines the common behaviour of several compound types, and allows for them to be grouped together.
      *
      * @return The group.

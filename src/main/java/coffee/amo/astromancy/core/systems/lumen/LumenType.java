@@ -2,8 +2,9 @@ package coffee.amo.astromancy.core.systems.lumen;
 
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandomList;
 
-public enum LumenTypes implements WeightedEntry {
+public enum LumenType implements WeightedEntry {
     DESTRUCTIVE("Destructive", 45, 1),
     CONSTRUCTIVE("Constructive", 35, 1),
     PURE("Pure", 10, 1.3f),
@@ -14,10 +15,19 @@ public enum LumenTypes implements WeightedEntry {
     private final int chance;
     private final float powerMultiplier;
 
-    LumenTypes(String type, int chance, float powerMultiplier) {
+    LumenType(String type, int chance, float powerMultiplier) {
         this.type = type;
         this.chance = chance;
         this.powerMultiplier = powerMultiplier;
+    }
+
+    public static LumenType getLumenTypeFromString(String type) {
+        for (LumenType lumenType : values()) {
+            if (lumenType.type.equals(type)) {
+                return lumenType;
+            }
+        }
+        return null;
     }
 
     public String getType() {
@@ -36,4 +46,6 @@ public enum LumenTypes implements WeightedEntry {
     public Weight getWeight() {
         return Weight.of(chance);
     }
+
+    public static final WeightedRandomList<LumenType> LIST = WeightedRandomList.create(LumenType.values());
 }

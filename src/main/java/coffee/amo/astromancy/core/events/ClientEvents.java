@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "astromancy")
 public class ClientEvents {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void aspectiTooltips(ItemTooltipEvent event){
         if(event.getItemStack().getItem() instanceof ArcanaSequence){
             if(event.getItemStack().hasTag()){

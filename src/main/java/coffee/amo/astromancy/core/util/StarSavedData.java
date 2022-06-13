@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
-    private static final List<Quadrant> quadrants = List.of(
+    private static List<Quadrant> quadrants = List.of(
             Quadrants.STARS,
             Quadrants.PENTACLES,
             Quadrants.SWORDS,
@@ -46,7 +46,11 @@ public class StarSavedData extends SavedData {
         for (int i = 0; i < tag.size(); i++) {
             CompoundTag starTag = tag.getCompound(i);
             Quadrant quadrant = Quadrant.fromNbt(starTag);
-            quadrants.add(quadrant);
+            for(Quadrant q : quadrants){
+                if(q.getName().equals(quadrant.getName())){
+                    quadrants.set(i, quadrant);
+                }
+            }
         }
         return this;
     }

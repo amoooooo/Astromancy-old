@@ -1,40 +1,57 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 
 public enum StarClass implements WeightedEntry {
-    HYPERGIANT("Hypergiant", 50, 10),
-    SUPERGIANT("Supergiant", 35, 20),
-    BRIGHT_GIANT("Bright Giant", 30, 30),
-    GIANT("Giant", 25, 40),
-    SUBGIANT("Subgiant", 15, 50),
-    MAIN_SEQUENCE("Main Sequence", 10, 70),
-    DWARF("Dwarf", 9, 40),
-    SUBDWARF("Subdwarf", 7.5f, 0),
-    WHITE_DWARF("White Dwarf", 5, 20),
-    CRIMSON("Crimson", 15, 5),
-    PURE("Pure", 10, 5),
-    DARK("Dark", 10, 5),
-    EMPTY("Empty", 10, 5),
-    HELL("Hell", 15, 5);
+    ULTRAGIANT("Ultragiant", 5, LuminosityClass.O, 30000, Pair.of(16.0f, 50.0f), 'O'),
+    HYPERGIANT("Hypergiant",  10, LuminosityClass.O, 10000, Pair.of(2.1f, 15.9f), 'B'),
+    SUPERGIANT("Supergiant",  20, LuminosityClass.I, 7500, Pair.of(1.4f, 2.09f), 'A'),
+    GIANT("Giant", 40, LuminosityClass.III, 6000, Pair.of(1.04f, 1.39f), 'F'),
+    MAIN_SEQUENCE("Main Sequence",  70, LuminosityClass.V, 5200, Pair.of(0.8f, 1.039f), 'G'),
+    DWARF("Dwarf",  40, LuminosityClass.VI, 3700, Pair.of(0.45f, 0.79f), 'K'),
+    WHITE_DWARF("White Dwarf",  20, LuminosityClass.VII, 2400, Pair.of(0.08f, 0.449f), 'M');
 
     private final String type;
-    private final float massMultiplier;
     private final int chance;
+    private final LuminosityClass luminosityClass;
+    private final int spectralIntensity;
+    private final Pair<Float, Float> massRange;
+    private final Character spectralClass;
 
-    StarClass(String type, float massMultiplier, int chance) {
+    StarClass(String type, int chance, LuminosityClass luminosityClass, int spectralIntensity, Pair<Float, Float> massRange, Character spectralClass) {
         this.type = type;
-        this.massMultiplier = massMultiplier;
         this.chance = chance;
+        this.luminosityClass = luminosityClass;
+        this.spectralIntensity = spectralIntensity;
+        this.massRange = massRange;
+        this.spectralClass = spectralClass;
     }
 
     public String getType() {
         return type;
     }
 
-    public float getMassMultiplier() {
-        return massMultiplier;
+    public int getSpectralIntensity() {
+        return spectralIntensity;
+    }
+
+    public Character getSpectralClass() {
+        return spectralClass;
+    }
+
+    public Pair<Float, Float> getMassRange() {
+        return massRange;
+    }
+
+    public static StarClass getStarClassFromIntensity(int spectralIntensity) {
+        for (StarClass starClass : values()) {
+            if (starClass.spectralIntensity == spectralIntensity) {
+                return starClass;
+            }
+        }
+        return null;
     }
 
     public float getChance() {
@@ -44,6 +61,19 @@ public enum StarClass implements WeightedEntry {
     public static StarClass fromString(String type) {
         for (StarClass starClass : StarClass.values()) {
             if (starClass.getType().equals(type)) {
+                return starClass;
+            }
+        }
+        return null;
+    }
+
+    public LuminosityClass getLuminosityClass() {
+        return luminosityClass;
+    }
+
+    public static StarClass fromLuminosityClass(LuminosityClass luminosityClass) {
+        for (StarClass starClass : StarClass.values()) {
+            if (starClass.getLuminosityClass().equals(luminosityClass)) {
                 return starClass;
             }
         }

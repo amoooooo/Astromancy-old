@@ -110,7 +110,7 @@ public class RenderHelper {
     }
 
     public static void renderStar(PoseStack ps, float size, MultiBufferSource buff, Star star, BlockEntity blockEntity, float pPartialTick, Font font, boolean offsets) {
-        float massMult = star.getType().getMassMultiplier() == 1 ? 1 : Math.min(star.getType().getMassMultiplier() / 27.5f, 1.5f);
+        float massMult = star.getClassification().getMassMultiplier() == 1 ? 1 : Math.min(star.getClassification().getMassMultiplier() / 27.5f, 1.5f);
         float multiplier = Math.max(massMult, 0.5f);
         float fac = (blockEntity.getLevel().getGameTime() + pPartialTick) * multiplier;
         ps.pushPose();
@@ -126,7 +126,7 @@ public class RenderHelper {
         ps.translate(-(size/2) * multiplier, -(size/2) * multiplier, -(size/2) * multiplier);
         RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderType.lightning(), getStarColor(star, blockEntity.getLevel()));
         ps.translate((size/5) * multiplier, (size/5) * multiplier, (size/5) * multiplier);
-        if(star.getType() == StarClass.EMPTY){
+        if(star.getClassification() == StarClass.EMPTY){
             RenderHelper.renderInvertedCube(ps, buff, ((size/7)*4) * multiplier, RenderType.lightning(), new Color(0,0,0,255));
         } else {
             RenderHelper.renderInvertedCube(ps, buff, ((size/7)*4) * multiplier, RenderType.lightning(), getStarColor(star, blockEntity.getLevel()).mixWith(Color.WHITE, 0.35f));
@@ -177,7 +177,7 @@ public class RenderHelper {
     }
 
     private static Color getStarColor(Star star, Level level) {
-        switch (star.getType()) {
+        switch (star.getClassification()) {
             case HYPERGIANT:
             case GIANT:
             case MAIN_SEQUENCE:
