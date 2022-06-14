@@ -7,6 +7,7 @@ import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +28,7 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
             //serverLevel.getDataStorage().set(worldPosition.toString(), );
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {
-            player.sendMessage(new TextComponent(StarSavedData.get().findStarFromName(star.getName()).getName()), player.getUUID());
+            player.sendMessage(new TextComponent(StarSavedData.get(level.getServer()).findStarFromName(star.getName()).getName()), player.getUUID());
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;

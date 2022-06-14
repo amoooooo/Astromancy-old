@@ -3,11 +3,12 @@ package coffee.amo.astromancy.core.util;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.*;
+import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
+import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -29,8 +30,12 @@ public class StarSavedData extends SavedData {
         System.out.println(Arrays.toString(constellationInstanceList.toArray()));
     }
 
+    public static StarSavedData get(MinecraftServer server) {
+        return server.overworld().getDataStorage().computeIfAbsent(StarSavedData::load, StarSavedData::new, "astromancy_stars");
+    }
+
     public static StarSavedData get() {
-        return ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(p -> new StarSavedData().load(p), StarSavedData::new, "astromancy_stars");
+        return get(ServerLifecycleHooks.getCurrentServer());
     }
 
     // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT
@@ -44,14 +49,15 @@ public class StarSavedData extends SavedData {
     }
 
     // TODO: Read the jank from above properly
-    public StarSavedData load(CompoundTag pCompoundTag) {
+    public static StarSavedData load(CompoundTag pCompoundTag) {
         ListTag tag = pCompoundTag.getList("constellations", Tag.TAG_COMPOUND);
         List<ConstellationInstance> constList = new ArrayList<>();
         for (Tag t : tag) {
             constList.add(ConstellationInstance.fromNbt((CompoundTag) t));
         }
-        constellationInstanceList = constList;
-        return this;
+        StarSavedData starSavedData = new StarSavedData();
+        starSavedData.constellationInstanceList = constList;
+        return starSavedData;
     }
 
     public void addStar(Star star, int x, int y, Constellations constel) {
@@ -133,5 +139,10 @@ public class StarSavedData extends SavedData {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return true;
     }
 }
