@@ -13,6 +13,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
@@ -22,6 +23,10 @@ public class StarSavedData extends SavedData {
         for(Constellations c : Constellations.values()){
             constellationInstanceList.add(new ConstellationInstance(c));
         }
+        Star sun = new Star(5200);
+        sun.setName("The Sun");
+        constellationInstanceList.get(9).addStar(sun, 0, 0);
+        System.out.println(Arrays.toString(constellationInstanceList.toArray()));
     }
 
     public static StarSavedData get() {

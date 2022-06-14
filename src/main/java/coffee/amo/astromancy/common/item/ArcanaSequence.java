@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ArcanaSequence extends Item {
@@ -33,6 +34,7 @@ public class ArcanaSequence extends Item {
                 } else if(pPlayer.isShiftKeyDown()){
                     for(ConstellationInstance q : StarSavedData.get().getConstellationInstances()){
                         for(Star[] star : q.getStars()){
+                            System.out.println(Arrays.toString(star));
                             for(Star s : star){
                                 System.out.println(s.getName());
                                 pPlayer.sendMessage(new TextComponent(s.getName()), pPlayer.getUUID());

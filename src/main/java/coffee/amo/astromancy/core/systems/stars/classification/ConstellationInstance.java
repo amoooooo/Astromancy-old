@@ -46,7 +46,7 @@ public class ConstellationInstance {
             starTag.add(x, yTag);
             for (int y = 0; y < 20; y++) {
                 if (stars[x][y] != null) {
-                    yTag.add(y, stars[x][y].toNbt());
+                    yTag.add(stars[x][y].toNbt());
                 }
             }
         }
