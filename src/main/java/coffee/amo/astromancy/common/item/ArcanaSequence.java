@@ -2,7 +2,7 @@ package coffee.amo.astromancy.common.item;
 
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
@@ -31,9 +31,12 @@ public class ArcanaSequence extends Item {
                     }
                     return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
                 } else if(pPlayer.isShiftKeyDown()){
-                    for(Quadrant q : StarSavedData.get().getStars()){
-                        for(Star star : q.getStars()){
-                            pPlayer.sendMessage(new TextComponent(star.getClassification().getType()), pPlayer.getUUID());
+                    for(ConstellationInstance q : StarSavedData.get().getConstellationInstances()){
+                        for(Star[] star : q.getStars()){
+                            for(Star s : star){
+                                System.out.println(s.getName());
+                                pPlayer.sendMessage(new TextComponent(s.getName()), pPlayer.getUUID());
+                            }
                         }
                     }
                 }

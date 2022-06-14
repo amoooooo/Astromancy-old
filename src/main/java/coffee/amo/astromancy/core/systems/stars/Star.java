@@ -7,9 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class Star {
@@ -20,16 +18,15 @@ public class Star {
     private float mass;
     private int spectralIntensity;
     private Character spectralClass;
-    private List<Pair<LumenType, Float>> lumen;
+    private Map<LumenType, Float> lumen = new HashMap<>();
 //    private Color color;
 //    private Constellation constellation;
 //    private Pair<Quadrant, Quadrant> quadrants;
 //    private Pair<Integer, Integer> quadrantCoordinates;
     private float randomOffset;
 
-    public Star(String name, int spectralIntensity) {
+    public Star(int spectralIntensity) {
         Random random = new Random();
-        this.name = name;
         this.spectralIntensity = spectralIntensity;
         this.classification = StarClass.getStarClassFromIntensity(spectralIntensity);
         this.luminosityClass = classification.getLuminosityClass();
@@ -40,11 +37,12 @@ public class Star {
         //TODO: figure out how to add lumen types with weights
         int lumenCount = random.nextInt(3) + 1;
         float lumenStrength = 1;
-        for(int i = 0; i < lumenCount; i++) {
+        for (int i = 0; i < lumenCount - 1; i++) {
             float lumenStrengthRandom = random.nextFloat(0.01f, lumenStrength);
-            this.lumen.add(Pair.of(LumenType.LIST.getRandom(random).get(), lumenStrengthRandom));
+            this.lumen.put(LumenType.LIST.getRandom(random).get(), lumenStrengthRandom);
             lumenStrength -= lumenStrengthRandom;
         }
+        this.lumen.put(LumenType.LIST.getRandom(random).get(), lumenStrength);
     }
 
     public StarClass getClassification() {
@@ -83,7 +81,7 @@ public class Star {
         return spectralClass;
     }
 
-    public List<Pair<LumenType, Float>> getLumen() {
+    public Map<LumenType, Float> getLumen() {
         return lumen;
     }
 
@@ -103,7 +101,7 @@ public class Star {
         this.spectralIntensity = spectralIntensity;
     }
 
-    public void setLumen(List<Pair<LumenType, Float>> lumen) {
+    public void setLumen(Map<LumenType, Float> lumen) {
         this.lumen = lumen;
     }
 
@@ -126,27 +124,29 @@ public class Star {
         compoundTag.putString("spectralClass", spectralClass.toString());
         compoundTag.putFloat("randomOffset", randomOffset);
         ListTag listTag = new ListTag();
-        for(Pair<LumenType, Float> lumenTypeFloatPair : lumen) {
+        lumen.forEach((type, strength) -> {
             CompoundTag tag = new CompoundTag();
-            tag.putString("type", lumenTypeFloatPair.getFirst().getType());
-            tag.putFloat("strength", lumenTypeFloatPair.getSecond());
+            tag.putString("type", type.getType());
+            tag.putFloat("strength", strength);
             listTag.add(tag);
-        }
+        });
         compoundTag.put("lumen", listTag);
         return compoundTag;
     }
 
     public static Star fromNbt(CompoundTag tag) {
-        Star star = new Star(tag.getString("name"), tag.getInt("spectralIntensity"));
+        Star star = new Star(tag.getInt("spectralIntensity"));
+        star.setName(tag.getString("name"));
         star.setLuminosity(tag.getFloat("luminosity"));
         star.setMass(tag.getFloat("mass"));
         star.setRandomOffset(tag.getFloat("randomOffset"));
         star.setLuminosityClass(LuminosityClass.getLuminosityClassFromString(tag.getString("luminosityClass")));
         star.setSpectralClass(tag.getString("spectralClass").charAt(0));
         ListTag listTag = tag.getList("lumen", Tag.TAG_COMPOUND);
-        for(Tag tag1 : listTag) {
-            CompoundTag tag2 = (CompoundTag) tag1;
-            star.lumen.add(Pair.of(LumenType.getLumenTypeFromString(tag2.getString("type")), tag2.getFloat("strength")));
+        // read lumen type from nbt
+        for (int i = 0; i < listTag.size(); i++) {
+            CompoundTag tag1 = listTag.getCompound(i);
+            star.getLumen().put(LumenType.getLumenTypeFromString(tag1.getString("type")), tag1.getFloat("strength"));
         }
         return star;
     }

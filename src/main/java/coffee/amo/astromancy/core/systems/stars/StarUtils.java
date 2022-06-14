@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.systems.stars;
 
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
+import coffee.amo.astromancy.core.util.StarSavedData;
 import com.mojang.datafixers.util.Pair;
 import com.sammy.ortus.helpers.util.Color;
 import net.minecraft.core.Direction;
@@ -23,19 +24,13 @@ public class StarUtils {
     );
 
     public static Star generateStar(Level level){
-        Star star = new Star(starClasses.getRandom(level.random).isPresent() ? starClasses.getRandom(level.random).get() : StarClass.MAIN_SEQUENCE);
-        star.setQuadrants(generateQuadrant(level), generateQuadrant(level));
-        star.setConstellation(generateConstellation(star.getQuadrants().getFirst(), level));
-        int X = level.random.nextInt(9)+1;
-        int Y = level.random.nextInt(9)+1;
-        Constellations.findByName(star.getConstellation().name).starsByQuadrant[X][Y] = star;
-        star.setQuadrantCoordinates(new Pair<>(X, Y));
-        star.setLuminosity((int) (level.random.nextInt(101) * star.getClassification().getMassMultiplier()));
-        star.setName(star.getConstellation().name  + " " + RomanNumeralHelper.toRoman(star.getLuminosity()) + " [" + X + " of " + star.getQuadrants().getFirst().name + ", " + Y + " of " + star.getQuadrants().getSecond().name + "]");
-        star.setMass( level.random.nextInt(101) * star.getClassification().getMassMultiplier());
-        star.setStrength(level.random.nextInt(101)* star.getClassification().getMassMultiplier());
-        star.setColor(orangeOrBlue(level.random.nextInt(2)));
-        star.setRandomOffset(level.random.nextFloat(0.01f)-0.005f);
+        int spectralIntensity = level.random.nextInt(0, 50000);
+        Star star = new Star(spectralIntensity);
+        Constellations constellation = Constellations.values()[level.random.nextInt(0, Constellations.values().length)];
+        int X = level.random.nextInt(11)-10;
+        int Y = level.random.nextInt(11)-10;
+        star.setName(constellation.getName() + " " + star.getLuminosityClass().getClassName() + star.getSpectralClass() + " " + RomanNumeralHelper.toRoman(star.getSpectralIntensity() / 100) + " [" + Math.abs(X) + " of " + getQuadrantFromX(X) + ", " + Math.abs(Y) + " of " + getQuadrantFromY(Y) + "]");
+        StarSavedData.get().addStar(star, X + 10, Y + 10, constellation);
         return star;
     }
 
@@ -47,30 +42,35 @@ public class StarUtils {
         }
     }
 
-    public static Star findStarByArcana(int x, int y, Constellation constellation){
-        return Constellations.findByName(constellation.name).starsByQuadrant[x][y];
+    public static Quadrants getQuadrantFromX(int x){
+        if(x > 0){
+            return Quadrants.PENTACLES;
+        } else {
+            return Quadrants.SWORDS;
+        }
     }
 
-    public static String generateName(Quadrant quadrant, Quadrant quadrant2, Level level){
-        return level.random.nextInt(11) + " of " + quadrant.getName() + ", " + level.random.nextInt(11) + " of " + quadrant2.getName();
+    public static Quadrants getQuadrantFromY(int y){
+        if(y > 0){
+            return Quadrants.WANDS;
+        } else {
+            return Quadrants.CUPS;
+        }
     }
 
-    public static Quadrant generateQuadrant(Level level){
-        return level.random.nextInt(2) == 0 ? (level.random.nextInt(2) == 0 ? Quadrants.STARS : Quadrants.PENTACLES) : (level.random.nextInt(2) == 0 ? Quadrants.SWORDS : Quadrants.WANDS);
-    }
-
-    public static Constellation generateConstellation(Quadrant quadrant, Level level){
-        return Quadrants.randomConstellationInQuadrant(quadrant, level);
+    public static Star findStarByArcana(int x, int y, Constellations constellation){
+        return StarSavedData.get().getStar(x, y, constellation);
     }
 
     public static Vec3 generatePosition(Star star){
-        Direction offsetDirection_x = star.getQuadrants().getFirst().direction;
-        Direction offsetDirection_z = star.getQuadrants().getSecond().direction;
-        int offset_x = star.getQuadrantCoordinates().getFirst();
-        int offset_z = star.getQuadrantCoordinates().getSecond();
-        double x = (offsetDirection_x.getStepX() + (offset_x/10.0f));
-        double z = (offsetDirection_z.getStepZ() + (offset_z/10.0f));
-        double y = (1 * (star.getConstellation().getHeight() / 10.0f));
-        return new Vec3(x, y, z);
+        for(int x = 0; x < 20; x++){
+            for(int z = 0; z < 20; z++){
+                Star star1 = StarSavedData.get().getStar(x, z, StarSavedData.get().findConstellationFromStar(star).getConstellation());
+                if(star1 != null){
+                    return new Vec3(x, StarSavedData.get().findConstellationFromStar(star).getConstellation().getHeight(), z);
+                }
+            }
+        }
+        return new Vec3(0, 0, 0);
     }
 }

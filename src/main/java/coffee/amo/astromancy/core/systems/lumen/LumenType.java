@@ -5,7 +5,7 @@ import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandomList;
 
 public enum LumenType implements WeightedEntry {
-    DESTRUCTIVE("Destructive", 45, 1),
+    DECONSTRUCTIVE("Deconstructive", 45, 1),
     CONSTRUCTIVE("Constructive", 35, 1),
     PURE("Pure", 10, 1.3f),
     DENATURED("Denatured", 10, 1.5f),

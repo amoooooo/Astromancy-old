@@ -1,18 +1,18 @@
 package coffee.amo.astromancy.client.systems;
 
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientConstellationHolder {
-    public static List<Quadrant> quadrants = new ArrayList<>();
+    public static List<ConstellationInstance> constellationInstances = new ArrayList<>();
 
-    public static void addConstellation(Quadrant quadrant){
-        quadrants.add(quadrant);
+    public static void setConstellationInstances(List<ConstellationInstance> constellationInstances) {
+        ClientConstellationHolder.constellationInstances = constellationInstances;
     }
 
-    public static List<Quadrant> getQuadrants(){
-        return quadrants;
+    public static List<ConstellationInstance> getConstellationInstances() {
+        return constellationInstances;
     }
 }

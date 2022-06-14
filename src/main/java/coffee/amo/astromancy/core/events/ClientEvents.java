@@ -28,7 +28,7 @@ public class ClientEvents {
                 String name = star.getName().replaceAll("\\[(.*?)\\]", "");
                 event.getToolTip().add(new TextComponent(name).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
                 if(Screen.hasShiftDown()){
-                    event.getToolTip().add(new TextComponent("[" + star.getQuadrantCoordinates().getFirst() + " of " + star.getQuadrants().getFirst().getName() + "], [" + star.getQuadrantCoordinates().getSecond() + " of " + star.getQuadrants().getSecond().name + "]").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+                    event.getToolTip().add(new TextComponent(star.getName()).withStyle(s -> s.withColor(ChatFormatting.GRAY)));
                 }
             }
         }

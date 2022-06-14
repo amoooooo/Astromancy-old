@@ -31,16 +31,16 @@ public class AspectiRegistry {
     public static final RegistryObject<ICompoundType> DECILE = TYPES.register("decile", () -> new AspectiCompoundType(Aspecti.DECILE, ASPECTI_TYPES));
     public static final RegistryObject<ICompoundType> SOL = TYPES.register("sol", () -> new AspectiCompoundType(Aspecti.SOL, ASPECTI_TYPES));
     public static final RegistryObject<ICompoundType> LUNA = TYPES.register("luna", () -> new AspectiCompoundType(Aspecti.LUNA, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> MERCURIA = TYPES.register("jupiter", () -> new AspectiCompoundType(Aspecti.MERCURIA, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> VENUTIO = TYPES.register("venus", () -> new AspectiCompoundType(Aspecti.VENUTIO, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> MARTUS = TYPES.register("mars", () -> new AspectiCompoundType(Aspecti.MARTUS, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> JUPILUS = TYPES.register("jupiter", () -> new AspectiCompoundType(Aspecti.JUPILUS, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> SATURIS = TYPES.register("saturnus", () -> new AspectiCompoundType(Aspecti.SATURIS, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> URANIA = TYPES.register("uranus", () -> new AspectiCompoundType(Aspecti.URANIA, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> NEPTURA = TYPES.register("neptunus", () -> new AspectiCompoundType(Aspecti.NEPTURA, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> PLUTUS = TYPES.register("pluto", () -> new AspectiCompoundType(Aspecti.PLUTUS, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> CHIROS = TYPES.register("argus", () -> new AspectiCompoundType(Aspecti.CHIROS, ASPECTI_TYPES));
-    public static final RegistryObject<ICompoundType> LILITHIA = TYPES.register("aquarius", () -> new AspectiCompoundType(Aspecti.LILITHIA, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> MERCURIA = TYPES.register("mercuria", () -> new AspectiCompoundType(Aspecti.MERCURIA, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> VENUTIO = TYPES.register("venutio", () -> new AspectiCompoundType(Aspecti.VENUTIO, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> MARTUS = TYPES.register("martus", () -> new AspectiCompoundType(Aspecti.MARTUS, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> JUPILUS = TYPES.register("jupilus", () -> new AspectiCompoundType(Aspecti.JUPILUS, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> SATURIS = TYPES.register("saturis", () -> new AspectiCompoundType(Aspecti.SATURIS, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> URANIA = TYPES.register("urania", () -> new AspectiCompoundType(Aspecti.URANIA, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> NEPTURA = TYPES.register("neptura", () -> new AspectiCompoundType(Aspecti.NEPTURA, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> PLUTUS = TYPES.register("plutus", () -> new AspectiCompoundType(Aspecti.PLUTUS, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> CHIROS = TYPES.register("chiros", () -> new AspectiCompoundType(Aspecti.CHIROS, ASPECTI_TYPES));
+    public static final RegistryObject<ICompoundType> LILITHIA = TYPES.register("lilithia", () -> new AspectiCompoundType(Aspecti.LILITHIA, ASPECTI_TYPES));
 
     public static void register(){
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

@@ -46,11 +46,13 @@ public enum StarClass implements WeightedEntry {
     }
 
     public static StarClass getStarClassFromIntensity(int spectralIntensity) {
-        for (StarClass starClass : values()) {
-            if (starClass.spectralIntensity == spectralIntensity) {
+        // check if spectral intensity is greater than any of the star classes
+        for (StarClass starClass : StarClass.values()) {
+            if (spectralIntensity >= starClass.getSpectralIntensity()) {
                 return starClass;
             }
         }
+        // if not, return null
         return null;
     }
 

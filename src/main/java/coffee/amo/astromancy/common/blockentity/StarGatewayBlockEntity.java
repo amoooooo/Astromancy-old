@@ -2,15 +2,11 @@ package coffee.amo.astromancy.common.blockentity;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,14 +24,10 @@ public class StarGatewayBlockEntity extends OrtusBlockEntity {
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if(!level.isClientSide && star == null) {
             star = StarUtils.generateStar(level);
-            StarSavedData.get().addStar(star);
             //serverLevel.getDataStorage().set(worldPosition.toString(), );
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {
             player.sendMessage(new TextComponent(StarSavedData.get().findStarFromName(star.getName()).getName()), player.getUUID());
-            Quadrant quadrant = Quadrants.findQuadrantFromConstellation(star.getConstellation());
-            System.out.println(StarSavedData.get().containsStar(star));
-            player.sendMessage(new TextComponent("Quadrant: " + quadrant.getName()), player.getUUID());
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;

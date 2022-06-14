@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StarSavedData extends SavedData {
-    private static List<Quadrant> quadrants = List.of(
-            Quadrants.STARS,
-            Quadrants.PENTACLES,
-            Quadrants.SWORDS,
-            Quadrants.WANDS
-    );
+    private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
 
     public StarSavedData() {
+        for(Constellations c : Constellations.values()){
+            constellationInstanceList.add(new ConstellationInstance(c));
+        }
     }
 
     public static StarSavedData get() {
@@ -33,66 +31,102 @@ public class StarSavedData extends SavedData {
     // TODO: nest the stars in Quadrant -> Constellation -> Star and dont save the Quadrants or Constellations in the Star NBT
     public CompoundTag save(CompoundTag pCompoundTag) {
         ListTag tag = new ListTag();
-        for (Quadrant quadrant : quadrants) {
-            tag.add(quadrant.toNbt());
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            tag.add(constellationInstance.toNbt());
         }
-        pCompoundTag.put("quadrants", tag);
+        pCompoundTag.put("constellations", tag);
         return pCompoundTag;
     }
 
     // TODO: Read the jank from above properly
     public StarSavedData load(CompoundTag pCompoundTag) {
-        ListTag tag = pCompoundTag.getList("stars", Tag.TAG_COMPOUND);
-        for (int i = 0; i < tag.size(); i++) {
-            CompoundTag starTag = tag.getCompound(i);
-            Quadrant quadrant = Quadrant.fromNbt(starTag);
-            for(Quadrant q : quadrants){
-                if(q.getName().equals(quadrant.getName())){
-                    quadrants.set(i, quadrant);
-                }
-            }
+        ListTag tag = pCompoundTag.getList("constellations", Tag.TAG_COMPOUND);
+        List<ConstellationInstance> constList = new ArrayList<>();
+        for (Tag t : tag) {
+            constList.add(ConstellationInstance.fromNbt((CompoundTag) t));
         }
+        constellationInstanceList = constList;
         return this;
     }
 
-    public void addQuadrant(Quadrant quadrant) {
-        quadrants.add(quadrant);
-        this.setDirty();
-    }
-
-    public void addStar(Star star) {
-        for(Quadrant q : quadrants){
-            if(q.equals(star.getQuadrant())){
-                q.addStar(star);
-                this.setDirty();
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new StarDataPacket(getStars()));
+    public void addStar(Star star, int x, int y, Constellations constel) {
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getConstellation() == constel) {
+                constellationInstance.addStar(star, x, y);
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new StarDataPacket(constellationInstanceList));
                 return;
             }
         }
     }
 
-    public List<Constellation> getConstellations() {
-        List<Constellation> constellations = new ArrayList<>();
-        for (Quadrant quadrant : quadrants) {
-            constellations.addAll(quadrant.constellations);
+    public Star getStar(int x, int y, Constellations constel) {
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getConstellation() == constel) {
+                return constellationInstance.getStar(x, y);
+            }
         }
-        return constellations;
+        return null;
     }
 
-    public void removeQuadrant(Quadrant quadrant) {
-        quadrants.remove(quadrant);
-        this.setDirty();
+    public ConstellationInstance getConstellationInstance(Constellations constel) {
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getConstellation() == constel) {
+                return constellationInstance;
+            }
+        }
+        return null;
     }
 
-    public List<Quadrant> getStars() {
-        return quadrants;
+    public List<ConstellationInstance> getConstellationInstances() {
+        return constellationInstanceList;
     }
 
-    public boolean containsStar(Star star) {
-        return quadrants.stream().anyMatch(quadrant -> quadrant.containsStar(star));
+    public List<Star> getStars(Constellations constel) {
+        List<Star> stars = new ArrayList<>();
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getConstellation() == constel) {
+                for (int x = 0; x < 20; x++) {
+                    for (int y = 0; y < 20; y++) {
+                        if (constellationInstance.getStar(x, y) != null) {
+                            stars.add(constellationInstance.getStar(x, y));
+                        }
+                    }
+                }
+            }
+        }
+        return stars;
+    }
+
+    public boolean doesStarExist(Star star) {
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getStar(star) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Star findStarFromName(String name) {
-        return quadrants.stream().flatMap(quadrant -> quadrant.getStars().stream()).filter(star -> star.getName().equals(name)).findFirst().orElse(null);
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            for (int x = 0; x < 20; x++) {
+                for (int y = 0; y < 20; y++) {
+                    if (constellationInstance.getStar(x, y) != null) {
+                        if (constellationInstance.getStar(x, y).getName().equals(name)) {
+                            return constellationInstance.getStar(x, y);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public ConstellationInstance findConstellationFromStar(Star star) {
+        for (ConstellationInstance constellationInstance : constellationInstanceList) {
+            if (constellationInstance.getStar(star) != null) {
+                return constellationInstance;
+            }
+        }
+        return null;
     }
 }

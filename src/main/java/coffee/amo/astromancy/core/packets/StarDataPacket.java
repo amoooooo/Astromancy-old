@@ -2,7 +2,7 @@ package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrant;
+import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LogicalSidedProvider;
@@ -15,22 +15,22 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class StarDataPacket {
-    public final List<Quadrant> quadrants;
+    public final List<ConstellationInstance> constellationInstances;
 
-    public StarDataPacket(List<Quadrant> quadrants) {
-        this.quadrants = quadrants;
+    public StarDataPacket(List<ConstellationInstance> constellationInstances) {
+        this.constellationInstances = constellationInstances;
     }
 
     public static void encode(StarDataPacket packet, FriendlyByteBuf buffer){
-        for(Quadrant q : packet.quadrants){
+        for(ConstellationInstance q : packet.constellationInstances){
             buffer.writeNbt(q.toNbt());
         }
     }
 
     public static StarDataPacket decode(FriendlyByteBuf buffer) {
-        List<Quadrant> q = new ArrayList<>();
+        List<ConstellationInstance> q = new ArrayList<>();
         for(int i = 0; i < 4; i++){
-            q.add(Quadrant.fromNbt(buffer.readNbt()));
+            q.add(ConstellationInstance.fromNbt(buffer.readNbt()));
         }
         return new StarDataPacket(q);
     }
@@ -46,11 +46,15 @@ public class StarDataPacket {
             if (clientWorld.isEmpty()) {
                 return;
             }
-            ClientConstellationHolder.quadrants = packet.quadrants;
-            for(Quadrant q : packet.quadrants){
-                System.out.println("Quadrant: " + q.toString());
-                for(Star star : q.getStars()){
-                    System.out.println(star.getName());
+            ClientConstellationHolder.constellationInstances = packet.constellationInstances;
+            if(!packet.constellationInstances.isEmpty()){
+                for(ConstellationInstance q : packet.constellationInstances){
+                    System.out.println("Quadrant: " + q.toString());
+                    for(Star[] star : q.getStars()){
+                        for(Star s : star){
+                            System.out.println("Star: " + s.getName());
+                        }
+                    }
                 }
             }
             System.out.println("Parsed star data");

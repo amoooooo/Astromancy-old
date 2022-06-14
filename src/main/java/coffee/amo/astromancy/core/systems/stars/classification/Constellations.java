@@ -1,87 +1,42 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
-import coffee.amo.astromancy.core.systems.stars.Star;
+public enum Constellations {
+    JUSTICE(0, "Justice"),
+    THE_HANGED_MAN(1, "The Hanged Man"),
+    DEATH(2, "Death"),
+    STRENGTH(-1, "Strength"),
+    THE_CHARIOT(-2, "The Chariot"),
+    JUDGEMENT(-3, "Judgement"),
+    THE_DEVIL(0, "The Devil"),
+    THE_TOWER(1, "The Tower"),
+    THE_STAR(2, "The Star"),
+    THE_MOON(-1, "The Moon"),
+    THE_SUN(-2, "The Sun"),
+    THE_FOOL(0, "The Fool"),
+    THE_MAGICIAN(1, "The Magician"),
+    THE_HERMIT(-1, "The Hermit"),
+    WHEEL_OF_FORTUNE(-2, "Wheel of Fortune"),
+    TEMPERANCE(-3, "Temperance"),
+    THE_WORLD(4, "The World"),
+    THE_EMPRESS(0, "The Empress"),
+    THE_EMPEROR(1, "The Emperor"),
+    THE_HIEROPHANT(2, "The Hierophant"),
+    THE_LOVERS(-1, "The Lovers"),
+    THE_HIGH_PRIESTESS(-2, "The High Priestess");
 
-import java.util.List;
-import java.util.Objects;
+    private final int height;
+    private final String name;
 
-public class Constellations {
-    public static Constellation THE_FOOL = new Constellation("The Fool", 0);
-    public static Constellation THE_MAGICIAN = new Constellation("The Magician", 1);
-    public static Constellation THE_HIGH_PRIESTESS = new Constellation("The High Priestess", -2);
-    public static Constellation THE_EMPRESS = new Constellation("The Empress", 0);
-    public static Constellation THE_EMPEROR = new Constellation("The Emperor", 1);
-    public static Constellation THE_HIEROPHANT = new Constellation("The Hierophant", 2);
-    public static Constellation THE_LOVERS = new Constellation("The Lovers", -1);
-    public static Constellation THE_CHARIOT = new Constellation("The Chariot", -2);
-    public static Constellation JUSTICE = new Constellation("Justice", 0);
-    public static Constellation THE_HERMIT = new Constellation("The Hermit", -1);
-    public static Constellation WHEEL_OF_FORTUNE = new Constellation("Wheel of Fortune", -2);
-    public static Constellation STRENGTH = new Constellation("Strength", -1);
-    public static Constellation THE_HANGED_MAN = new Constellation("The Hanged Man", 1);
-    public static Constellation DEATH = new Constellation("Death", 2);
-    public static Constellation TEMPERANCE = new Constellation("Temperance", -3);
-    public static Constellation THE_DEVIL = new Constellation("The Devil", 0);
-    public static Constellation THE_TOWER = new Constellation("The Tower", 1);
-    public static Constellation THE_STAR = new Constellation("The Star", 2);
-    public static Constellation THE_MOON = new Constellation("The Moon", -1);
-    public static Constellation THE_SUN = new Constellation("The Sun", -2);
-    public static Constellation JUDGEMENT = new Constellation("Judgement", -3);
-    public static Constellation THE_WORLD = new Constellation("The World", 4);
-    public static List<Constellation> constellations = List.of(
-            THE_FOOL,
-            THE_MAGICIAN,
-            THE_HIGH_PRIESTESS,
-            THE_EMPRESS,
-            THE_EMPEROR,
-            THE_HIEROPHANT,
-            THE_LOVERS,
-            THE_CHARIOT,
-            JUSTICE,
-            THE_HERMIT,
-            WHEEL_OF_FORTUNE,
-            STRENGTH,
-            THE_HANGED_MAN,
-            DEATH,
-            TEMPERANCE,
-            THE_DEVIL,
-            THE_TOWER,
-            THE_STAR,
-            THE_MOON,
-            THE_SUN,
-            JUDGEMENT,
-            THE_WORLD
-    );
-
-    public static Constellation register(String name, int height){
-        Constellation constellation = new Constellation(name, height);
-        constellations.add(constellation);
-        return constellation;
+    Constellations(int height, String name) {
+        this.height = height;
+        this.name = name;
     }
 
-    public static Constellation findByName(String name) {
-        for (Constellation constellation : constellations) {
-            if (constellation.name.equals(name)) {
-                return constellation;
-            }
-        }
-        return null;
+    public int getHeight() {
+        return height;
     }
 
-    public static Constellation findByStar(Star star) {
-        for (Constellation constellation : constellations) {
-            if (constellation.containsStar(star)) {
-                return constellation;
-            }
-        }
-        return null;
-    }
-
-    public static void setConstellation(Constellation constellation){
-        for(int i = 0; i < constellations.size(); i++){
-            if(constellations.get(i).name.equals(constellation.name)){
-                constellations.set(i, constellation);
-            }
-        }
+    public String getName() {
+        return name;
     }
 }
