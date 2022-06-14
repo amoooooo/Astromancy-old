@@ -32,7 +32,7 @@ public class ArcanaSequence extends Item {
                     }
                     return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
                 } else if(pPlayer.isShiftKeyDown()){
-                    for(ConstellationInstance q : StarSavedData.get().getConstellationInstances()){
+                    for(ConstellationInstance q : StarSavedData.get(pLevel.getServer()).getConstellationInstances()){
                         for(Star[] star : q.getStars()){
                             System.out.println(Arrays.toString(star));
                             for(Star s : star){

@@ -4,6 +4,7 @@ import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
+import coffee.amo.astromancy.core.util.StarSavedData;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +56,8 @@ public class Astromancy {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        MinecraftForge.EVENT_BUS.addListener(this::attachDataStorage);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -76,6 +81,11 @@ public class Astromancy {
         LOGGER.info("Got IMC {}", event.getIMCStream().
                 map(m -> m.messageSupplier().get()).
                 collect(Collectors.toList()));
+    }
+
+    private void attachDataStorage(final ServerStartedEvent event) {
+        //Attach the data as soon as we can, not sure if it is required
+        StarSavedData.get(event.getServer());
     }
 
     public static ResourceLocation astromancy(String path){

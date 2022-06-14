@@ -22,6 +22,7 @@ public class StarDataPacket {
     }
 
     public static void encode(StarDataPacket packet, FriendlyByteBuf buffer){
+        buffer.writeInt(packet.constellationInstances.size());
         for(ConstellationInstance q : packet.constellationInstances){
             buffer.writeNbt(q.toNbt());
         }
@@ -29,7 +30,8 @@ public class StarDataPacket {
 
     public static StarDataPacket decode(FriendlyByteBuf buffer) {
         List<ConstellationInstance> q = new ArrayList<>();
-        for(int i = 0; i < 4; i++){
+        int size = buffer.readInt();
+        for(int i = 0; i < size; i++){
             q.add(ConstellationInstance.fromNbt(buffer.readNbt()));
         }
         return new StarDataPacket(q);
@@ -52,6 +54,9 @@ public class StarDataPacket {
                     System.out.println("Quadrant: " + q.toString());
                     for(Star[] star : q.getStars()){
                         for(Star s : star){
+                            if(s == null){
+                                continue;
+                            }
                             System.out.println("Star: " + s.getName());
                         }
                     }

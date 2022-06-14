@@ -30,7 +30,7 @@ public class StarUtils {
         int X = level.random.nextInt(11)-10;
         int Y = level.random.nextInt(11)-10;
         star.setName(constellation.getName() + " " + star.getLuminosityClass().getClassName() + star.getSpectralClass() + " " + RomanNumeralHelper.toRoman(star.getSpectralIntensity() / 100) + " [" + Math.abs(X) + " of " + getQuadrantFromX(X) + ", " + Math.abs(Y) + " of " + getQuadrantFromY(Y) + "]");
-        StarSavedData.get().addStar(star, X + 10, Y + 10, constellation);
+        StarSavedData.get(level.getServer()).addStar(star, X + 10, Y + 10, constellation);
         return star;
     }
 
@@ -65,7 +65,12 @@ public class StarUtils {
     public static Vec3 generatePosition(Star star){
         for(int x = 0; x < 20; x++){
             for(int z = 0; z < 20; z++){
-                Star star1 = StarSavedData.get().getStar(x, z, StarSavedData.get().findConstellationFromStar(star).getConstellation());
+
+                ConstellationInstance constellationInstance = StarSavedData.get().findConstellationFromStar(star);
+                if(constellationInstance == null){
+                    continue;
+                }
+                Star star1 = StarSavedData.get().getStar(x, z, constellationInstance.getConstellation());
                 if(star1 != null){
                     return new Vec3(x, StarSavedData.get().findConstellationFromStar(star).getConstellation().getHeight(), z);
                 }

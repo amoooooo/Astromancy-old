@@ -37,7 +37,7 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
             for (ConstellationInstance cInst : ClientConstellationHolder.getConstellationInstances()) {
                 for (Star[] star : cInst.getStars()) {
                     for (Star star1 : star) {
-                        if(star != null){
+                        if(star1 != null){
                             RenderHelper.renderStar(ps, 0.035f, pBufferSource, star1, pBlockEntity, pPartialTick, font, true);
                         }
                     }
