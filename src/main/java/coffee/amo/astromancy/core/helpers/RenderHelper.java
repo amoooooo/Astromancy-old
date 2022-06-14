@@ -114,8 +114,8 @@ public class RenderHelper {
         float fac = (blockEntity.getLevel().getGameTime() + pPartialTick) * multiplier;
         ps.pushPose();
         if (offsets) {
-            Vec3 offset = StarUtils.generatePosition(star);
-            ps.translate(offset.x * 1.35, (offset.y + 0.1f + (star.getRandomOffset() * 5.0f)) * 5.5f, offset.z * 1.35);
+            Vec3 offset = StarUtils.generatePosition(star, blockEntity.getLevel());
+            ps.translate(offset.x * 1.35, (offset.y + (star.getRandomOffset())), offset.z * 1.35);
         }
         ps.translate((size / 2) * multiplier, (size / 2) * multiplier, (size / 2) * multiplier);
         renderText(ps, star.getName(), buff, font);

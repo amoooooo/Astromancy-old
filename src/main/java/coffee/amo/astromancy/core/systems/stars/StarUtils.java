@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.systems.stars;
 
+import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
@@ -62,17 +63,18 @@ public class StarUtils {
         return StarSavedData.get().getStar(x, y, constellation);
     }
 
-    public static Vec3 generatePosition(Star star){
+    public static Vec3 generatePosition(Star star, Level level){
         for(int x = 0; x < 20; x++){
             for(int z = 0; z < 20; z++){
 
-                ConstellationInstance constellationInstance = StarSavedData.get().findConstellationFromStar(star);
+                ConstellationInstance constellationInstance = ClientConstellationHolder.findConstellationFromStar(star);
                 if(constellationInstance == null){
                     continue;
                 }
-                Star star1 = StarSavedData.get().getStar(x, z, constellationInstance.getConstellation());
+                Star star1 = ClientConstellationHolder.getStar(x, z, constellationInstance.getConstellation());
+
                 if(star1 != null){
-                    return new Vec3(x, StarSavedData.get().findConstellationFromStar(star).getConstellation().getHeight(), z);
+                    return new Vec3((x - 10) / 10.0f, ClientConstellationHolder.findConstellationFromStar(star).getConstellation().getHeight(), (z - 10) / 10.0f);
                 }
             }
         }

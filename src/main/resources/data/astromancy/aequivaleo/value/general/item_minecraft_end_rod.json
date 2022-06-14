@@ -18,20 +18,96 @@
   ],
   "compounds": [
     {
-      "amount": 1.0,
-      "type": "astromancy:decile"
+      "amount": 100.0,
+      "type": "astromancy:conjunction"
     },
     {
-      "amount": 1.0,
-      "type": "astromancy:quincunx"
+      "amount": 100.0,
+      "type": "astromancy:opposition"
     },
     {
-      "amount": 1.0,
+      "amount": 100.0,
       "type": "astromancy:square"
     },
     {
-      "amount": 1.0,
+      "amount": 100.0,
+      "type": "astromancy:trine"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:sextile"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:semisextile"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:quintile"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:quincunx"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:octile"
+    },
+    {
+      "amount": 100.0,
       "type": "astromancy:trioctile"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:decile"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:sol"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:luna"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:mercuria"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:venutio"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:martus"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:jupilus"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:saturis"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:urania"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:neptura"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:plutus"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:chiros"
+    },
+    {
+      "amount": 100.0,
+      "type": "astromancy:lilithia"
     }
   ]
 }
