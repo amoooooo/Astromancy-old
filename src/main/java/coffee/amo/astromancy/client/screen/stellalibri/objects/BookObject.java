@@ -1,36 +1,40 @@
 package coffee.amo.astromancy.client.screen.stellalibri.objects;
 
+import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.sammy.ortus.systems.rendering.VFXBuilders;
 import net.minecraft.client.Minecraft;
 
-import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.renderTransparentTexture;
+import java.util.List;
+
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.screen;
 
 public class BookObject {
     public boolean isHovering;
-    public BookObject parent;
+    // TODO: Make this a list, check of BookObject has children in the render method, if so, render those.
+    public List<BookObject> children;
+    public String identifier;
     public float hover;
     public int posX;
     public int posY;
     public int width;
     public int height;
 
-    public BookObject(int posX, int posY, int width, int height)
+    public BookObject(int posX, int posY, int width, int height, String identifier)
     {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
+        this.identifier = identifier;
     }
-    public BookObject(int posX, int posY, int width, int height, BookObject parent)
+    public BookObject(int posX, int posY, int width, int height, BookObject... child)
     {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
-        this.parent = parent;
+        this.children = List.of(child);
     }
     public int hoverCap()
     {
@@ -39,6 +43,10 @@ public class BookObject {
 
     public void render(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks)
     {
+
+    }
+
+    public void renderChildren(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks){
 
     }
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks)

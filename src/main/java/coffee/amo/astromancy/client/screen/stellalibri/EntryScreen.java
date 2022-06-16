@@ -4,10 +4,8 @@ import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.EntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.BookPage;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.sammy.ortus.handlers.ScreenParticleHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.isHovering;
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.renderTexture;
-import static com.sammy.ortus.systems.rendering.particle.screen.base.ScreenParticle.RenderOrder.BEFORE_TOOLTIPS;
 
 public class EntryScreen extends Screen {
     public static final ResourceLocation BOOK_TEXTURE = Astromancy.astromancy("textures/gui/book/entry.png");
@@ -81,7 +78,6 @@ public class EntryScreen extends Screen {
                 }
             }
         }
-        ScreenParticleHandler.renderParticles(BEFORE_TOOLTIPS);
     }
 
     @Override
@@ -145,7 +141,6 @@ public class EntryScreen extends Screen {
 
     public void close(boolean ignoreNextInput) {
         BookScreen.openScreen(ignoreNextInput);
-        ScreenParticleHandler.wipeParticles();
         openObject.exit();
     }
 
@@ -156,7 +151,6 @@ public class EntryScreen extends Screen {
 
     public static void openScreen(EntryObject newObject) {
         Minecraft.getInstance().setScreen(getInstance(newObject));
-        ScreenParticleHandler.wipeParticles();
         screen.playSound();
     }
 

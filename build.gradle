@@ -176,9 +176,9 @@ repositories {
         name 'JEI maven'
         url "https://dvs1.progwml6.com/files/maven"
     }
-    maven { // Registrate
-        url "https://maven.tterrag.com/"
-    }
+//    maven { // Registrate
+//        url "https://maven.tterrag.com/"
+//    }
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
     // flatDir {
     //     dir 'libs'
@@ -186,22 +186,22 @@ repositories {
     mavenLocal()
 }
 
-configurations {
-    shade
-}
-
-shadowJar {
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'coffee.amo.astromancy.repack.registrate'
-}
-reobf {
-    shadowJar {}
-}
+//configurations {
+//    shade
+//}
+//
+//shadowJar {
+//    configurations = [project.configurations.shade]
+//    relocate 'com.tterrag.registrate', 'coffee.amo.astromancy.repack.registrate'
+//}
+//reobf {
+//    shadowJar {}
+//}
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.46'
 
-    implementation fg.deobf("com.sammy.ortus:ortus:1.18.2-1.1.172")
+    //implementation fg.deobf("com.sammy.ortus:ortus:1.18.2-1.1.172")
 
     implementation fg.deobf("curse.maven:curios-309927:3748873")
     compileOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.193:api')
@@ -211,9 +211,9 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:api")
     compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:vanillaapi")
 
-    def registrate = "com.tterrag.registrate:Registrate:MC1.18.2-1.0.25"
-    implementation fg.deobf(registrate)
-    shade registrate
+//    def registrate = "com.tterrag.registrate:Registrate:MC1.18.2-1.0.25"
+//    implementation fg.deobf(registrate)
+//    shade registrate
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

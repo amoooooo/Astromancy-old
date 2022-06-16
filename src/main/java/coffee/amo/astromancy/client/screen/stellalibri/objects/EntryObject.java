@@ -8,14 +8,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
 
 public class EntryObject extends BookObject {
     public final BookEntry entry;
-    public EntryObject(BookEntry entry, int posX, int posY){
-        super(posX, posY, 32, 32);
+    public final String identifier;
+    public EntryObject(BookEntry entry, int posX, int posY, String identifier) {
+        super(posX, posY, 32, 32, identifier);
         this.entry = entry;
+        this.identifier = identifier;
+    }
+
+    public EntryObject(BookEntry entry, int posX, int posY, String identifier, List<BookObject> child) {
+        super(posX, posY, 32, 32, identifier);
+        this.entry = entry;
+        this.identifier = identifier;
+        this.children = child;
     }
 
     @Override

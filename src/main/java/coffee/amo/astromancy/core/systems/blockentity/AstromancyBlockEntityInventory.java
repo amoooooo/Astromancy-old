@@ -213,7 +213,7 @@ public class AstromancyBlockEntityInventory extends ItemStackHandler {
     }
 
     public void extractItem(Player playerEntity, ItemStack stack, int slot) {
-        ItemHandlerHelper.giveItemToPlayer(playerEntity, stack, playerEntity.getInventory().selected);
+        playerEntity.addItem(stack);
         setStackInSlot(slot, ItemStack.EMPTY);
     }
 

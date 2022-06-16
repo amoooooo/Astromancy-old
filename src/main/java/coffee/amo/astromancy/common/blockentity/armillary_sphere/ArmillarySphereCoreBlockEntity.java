@@ -11,6 +11,7 @@ import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
+import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntityInventory;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockCoreEntity;
@@ -54,7 +55,6 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     public Map<Aspecti, Integer> requirements = new HashMap<>();
     public UUID playerUUID = null;
     public Star star;
-    public String starName;
 
     public ArmillarySphereCoreBlockEntity(BlockEntityType<? extends ArmillarySphereCoreBlockEntity> type, MultiblockStructure structure, BlockPos pos, BlockState state) {
         super(type, structure, pos, state);
@@ -110,6 +110,7 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     public void generateRequirements(Level level) {
         int aspectiCount = level.random.nextInt(5) + 1;
         List<Aspecti> shuffledAspecti = Lists.newArrayList(Aspecti.values());
+        shuffledAspecti.remove(Aspecti.EMPTY);
         Collections.shuffle(shuffledAspecti);
         shuffledAspecti.subList(0, aspectiCount).forEach(aspecti -> {
             int amount = level.random.nextInt(15) + 1;
@@ -122,6 +123,11 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
         Map<Aspecti, Integer> match = new HashMap<>();
         for (ItemStack itemStack : inventory.getStacks()) {
             if (itemStack.isEmpty()) {
+                continue;
+            }
+            if (itemStack.getItem().equals(ItemRegistry.ASPECTI_PHIAL.get()) && itemStack.hasTag()){
+                int count = ((CompoundTag)itemStack.getTag().get("aspecti")).getInt("count");
+                match.compute(Aspecti.values()[((CompoundTag)itemStack.getTag().get("aspecti")).getInt("aspecti")], (aspecti, integer) -> integer == null ? count : integer + count);
                 continue;
             }
             AspectiEntry entry = AspectiHelper.getEntry(level.dimension(), itemStack);

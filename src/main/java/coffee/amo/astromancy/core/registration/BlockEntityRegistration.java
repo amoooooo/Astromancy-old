@@ -12,7 +12,6 @@ import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphere
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.core.systems.multiblock.IAstromancyMultiblockComponent;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockComponentEntity;
-import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,16 +28,15 @@ import java.util.Arrays;
 
 public class BlockEntityRegistration {
 
-    //public static final BlockEntityEntry<ArmillarySphereBlockEntity> ARMILLARY_SPHERE = Astromancy.registrate().<ArmillarySphereBlockEntity>blockEntity("armillary_sphere", ArmillarySphereBlockEntity::new).renderer(() -> ArmillarySphereRenderer::new).validBlock(BlockRegistration.ARMILLARY_SPHERE).register();
-    public static final BlockEntityEntry<StarGatewayBlockEntity> STAR_GATEWAY = Astromancy.registrate().<StarGatewayBlockEntity>blockEntity("star_gateway", StarGatewayBlockEntity::new).renderer(() -> StarGatewayRenderer::new).validBlock(BlockRegistration.STAR_GATEWAY).register();
-    public static final BlockEntityEntry<AstrolabeBlockEntity> ASTROLABE = Astromancy.registrate().<AstrolabeBlockEntity>blockEntity("astrolabe", AstrolabeBlockEntity::new).renderer(() -> AstrolabeRenderer::new).validBlock(BlockRegistration.ASTROLABE).register();
-    public static final BlockEntityEntry<JarBlockEntity> JAR = Astromancy.registrate().<JarBlockEntity>blockEntity("jar", JarBlockEntity::new).renderer(() -> JarRenderer::new).validBlock(BlockRegistration.JAR).register();
 
 
     public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Astromancy.MODID);
     public static final RegistryObject<BlockEntityType<MultiblockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> BlockEntityType.Builder.of(MultiblockComponentEntity::new, getBlocks(IAstromancyMultiblockComponent.class)).build(null));
 
     public static final RegistryObject<BlockEntityType<ArmillarySphereCoreBlockEntity>> ARMILLARY_SPHERE = BLOCK_ENTITY_TYPES.register("armillary_sphere", () -> BlockEntityType.Builder.of(ArmillarySphereCoreBlockEntity::new, getBlocks(ArmillarySphereCoreBlock.class)).build(null));
+    public static final RegistryObject<BlockEntityType<StarGatewayBlockEntity>> STAR_GATEWAY = BLOCK_ENTITY_TYPES.register("star_gateway", () -> BlockEntityType.Builder.of(StarGatewayBlockEntity::new, BlockRegistration.STAR_GATEWAY.get()).build(null));
+    public static final RegistryObject<BlockEntityType<JarBlockEntity>> JAR = BLOCK_ENTITY_TYPES.register("jar", () -> BlockEntityType.Builder.of(JarBlockEntity::new, BlockRegistration.JAR.get()).build(null));
+    public static final RegistryObject<BlockEntityType<AstrolabeBlockEntity>> ASTROLABE = BLOCK_ENTITY_TYPES.register("astrolabe", () -> BlockEntityType.Builder.of(AstrolabeBlockEntity::new, BlockRegistration.ASTROLABE.get()).build(null));
 
     public static void register(){
 
@@ -59,6 +57,9 @@ public class BlockEntityRegistration {
         @SubscribeEvent
         public static void registerRenderer(EntityRenderersEvent.RegisterRenderers event){
             event.registerBlockEntityRenderer(ARMILLARY_SPHERE.get(), ArmillarySphereRenderer::new);
+            event.registerBlockEntityRenderer(STAR_GATEWAY.get(), StarGatewayRenderer::new);
+            event.registerBlockEntityRenderer(JAR.get(), JarRenderer::new);
+            event.registerBlockEntityRenderer(ASTROLABE.get(), AstrolabeRenderer::new);
         }
     }
 }

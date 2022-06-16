@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class ArmillarySpherePacket {
+public class ArmillarySpherePacket{
 
     public final BlockPos pos;
     public final Map<Aspecti, Integer> aspecti;

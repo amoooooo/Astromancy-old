@@ -8,12 +8,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookEntry {
     public final ItemStack iconStack;
     public final String identifier;
     public final int xOffset;
     public final int yOffset;
+    public final List<BookObject> children = new ArrayList<>();
     public ArrayList<BookPage> pages = new ArrayList<>();
     public EntryObjectSupplier objectSupplier = EntryObject::new;
     public BookEntry(String identifier, Item item, int xOffset, int yOffset) {
@@ -21,6 +23,18 @@ public class BookEntry {
         this.iconStack = item.getDefaultInstance();
         this.xOffset = xOffset;
         this.yOffset = yOffset;
+    }
+
+    public BookEntry(String identifier, Item item, int xOffset, int yOffset, List<BookObject> child) {
+        this.identifier = identifier;
+        this.iconStack = item.getDefaultInstance();
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.children.addAll(child);
+    }
+
+    public void addChild(BookObject child) {
+        children.add(child);
     }
 
     public String translationKey(){
@@ -47,10 +61,11 @@ public class BookEntry {
 
     public BookEntry setObjectSupplier(EntryObjectSupplier supplier){
         this.objectSupplier = supplier;
+
         return this;
     }
 
     public interface EntryObjectSupplier {
-        EntryObject getBookObject(BookEntry entry, int x, int y);
+        EntryObject getBookObject(BookEntry entry, int x, int y, String identifier, List<BookObject> children);
     }
 }

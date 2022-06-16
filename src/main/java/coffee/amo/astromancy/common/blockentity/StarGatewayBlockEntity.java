@@ -1,14 +1,13 @@
 package coffee.amo.astromancy.common.blockentity;
 
+import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import coffee.amo.astromancy.core.util.StarSavedData;
-import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +19,10 @@ public class StarGatewayBlockEntity extends AstromancyBlockEntity {
     public Star star;
     public StarGatewayBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    public StarGatewayBlockEntity(BlockPos pos, BlockState state){
+        super(BlockEntityRegistration.STAR_GATEWAY.get(), pos, state);
     }
 
     @Override

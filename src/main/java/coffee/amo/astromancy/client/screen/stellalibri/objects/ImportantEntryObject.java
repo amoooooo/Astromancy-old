@@ -4,12 +4,18 @@ import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 
+import java.util.List;
+
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
 
 public class ImportantEntryObject extends EntryObject {
 
-    public ImportantEntryObject(BookEntry entry, int posX, int posY) {
-        super(entry, posX, posY);
+    public ImportantEntryObject(BookEntry entry, int posX, int posY, String identifier) {
+        super(entry, posX, posY, identifier);
+    }
+
+    public ImportantEntryObject(BookEntry bookEntry, int i, int i1, String s, List<BookObject> bookObjects) {
+        super(bookEntry, i, i1, s, bookObjects);
     }
 
     @Override

@@ -1,10 +1,13 @@
 package coffee.amo.astromancy.common.item;
 
+import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.aequivaleo.AspectiHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +27,7 @@ public class AspectiPhial extends Item {
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         if(pStack.hasTag()){
-            pTooltipComponents.add(new TextComponent(StringHelper.capitalize(Aspecti.values()[((CompoundTag) pStack.getTag().get("aspecti")).getInt("aspecti")].name().toLowerCase(Locale.ROOT)) + ": " + ((CompoundTag) pStack.getTag().get("aspecti")).getInt("count")).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+            pTooltipComponents.add(new TextComponent(StringHelper.capitalize(Aspecti.values()[((CompoundTag) pStack.getTag().get("aspecti")).getInt("aspecti")].symbol())).withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(AspectiHelper.convertDoubleToSmallString(((CompoundTag) pStack.getTag().get("aspecti")).getInt("count"))).withStyle(s -> s.withFont(Style.DEFAULT_FONT))));
         }
     }
 

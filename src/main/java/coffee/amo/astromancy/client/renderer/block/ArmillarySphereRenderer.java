@@ -2,13 +2,12 @@ package coffee.amo.astromancy.client.renderer.block;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphereCoreBlockEntity;
+import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.sammy.ortus.helpers.util.Color;
-import com.sammy.ortus.setup.OrtusRenderTypeRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,17 +18,18 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
+import java.awt.*;
 
-import static com.sammy.ortus.handlers.RenderHandler.DELAYED_RENDER;
 
 public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySphereCoreBlockEntity> {
 
     private final static ResourceLocation BEAM = Astromancy.astromancy("textures/vfx/light_trail.png");
-    private final static RenderType BEAM_TYPE = OrtusRenderTypeRegistry.ADDITIVE_TEXTURE.apply(BEAM);
+    private final static RenderType BEAM_TYPE = RenderTypeRegistry.additiveTexture(BEAM);
 
     private final Font font;
 
@@ -63,18 +63,17 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         //fac *=  ((float)pBlockEntity.ticksActive / 10.0f);
         float scale = Math.max(1 - (pBlockEntity.ticksActive / 300.0f), 0.1f);
         float speed = 1 + (pBlockEntity.ticksActive / 150.0f);
-        VertexConsumer consumer = DELAYED_RENDER.getBuffer(BEAM_TYPE);
-        double distance = Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos())) > 10 ? 0 : Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos()));
+        double actualDistance = Minecraft.getInstance().player.position().distanceTo(Vec3.atCenterOf(pBlockEntity.getBlockPos()));
+        double distance = actualDistance > 10 ? 0 : actualDistance;
         double distanceFactor = Math.max(0, Math.max(0, distance / 10.0));
-        Color color = new Color(1,1,1,(1-(float)distanceFactor == 0 ? 0.001f : 1-(float)distanceFactor));
         if (pBlockEntity.requirementBool) {
-            drawRequirements(ps, pBufferSource, pBlockEntity, distanceFactor, color);
+            drawRequirements(ps, pBufferSource, pBlockEntity, distanceFactor, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((1.0f - (float) actualDistance / 10.0f) * 255.0f)), 255, 255, 255)));
         }
         if(pBlockEntity.star != null){
-            drawStar(ps, pBufferSource, pBlockEntity, distanceFactor, color);
+            drawStar(ps, pBufferSource, pBlockEntity, distanceFactor, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((1.0f - (float) actualDistance / 10.0f) * 255.0f)), 255, 255, 255)));
         }
         if(!pBlockEntity.inventory.isEmpty()){
-            drawTiers(ps, pBufferSource, pBlockEntity, distanceFactor, color, scale, speed, fac);
+            drawTiers(ps, pBufferSource, pBlockEntity, distanceFactor, scale, speed, fac);
         }
         ps.popPose();
     }
@@ -117,7 +116,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
 
         mstack.popPose();
     }
-    private void drawCurrent(MultiBufferSource buffer, PoseStack ps, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color) {
+    private void drawCurrent(MultiBufferSource buffer, PoseStack ps, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, int color) {
         ps.pushPose();
         ps.translate(0.5, 1.5, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
@@ -147,14 +146,14 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
         for (TextComponent requirement : blockEntity.pairToTextComponent(blockEntity.getMatchFromInventory())) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
-            font.draw(ps, requirement, 0, 0, color.getRGB());
+            font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
             ps.translate(0, font.lineHeight, 0);
         }
         ps.popPose();
     }
 
-    private void drawRequirements(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color){
+    private void drawRequirements(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, int color){
         drawCurrent(buffer, ps, blockEntity, distanceFactor, color);
         ps.pushPose();
         ps.translate(0.5, 0.35, 0.5);
@@ -185,14 +184,14 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
         for (TextComponent requirement : blockEntity.getAspectiInstances()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
-            font.draw(ps, requirement, 0, 0, color.getRGB());
+            font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
             ps.translate(0, font.lineHeight, 0);
         }
         ps.popPose();
     }
 
-    private void drawStar(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color){
+    private void drawStar(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, int color){
         ps.pushPose();
         ps.translate(0.5, 0.05, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
@@ -222,14 +221,14 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
         for (String requirement : blockEntity.star.getString()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
-            font.draw(ps, requirement, 0, 0, color.getRGB());
+            font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
             ps.translate(0, font.lineHeight, 0);
         }
         ps.popPose();
     }
 
-    private void drawTiers(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color, float scale, float speed, float fac){
+    private void drawTiers(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, float scale, float speed, float fac){
         ps.pushPose();
         ps.translate(0.5, 1.5, 0.5);
         ps.scale(scale, scale, scale);
@@ -243,7 +242,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
                 ps.translate(offsets[i].x(), offsets[i].y(), offsets[i].z());
                 ps.mulPose(Vector3f.YN.rotationDegrees(fac));
                 ps.translate(0, -0.175, 0);
-                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.getStacks().get(i), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
                 ps.popPose();
             }
         }
@@ -257,7 +256,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
                 ps.mulPose(Vector3f.ZN.rotationDegrees(fac * 1.3f));
                 ps.scale(0.8f, 0.8f, 0.8f);
                 ps.translate(0, -0.175, 0);
-                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.getStacks().get(i), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
                 ps.popPose();
             }
         }
@@ -271,7 +270,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
                 ps.mulPose(Vector3f.XN.rotationDegrees(fac * 1.5f));
                 ps.scale(0.8f, 0.8f, 0.8f);
                 ps.translate(0, -0.175, 0);
-                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.items.get(i).getDefaultInstance(), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
+                Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.inventory.getStacks().get(i), ItemTransforms.TransformType.GROUND, 15728640, OverlayTexture.NO_OVERLAY, ps, buffer, 1);
                 ps.popPose();
             }
         }

@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
-import com.sammy.ortus.helpers.util.Color;
+
+import java.awt.*;
 
 public enum StarColors {
     O(new Color(40, 145, 250, 255)),

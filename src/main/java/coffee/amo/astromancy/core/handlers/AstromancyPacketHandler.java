@@ -1,10 +1,7 @@
 package coffee.amo.astromancy.core.handlers;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
-import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
-import coffee.amo.astromancy.core.packets.StarDataPacket;
-import coffee.amo.astromancy.core.packets.StarPacket;
+import coffee.amo.astromancy.core.packets.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -34,5 +31,17 @@ public class AstromancyPacketHandler {
         INSTANCE.registerMessage(ID++, StarDataPacket.class, StarDataPacket::encode,
                 StarDataPacket::decode,
                 StarDataPacket::handle);
+
+        INSTANCE.registerMessage(ID++, JarUpdatePacket.class, JarUpdatePacket::encode,
+                JarUpdatePacket::decode,
+                JarUpdatePacket::handle);
+
+        INSTANCE.registerMessage(ID++, ResearchPacket.class, ResearchPacket::encode,
+                ResearchPacket::decode,
+                ResearchPacket::handle);
+
+        INSTANCE.registerMessage(ID++, ResearchRemovePacket.class, ResearchRemovePacket::encode,
+                ResearchRemovePacket::decode,
+                ResearchRemovePacket::handle);
     }
 }

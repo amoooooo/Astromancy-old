@@ -2,7 +2,6 @@ package coffee.amo.astromancy.common.block;
 
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.core.systems.block.AstromancyEntityBlock;
-import com.sammy.ortus.systems.block.OrtusEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -13,12 +12,9 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.stream.Stream;
 
 public class StarGateway<T extends StarGatewayBlockEntity> extends AstromancyEntityBlock<T> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

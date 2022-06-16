@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.client.screen.stellalibri;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.BookObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.EntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.ImportantEntryObject;
@@ -9,12 +10,10 @@ import coffee.amo.astromancy.client.screen.stellalibri.pages.HeadlineTextPage;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.TextPage;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookEntriesEvent;
-import coffee.amo.astromancy.core.registration.ItemRegistry;
+import coffee.amo.astromancy.core.systems.recipe.IRecipeComponent;
+import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.sammy.ortus.handlers.ScreenParticleHandler;
-import com.sammy.ortus.systems.recipe.IRecipeComponent;
-import com.sammy.ortus.systems.rendering.VFXBuilders;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -38,7 +37,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static coffee.amo.astromancy.core.registration.ItemRegistry.*;
-import static com.sammy.ortus.systems.rendering.particle.screen.base.ScreenParticle.RenderOrder.BEFORE_TOOLTIPS;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 
@@ -74,7 +72,7 @@ public class BookScreen extends Screen {
         ENTRIES.clear();
         Item EMPTY = ItemStack.EMPTY.getItem();
 
-        ENTRIES.add(new BookEntry("introduction", ItemRegistry.STELLA_LIBRI.get(), 0, 0)
+        ENTRIES.add(new BookEntry("introduction", STELLA_LIBRI.get(), 0, 0)
                 .setObjectSupplier(ImportantEntryObject::new)
                 .addPage(new HeadlineTextPage("introduction", "introduction.a"))
                 .addPage(new TextPage("introduction.b")));
@@ -82,6 +80,9 @@ public class BookScreen extends Screen {
                 .addPage(new HeadlineTextPage("armillary_sphere", "armillary_sphere.a"))
                 .addPage(CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()))
                 .addPage(CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get())));
+
+        ENTRIES.add(new BookEntry("armillary_sphere_2", ARMILLARY_SPHERE_CAGE.get(), 0, -2).setObjectSupplier(EntryObject::new)
+                .addPage(new HeadlineTextPage("armillary_sphere_2", "armillary_sphere_2.a")));
     }
 
     public static boolean isHovering(double mouseX, double mouseY, int posX, int posY, int width, int height) {
@@ -280,7 +281,6 @@ public class BookScreen extends Screen {
         if(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof StellaLibri sl){
             sl.setOpenness(1);
         }
-        ScreenParticleHandler.wipeParticles();
         screen.playSound();
         screen.ignoreNextMouseInput = ignoreNextMouseClick;
     }
@@ -303,7 +303,15 @@ public class BookScreen extends Screen {
         int width = 40;
         int height = 48;
         for (BookEntry entry : ENTRIES) {
-            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height));
+
+            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.identifier, entry.children));
+        }
+        for (BookObject object : OBJECTS) {
+            if(object.identifier == "introduction"){
+                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere").findFirst().orElse(null));
+            } else if (object.identifier == "armillary_sphere") {
+                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere_2").findFirst().orElse(null));
+            }
         }
         faceObject(OBJECTS.get(0));
     }
@@ -326,14 +334,17 @@ public class BookScreen extends Screen {
         renderBackground(BACKGROUND_TEXTURE, poseStack, 0.1f, 0.1f);
         GL11.glEnable(GL_SCISSOR_TEST);
         cut();
+        if(Minecraft.getInstance().level.getDayTime() > 13000){
+            renderEntries(poseStack, mouseX, mouseY, partialTicks);
 
-        renderEntries(poseStack, mouseX, mouseY, partialTicks);
-        ScreenParticleHandler.renderParticles(BEFORE_TOOLTIPS);
+        }
         GL11.glDisable(GL_SCISSOR_TEST);
 
         //renderTransparentTexture(FADE_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
         renderTransparentTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 256, 256);
-        lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
+        if(Minecraft.getInstance().level.getDayTime() > 13000){
+            lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
+        }
     }
 
     @Override
@@ -393,22 +404,37 @@ public class BookScreen extends Screen {
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
-            object.isHovering = isHovering;
-            object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
-            object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+            if(ClientResearchHolder.getResearch().contains(object.identifier)){
+                boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
+                object.isHovering = isHovering;
+                object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
+                object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                if(!object.children.isEmpty()){
+                    object.children.forEach(c -> {
+                        boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
+                        c.isHovering = isHovering2;
+                        c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
+                        c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                    });
+                }
+            }
         }
     }
 
     public void lateEntryRender(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+            if(ClientResearchHolder.getResearch().contains(object.identifier)){
+                object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                object.children.forEach(c -> {
+                    c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                });
+            }
         }
     }
 
     public void renderBackground(ResourceLocation texture, PoseStack poseStack, float xModifier, float yModifier) {
-        int guiLeft = (width - bookWidth) / 2; //TODO: literally just redo this entire garbage method, please
+        int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         int insideLeft = guiLeft + 15;
         int insideTop = guiTop + 16;

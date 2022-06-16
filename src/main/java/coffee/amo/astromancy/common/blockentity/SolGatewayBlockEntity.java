@@ -1,7 +1,6 @@
 package coffee.amo.astromancy.common.blockentity;
 
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
-import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;

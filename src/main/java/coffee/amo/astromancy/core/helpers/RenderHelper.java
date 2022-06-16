@@ -8,13 +8,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.sammy.ortus.helpers.util.Color;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+
+import java.awt.*;
 
 public class RenderHelper {
 
@@ -98,39 +99,18 @@ public class RenderHelper {
         buff.vertex(ps.last().pose(), 0, 0, 0).color(0xFFFF55FF).uv(0, 0).endVertex();
     }
 
-    // todo: use Hek's AT alternative, add blockpos arguments, use that for center
-    public static void renderFacingQuad(PoseStack ps, float size, VertexConsumer buff, Color color) {
-//        Vec3 player = Minecraft.getInstance().player.getEyePosition();
-//        Vec3 center = new Vec3(ps.last().pose().m03 + 0.5, ps.last().pose().m13 + 1.0f, ps.last().pose().m23 + 0.5);
-//
-//        Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
-//        Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
-//        Vec3 d = player.subtract(center);
-//
-//        // Find angle between start & end in yaw
-//        float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
-//
-//        // Find angle between start & end in pitch
-//        float pitch = (float) Math.toDegrees(Math.atan2(Math.sqrt(d.z * d.z + d.x * d.x), d.y) + Math.PI);
-//
-//        Quaternion Q = Quaternion.ONE.copy();
-//
-//        // doubling to account for how quats work
-//        Q.mul(new Quaternion(new Vector3f(0.0f, 1.0f, 0.0f), -yaw * 2, true));
-//        Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
-//        //Q.mul(-1);
-//        ps.mulPose(Q);
-        buff.vertex(ps.last().pose(), 0, size, 0).color(color.getRGB()).uv(0, 1).uv2(0, 1).endVertex();
-        buff.vertex(ps.last().pose(), size, size, 0).color(color.getRGB()).uv(1, 1).uv2(1, 1).endVertex();
-        buff.vertex(ps.last().pose(), size, 0, 0).color(color.getRGB()).uv(1, 0).uv2(1, 0).endVertex();
-        buff.vertex(ps.last().pose(), 0, 0, 0).color(color.getRGB()).uv(0, 0).uv2(0, 0).endVertex();
-    }
-
     private static void renderQuad(PoseStack ps, float size, VertexConsumer buff, Color color) {
         buff.vertex(ps.last().pose(), 0, size, 0).color(color.getRGB()).uv2(0, 1).uv(0, 1).overlayCoords(0, 1).normal(0, 1, 0).endVertex();
         buff.vertex(ps.last().pose(), size, size, 0).color(color.getRGB()).uv2(1, 1).uv(1, 1).overlayCoords(1, 1).normal(1, 1, 0).endVertex();
         buff.vertex(ps.last().pose(), size, 0, 0).color(color.getRGB()).uv2(1, 0).uv(1, 0).overlayCoords(1, 0).normal(1, 0, 0).endVertex();
         buff.vertex(ps.last().pose(), 0, 0, 0).color(color.getRGB()).uv2(0, 0).uv(0, 0).overlayCoords(0, 0).normal(0, 0, 0).endVertex();
+    }
+
+    public static void renderQuad(PoseStack ps, float xSize, float ySize, VertexConsumer buff, int color) {
+        buff.vertex(ps.last().pose(), 0, ySize, 0).color(color).uv(0, 1).uv2(0, 1).normal(0, 1, 0).endVertex();
+        buff.vertex(ps.last().pose(), xSize, ySize, 0).color(color).uv(1, 1).uv2(1, 1).normal(1, 1, 0).endVertex();
+        buff.vertex(ps.last().pose(), xSize, 0, 0).color(color).uv(1, 0).uv2(1, 0).normal(1, 0, 0).endVertex();
+        buff.vertex(ps.last().pose(), 0, 0, 0).color(color).uv(0, 0).uv2(0, 0).normal(0, 0, 0).endVertex();
     }
 
     public static void renderStar(PoseStack ps, float size, MultiBufferSource buff, Star star, BlockEntity blockEntity, float pPartialTick, Font font, boolean offsets) {
@@ -150,7 +130,7 @@ public class RenderHelper {
         ps.translate(-(size / 2) * multiplier, -(size / 2) * multiplier, -(size / 2) * multiplier);
         RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderType.lightning(), getStarColor(star));
         ps.translate((size / 5) * multiplier, (size / 5) * multiplier, (size / 5) * multiplier);
-        RenderHelper.renderInvertedCube(ps, buff, ((size / 7) * 4) * multiplier, RenderType.lightning(), getStarColor(star).mixWith(Color.WHITE, 0.005f));
+        RenderHelper.renderInvertedCube(ps, buff, ((size / 7) * 4) * multiplier, RenderType.lightning(), getStarColor(star).brighter().brighter());
         //renderDisc(ps, 0.1f,buff, RenderType.lightning(), pPartialTick);
         ps.popPose();
     }
@@ -184,6 +164,30 @@ public class RenderHelper {
         font.draw(ps, text, 0, 0, Color.WHITE.getRGB());
         ps.translate(-font.width(text), 0, 0);
         ps.popPose();
+    }
+
+    public static void doFacingFromBlock(PoseStack ps, BlockEntity blockEntity){
+        //ps.mulPose(Vector3f.XP.rotation(135));
+        Vec3 player = new Vec3(0, 1.5f, 0);
+        Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 0.5, blockEntity.getBlockPos().getZ() + 0.5);
+
+        Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
+        Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
+        Vec3 d = player.subtract(center);
+
+        // Find angle between start & end in yaw
+        float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
+
+        // Find angle between start & end in pitch
+        float pitch = (float) Math.toDegrees(Math.atan2(Math.sqrt(d.z * d.z + d.x * d.x), d.y) + Math.PI);
+
+        Quaternion Q = Quaternion.ONE.copy();
+
+        // doubling to account for how quats work
+        Q.mul(new Quaternion(new Vector3f(0.0f, 1.0f, 0.0f), -yaw * 2, true));
+        Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
+        //Q.mul(-1);
+        ps.mulPose(Q);
     }
 
     public static void renderDisc(PoseStack ps, float size, MultiBufferSource buffer, RenderType type, float partialTick) {

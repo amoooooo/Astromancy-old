@@ -1,6 +1,7 @@
 {
   "__items__": "",
   "itemGroup.astromancy": "Astromancy",
+  "itemGroup.astromancy.phialTab": "Astromancy Phials",
   "block.astromancy.armillary_sphere": "Armillary Sphere",
   "block.astromancy.star_gateway": "Star Gateway",
   "block.astromancy.jar": "Jar",
@@ -20,5 +21,6 @@
   "astromancy.gui.book.entry.armillary_sphere": "Armillary Sphere",
   "astromancy.gui.book.entry.armillary_sphere.description": "A device that can be used to divine the locations of a star.",
   "astromancy.gui.book.entry.page.headline.armillary_sphere": "Armillary Sphere",
-  "astromancy.gui.book.entry.page.text.armillary_sphere.a": "The Armillary Sphere is a device that can be used to divine the locations of a star. It does not seem to give me the full stellar location. Maybe I should look into the rituals of old using Sun Dials"
+  "astromancy.gui.book.entry.page.text.armillary_sphere.a": "The Armillary Sphere is a device that can be used to divine the locations of a star. It does not seem to give me the full stellar location. Maybe I should look into the rituals of old using Sun Dials",
+  "astromancy.gui.entry.title": "Title"
 }
