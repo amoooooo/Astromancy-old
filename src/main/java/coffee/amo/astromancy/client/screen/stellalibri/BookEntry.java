@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.client.screen.stellalibri;
 
+import coffee.amo.astromancy.client.screen.stellalibri.objects.BookObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.EntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.BookPage;
 import net.minecraft.world.item.Item;

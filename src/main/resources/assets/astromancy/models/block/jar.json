@@ -1,0 +1,46 @@
+{
+	"parent": "block/block",
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "astromancy:block/jar"
+	},
+	"elements": [
+		{
+			"from": [4, 11, 4],
+			"to": [12, 14, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-4, 0, -4]},
+			"faces": {
+				"north": {"uv": [2, 7.5, 4, 8.25], "texture": "#0"},
+				"east": {"uv": [0, 7.5, 2, 8.25], "texture": "#0"},
+				"south": {"uv": [6, 7.5, 8, 8.25], "texture": "#0"},
+				"west": {"uv": [4, 7.5, 6, 8.25], "texture": "#0"},
+				"up": {"uv": [4, 7.5, 2, 5.5], "texture": "#0"},
+				"down": {"uv": [6, 5.5, 4, 7.5], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 0, 3],
+			"to": [13, 12, 13],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [-5, 0, -5]},
+			"faces": {
+				"north": {"uv": [5, 2.5, 2.5, 5.5], "texture": "#0"},
+				"east": {"uv": [7.5, 2.5, 5, 5.5], "texture": "#0"},
+				"south": {"uv": [10, 2.5, 7.5, 5.5], "texture": "#0"},
+				"west": {"uv": [2.5, 2.5, 0, 5.5], "texture": "#0"},
+				"up": {"uv": [2.5, 2.5, 5, 0], "texture": "#0"},
+				"down": {"uv": [5, 0, 7.5, 2.5], "texture": "#0"}
+			}
+		}
+	],
+	"display": {},
+	"groups": [
+		{
+			"name": "bone",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

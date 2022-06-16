@@ -2,12 +2,15 @@ package coffee.amo.astromancy.client.screen.stellalibri.objects;
 
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.sammy.ortus.systems.rendering.VFXBuilders;
 import net.minecraft.client.Minecraft;
 
+import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.renderTransparentTexture;
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.screen;
 
 public class BookObject {
     public boolean isHovering;
+    public BookObject parent;
     public float hover;
     public int posX;
     public int posY;
@@ -20,6 +23,14 @@ public class BookObject {
         this.posY = posY;
         this.width = width;
         this.height = height;
+    }
+    public BookObject(int posX, int posY, int width, int height, BookObject parent)
+    {
+        this.posX = posX;
+        this.posY = posY;
+        this.width = width;
+        this.height = height;
+        this.parent = parent;
     }
     public int hoverCap()
     {

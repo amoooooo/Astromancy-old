@@ -29,8 +29,11 @@ public class EntryObject extends BookObject {
     {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        renderTexture(FRAME_TEXTURE, poseStack, posX, posY, 0, 0, 256, 256, 256, 256);
-        minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 8, posY + 8);
+        renderTexture(FRAME_TEXTURE, poseStack, posX + 6, posY + 6, 80, 232, 22, 22, 256, 256);
+        poseStack.pushPose();
+        poseStack.scale(0.5f, 0.5f, 0.5f);
+        minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 9, posY + 9);
+        poseStack.popPose();
     }
 
     @Override

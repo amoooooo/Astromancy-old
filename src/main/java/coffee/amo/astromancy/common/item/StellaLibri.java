@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class StellaLibri extends Item {
+    private float openness = 0;
     public StellaLibri(Properties pProperties) {
         super(pProperties);
     }
@@ -21,5 +22,13 @@ public class StellaLibri extends Item {
             return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
         }
         return super.use(pLevel, pPlayer, pUsedHand);
+    }
+
+    public void setOpenness(float openness) {
+        this.openness = openness;
+    }
+
+    public static float getOpenness(StellaLibri sl) {
+        return sl.openness;
     }
 }

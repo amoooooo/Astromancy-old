@@ -16,7 +16,10 @@ public class ImportantEntryObject extends EntryObject {
     public void render(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        renderTexture(FRAME_TEXTURE, poseStack, posX + 3, posY + 3, 26, 230, 26, 26, 256, 256);
-        minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 8, posY + 8);
+        renderTexture(FRAME_TEXTURE, poseStack, posX + 7, posY + 8, 133, 232, 20, 22, 256, 256);
+        poseStack.pushPose();
+        poseStack.scale(0.5f, 0.5f, 0.5f);
+        minecraft.getItemRenderer().renderGuiItem(entry.iconStack, posX + 9, posY + 10);
+        poseStack.popPose();
     }
 }

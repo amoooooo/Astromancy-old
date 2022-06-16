@@ -118,3 +118,4 @@ run/
 !gradle-wrapper.jar
 /src/main/resources/data/astromancy/aequivaleo/
 /runServer/
+/src/main/resources/assets/astromancy/models/block/VoxelShape.java

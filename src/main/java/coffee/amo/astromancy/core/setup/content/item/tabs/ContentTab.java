@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.setup.content.item.tabs;
 
+import coffee.amo.astromancy.core.registration.ItemRegistry;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,6 @@ public class ContentTab extends CreativeModeTab {
 
     @Override
     public ItemStack makeIcon() {
-        return ItemStack.EMPTY;
+        return ItemRegistry.ARMILLARY_SPHERE.get().getDefaultInstance();
     }
 }

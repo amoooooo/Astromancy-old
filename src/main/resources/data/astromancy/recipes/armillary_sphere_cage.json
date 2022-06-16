@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " g ",
+        "g g",
+        " g "
+    ],
+    "key": {
+        "g": {
+            "item": "astromancy:alchemical_brass_ingot"
+        }
+    },
+    "result": {
+        "item": "astromancy:armillary_sphere_cage",
+        "count": 1
+    }
+}

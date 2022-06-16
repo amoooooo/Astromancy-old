@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " # ",
+        " D ",
+        "gDg"
+    ],
+    "key": {
+        "#": {
+            "item": "astromancy:armillary_sphere_cage"
+        },
+        "D": {
+            "item": "minecraft:dark_oak_planks"
+        },
+        "g": {
+            "item": "astromancy:alchemical_brass_ingot"
+        }
+    },
+    "result": {
+        "item": "astromancy:armillary_sphere",
+        "count": 1
+    }
+}
