@@ -1,19 +1,7 @@
 {
   "variants": {
-    "facing=east": {
-      "model": "astromancy:block/armillary_sphere",
-      "y": 90
-    },
-    "facing=north": {
+    "":{
       "model": "astromancy:block/armillary_sphere"
-    },
-    "facing=south": {
-      "model": "astromancy:block/armillary_sphere",
-      "y": 180
-    },
-    "facing=west": {
-      "model": "astromancy:block/armillary_sphere",
-      "y": 270
     }
   }
 }

@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.common.blockentity;
+package coffee.amo.astromancy.common.blockentity.armillary_sphere;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.AspectiEntry;
@@ -6,26 +6,26 @@ import coffee.amo.astromancy.aequivaleo.AspectiHelper;
 import coffee.amo.astromancy.aequivaleo.AspectiInstance;
 import coffee.amo.astromancy.common.item.ArcanaSequence;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.helpers.BlockHelper;
 import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
-import coffee.amo.astromancy.core.registration.AspectiRegistry;
+import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
+import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
+import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntityInventory;
+import coffee.amo.astromancy.core.systems.multiblock.MultiblockCoreEntity;
+import coffee.amo.astromancy.core.systems.multiblock.MultiblockStructure;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import com.google.common.collect.Lists;
-import com.sammy.ortus.helpers.BlockHelper;
-import com.sammy.ortus.systems.blockentity.ItemHolderBlockEntity;
-import com.sammy.ortus.systems.blockentity.OrtusBlockEntityInventory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TextComponentTagVisitor;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -34,13 +34,20 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Supplier;
 
-// TODO: fix inventory
-public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
+public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
+    public static final Supplier<MultiblockStructure> STRUCTURE = () -> (MultiblockStructure.of(new MultiblockStructure.StructurePiece(0,1,0, BlockRegistration.ARMILLARY_SPHERE_COMPONENT.get().defaultBlockState())));
+
+    public AstromancyBlockEntityInventory inventory;
     public boolean toggled = false;
     public int ticksActive = 0;
     public boolean requirementBool = false;
@@ -49,15 +56,19 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
     public Star star;
     public String starName;
 
-    public ArmillarySphereBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
-        inventory = new OrtusBlockEntityInventory(12, 1) {
+    public ArmillarySphereCoreBlockEntity(BlockEntityType<? extends ArmillarySphereCoreBlockEntity> type, MultiblockStructure structure, BlockPos pos, BlockState state) {
+        super(type, structure, pos, state);
+        inventory = new AstromancyBlockEntityInventory(12, 1) {
             @Override
             public void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
                 BlockHelper.updateAndNotifyState(level, worldPosition);
             }
         };
+    }
+
+    public ArmillarySphereCoreBlockEntity(BlockPos pos, BlockState state){
+        this(BlockEntityRegistration.ARMILLARY_SPHERE.get(), STRUCTURE.get(), pos, state);
     }
 
     @Override
@@ -173,6 +184,7 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
     @Override
     public void onBreak(@Nullable Player player) {
         inventory.dumpItems(level, worldPosition);
+        super.onBreak(player);
     }
 
     @Override
@@ -243,4 +255,22 @@ public class ArmillarySphereBlockEntity extends ItemHolderBlockEntity {
         });
         return list;
     }
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return inventory.inventoryOptional.cast();
+        }
+        return super.getCapability(cap);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return inventory.inventoryOptional.cast();
+        }
+        return super.getCapability(cap, side);
+    }
+
 }

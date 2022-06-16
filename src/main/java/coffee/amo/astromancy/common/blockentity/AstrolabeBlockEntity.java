@@ -3,6 +3,7 @@ package coffee.amo.astromancy.common.blockentity;
 import coffee.amo.astromancy.common.item.ArcanaSequence;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.StarPacket;
+import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import com.sammy.ortus.helpers.BlockHelper;
 import com.sammy.ortus.systems.blockentity.OrtusBlockEntity;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 
-public class AstrolabeBlockEntity extends OrtusBlockEntity {
+public class AstrolabeBlockEntity extends AstromancyBlockEntity {
     public boolean toggled = false;
     public Star star;
     public AstrolabeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

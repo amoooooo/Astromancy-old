@@ -14,10 +14,10 @@ uniform int StarLayers;
 in float vertexDistance;
 
 // divisions of grid
-const float repeats = 30.;
+const float repeats = 75.;
 
 // number of layers
-const float layers = 30.;
+const float layers = 10.;
 
 // star colours
 const vec3 blue = vec3(51.,64.,195.)/255.;
@@ -104,7 +104,7 @@ float perlin2(vec2 uv, int octaves, float pscale){
 
 vec3 stars(vec2 uv, float offset){
 
-    float timeScale = -(((GameTime * 24000) * 0.0001) + offset) / layers;
+    float timeScale = -(((1 * 24000) * 0.0001) + offset) / layers;
 
     float trans = fract(timeScale);
 
@@ -143,7 +143,7 @@ vec3 stars(vec2 uv, float offset){
 
     // calculate random xy and size
     vec2 rndXY = N22(newRnd + ipos*(offset+1.))*0.9+0.05;
-    float rndSize = N21(ipos)*100.+200.;
+    float rndSize = N21(ipos)*75.+200.;
 
 
     vec2 j = (rndXY - uv)*rndSize;
