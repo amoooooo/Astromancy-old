@@ -49,19 +49,6 @@ public class StarDataPacket {
                 return;
             }
             ClientConstellationHolder.constellationInstances = packet.constellationInstances;
-            if(!packet.constellationInstances.isEmpty()){
-                for(ConstellationInstance q : packet.constellationInstances){
-                    System.out.println("Quadrant: " + q.toString());
-                    for(Star[] star : q.getStars()){
-                        for(Star s : star){
-                            if(s == null){
-                                continue;
-                            }
-                            System.out.println("Star: " + s.getName());
-                        }
-                    }
-                }
-            }
             System.out.println("Parsed star data");
         });
         contextSupplier.get().setPacketHandled(true);

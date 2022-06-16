@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.client.renderer.block;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.common.blockentity.ArmillarySphereBlockEntity;
+import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphereCoreBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
@@ -17,18 +17,16 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 
 import static com.sammy.ortus.handlers.RenderHandler.DELAYED_RENDER;
 
-public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySphereBlockEntity> {
+public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySphereCoreBlockEntity> {
 
     private final static ResourceLocation BEAM = Astromancy.astromancy("textures/vfx/light_trail.png");
     private final static RenderType BEAM_TYPE = OrtusRenderTypeRegistry.ADDITIVE_TEXTURE.apply(BEAM);
@@ -59,7 +57,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
     }
 
     @Override
-    public void render(ArmillarySphereBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
+    public void render(ArmillarySphereCoreBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
         float fac = ((((pBlockEntity.ticksActive) + pPartialTick) * 2 + 2)) * (pBlockEntity.toggled ? 1 : 0);
         //fac *=  ((float)pBlockEntity.ticksActive / 10.0f);
@@ -119,7 +117,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
 
         mstack.popPose();
     }
-    private void drawCurrent(MultiBufferSource buffer, PoseStack ps, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color) {
+    private void drawCurrent(MultiBufferSource buffer, PoseStack ps, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color) {
         ps.pushPose();
         ps.translate(0.5, 1.5, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
@@ -143,6 +141,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
         //Q.mul(-1);
         ps.mulPose(Q);
+        ps.translate(0,0,-0.6);
         ps.scale(0.01f * (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
@@ -155,10 +154,10 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.popPose();
     }
 
-    private void drawRequirements(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color){
+    private void drawRequirements(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color){
         drawCurrent(buffer, ps, blockEntity, distanceFactor, color);
         ps.pushPose();
-        ps.translate(0.5, 0.5, 0.5);
+        ps.translate(0.5, 0.35, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
         Vec3 player = Minecraft.getInstance().player.getEyePosition();
         Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 0.5, blockEntity.getBlockPos().getZ() + 0.5);
@@ -193,9 +192,9 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.popPose();
     }
 
-    private void drawStar(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color){
+    private void drawStar(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color){
         ps.pushPose();
-        ps.translate(0.5, 1.0f, 0.5);
+        ps.translate(0.5, 0.05, 0.5);
         ps.mulPose(Vector3f.XP.rotation(135));
         Vec3 player = Minecraft.getInstance().player.getEyePosition();
         Vec3 center = new Vec3(blockEntity.getBlockPos().getX() + 0.5, blockEntity.getBlockPos().getY() + 1.0f, blockEntity.getBlockPos().getZ() + 0.5);
@@ -217,6 +216,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
         //Q.mul(-1);
         ps.mulPose(Q);
+        ps.translate(0,0,-0.6);
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
@@ -229,9 +229,9 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.popPose();
     }
 
-    private void drawTiers(PoseStack ps, MultiBufferSource buffer, ArmillarySphereBlockEntity blockEntity, double distanceFactor, Color color, float scale, float speed, float fac){
+    private void drawTiers(PoseStack ps, MultiBufferSource buffer, ArmillarySphereCoreBlockEntity blockEntity, double distanceFactor, Color color, float scale, float speed, float fac){
         ps.pushPose();
-        ps.translate(0.5, Math.max(1.5 * scale, 0.5), 0.5);
+        ps.translate(0.5, 1.5, 0.5);
         ps.scale(scale, scale, scale);
         ps.scale(0.5f, 0.5f, 0.5f);
         ps.mulPose(Vector3f.XN.rotationDegrees(fac * speed));

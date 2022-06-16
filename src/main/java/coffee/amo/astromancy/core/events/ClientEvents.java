@@ -22,16 +22,14 @@ public class ClientEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void aspectiTooltips(ItemTooltipEvent event){
-        if(event.getItemStack().getItem() instanceof ArcanaSequence){
-            if(event.getItemStack().hasTag()){
-                Star star = Star.fromNbt((CompoundTag) event.getItemStack().getTag().get("star"));
-                String name = star.getName().replaceAll("\\[(.*?)\\]", "");
-                event.getToolTip().add(new TextComponent(name).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
-                if(Screen.hasShiftDown()){
-                    event.getToolTip().add(new TextComponent(star.getName()).withStyle(s -> s.withColor(ChatFormatting.GRAY)));
-                }
-            }
-        }
+//        if(event.getItemStack().getItem() instanceof ArcanaSequence){
+//            if(event.getItemStack().hasTag()){
+//                event.getToolTip().add(new TextComponent(((CompoundTag) event.getItemStack().getTag().get("star")).getString("name").replaceAll("\\[(.*?)\\]", "")).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+//                if(Screen.hasShiftDown()){
+//                    event.getToolTip().add(new TextComponent(((CompoundTag) event.getItemStack().getTag().get("star")).getString("name")).withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+//                }
+//            }
+//        }
         if(Screen.hasShiftDown()){
             TextComponent symbols = AspectiHelper.getEntry(event.getPlayer().level.dimension(), event.getItemStack()).sort().getTooltip();
             event.getToolTip().add(symbols);

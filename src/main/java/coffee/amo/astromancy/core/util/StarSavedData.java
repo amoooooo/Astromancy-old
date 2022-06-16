@@ -26,7 +26,7 @@ public class StarSavedData extends SavedData {
         }
         Star sun = new Star(5200);
         sun.setName("The Sun");
-        constellationInstanceList.get(9).addStar(sun, 0, 0);
+        constellationInstanceList.get(8).addStar(sun, 10, 10);
         System.out.println(Arrays.toString(constellationInstanceList.toArray()));
     }
 

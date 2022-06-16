@@ -1,5 +1,8 @@
 package coffee.amo.astromancy.core.systems.aspecti;
 
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.nbt.CompoundTag;
+
 public enum Aspecti {
     CONJUNCTION("!"), // Basic
     OPPOSITION("\""), // Complete
@@ -12,7 +15,7 @@ public enum Aspecti {
     OCTILE(")"), // Combine
     TRIOCTILE("*"), // Power
     DECILE("+"), // Weight
-    SOL("-"), // Lumen
+    SOL(":"), // Lumen
     LUNA("."), // Lumen alteration
     MERCURIA("/"), // Metal
     VENUTIO("0"), // Fire
@@ -33,5 +36,10 @@ public enum Aspecti {
 
     public String symbol() {
         return symbol;
+    }
+
+    public static Pair<Aspecti, Integer> fromNbt(CompoundTag ptag){
+        CompoundTag tag = ptag.getCompound("aspecti");
+        return Pair.of(values()[tag.getInt("aspecti")], tag.getInt("count"));
     }
 }

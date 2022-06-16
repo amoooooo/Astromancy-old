@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.systems.stars.types;
 
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandomList;
 
 public enum StarType implements WeightedEntry {
     NORMAL("Normal", 100),
@@ -27,4 +28,13 @@ public enum StarType implements WeightedEntry {
     public String getType(){
         return name;
     }
+
+    public static WeightedRandomList<StarType> list = WeightedRandomList.create(
+            NORMAL,
+            CRIMSON,
+            PURE,
+            DARK,
+            EMPTY,
+            HELL
+    );
 }

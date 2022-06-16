@@ -1,79 +1,98 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConstellationInstance {
     private final Constellations constellation;
-    private Star[][] stars = new Star[20][20];
+    private Map<Integer, Map<Integer, Star>> starMap = new HashMap<>();
 
     public ConstellationInstance(Constellations constellation) {
         this.constellation = constellation;
     }
 
     public void addStar(Star star, int x, int y) {
-        stars[x][y] = star;
+        if (!starMap.containsKey(x)) {
+            starMap.put(x, new HashMap<>());
+        }
+        starMap.get(x).put(y, star);
     }
 
     public Star getStar(int x, int y) {
-        return stars[x][y];
+        if (!starMap.containsKey(x)) {
+            return null;
+        }
+        return starMap.get(x).get(y);
     }
 
     public Constellations getConstellation() {
         return constellation;
     }
 
-    public Star[][] getStars() {
-        return stars;
+
+    public Map<Integer, Map<Integer, Star>> getStarMap() {
+        return starMap;
     }
 
-    public void setStars(Star[][] stars) {
-        this.stars = stars;
+    public void setStars(Map<Integer, Map<Integer, Star>> stars) {
+        this.starMap = stars;
     }
 
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
         tag.putString("constellation", constellation.name());
-        ListTag starTag = new ListTag();
-        // add stars to the list, each star is its own compound tag and the key is the quadrant coordinates
-        for (int x = 0; x < 20; x++) {
-            ListTag yTag = new ListTag();
-            starTag.add(x, yTag);
-            for (int y = 0; y < 20; y++) {
-                if (stars[x][y] != null) {
-                    yTag.add(stars[x][y].toNbt());
-                }
-            }
-        }
+        // starMap to NBT using CompoundTags
+        CompoundTag starTag = new CompoundTag();
+        starMap.forEach((x, yMap) -> {
+            yMap.forEach((y, star) -> {
+                CompoundTag starCompound = new CompoundTag();
+                starCompound.put(""+y, star.toNbt());
+                starTag.put(""+x, starCompound);
+            });
+        });
         tag.put("stars", starTag);
         return tag;
     }
 
     public static ConstellationInstance fromNbt(CompoundTag tag){
         String constellationName = tag.getString("constellation");
-        Star[][] starsByQuadrant = new Star[20][20];
-        ListTag starTag = tag.getList("stars", Tag.TAG_LIST);
-        for (int x = 0; x < starTag.size(); x++) {
-            ListTag yList = starTag.getList(x);
-            for (int y = 0; y < yList.size(); y++) {
-                starsByQuadrant[x][y] = Star.fromNbt(yList.getCompound(y));
+        Map<Integer, Map<Integer, Star>> starMap = new HashMap<>();
+        CompoundTag starTag = tag.getCompound("stars");
+        for(String x : starTag.getAllKeys()) {
+            CompoundTag xTag = starTag.getCompound(x);
+            for (String y : xTag.getAllKeys()) {
+                starMap.computeIfAbsent(Integer.parseInt(x), integer -> new HashMap<>()).put(Integer.parseInt(y), Star.fromNbt(xTag.getCompound(y)));
             }
         }
         ConstellationInstance constellationInstance = new ConstellationInstance(Constellations.valueOf(constellationName));
-        constellationInstance.setStars(starsByQuadrant);
+        constellationInstance.setStars(starMap);
         return constellationInstance;
     }
 
-    public Star getStar(Star star) {
-        for (int x = 0; x < 20; x++) {
-            for (int y = 0; y < 20; y++) {
-                if (stars[x][y] != null && stars[x][y].equals(star)) {
-                    return stars[x][y];
+    public Star getStar(Star star){
+        for(Map<Integer, Star> xMap : starMap.values()){
+            for(Star yStar : xMap.values()){
+                if(yStar.equals(star)){
+                    return yStar;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Pair<Integer, Integer> getStarCoordinates(Star star) {
+        for(Map<Integer, Star> xMap : starMap.values()){
+            for(Integer y : xMap.keySet()){
+                if(xMap.get(y).equals(star)){
+                    return Pair.of(xMap.keySet().iterator().next(), y);
                 }
             }
         }

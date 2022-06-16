@@ -32,16 +32,15 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
         ps.translate(0.07f, 1.01f, 0.07f);
         RenderHelper.renderInvertedCube(ps, pBufferSource, 4.85f, sunType);
         VertexConsumer starBuff = pBufferSource.getBuffer(RenderType.solid());
-        ps.translate(0, 1.55, 0);
+        ps.translate(2.5, 2.0, 2.5);
+        ps.scale(0.85f, 0.85f, 0.85f);
         if (!ClientConstellationHolder.constellationInstances.isEmpty()) {
             for (ConstellationInstance cInst : ClientConstellationHolder.getConstellationInstances()) {
-                for (Star[] star : cInst.getStars()) {
-                    for (Star star1 : star) {
-                        if(star1 != null){
-                            RenderHelper.renderStar(ps, 0.035f, pBufferSource, star1, pBlockEntity, pPartialTick, font, true);
-                        }
-                    }
-                }
+                cInst.getStarMap().forEach((x, yMap) -> {
+                    yMap.forEach((y, star) -> {
+                        RenderHelper.renderStar(ps, 0.035f, pBufferSource, star, pBlockEntity, pPartialTick, font, true);
+                    });
+                });
             }
         }
         ps.popPose();

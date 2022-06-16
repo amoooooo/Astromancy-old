@@ -2,16 +2,20 @@ package coffee.amo.astromancy.core.systems.stars;
 
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
+import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import com.mojang.datafixers.util.Pair;
 import com.sammy.ortus.helpers.util.Color;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class StarUtils {
     private static final List<String> luminosityClasses = List.of("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C", "CI", "CII", "CIII", "CIV", "CV", "CVI", "CVII", "CVIII", "CIX", "CX", "CXI", "CXII", "CXIII", "CXIV", "CXV", "CX");
@@ -25,12 +29,13 @@ public class StarUtils {
     );
 
     public static Star generateStar(Level level){
-        int spectralIntensity = level.random.nextInt(0, 50000);
+        SpectralIntensityBand spectralIntBand = SpectralIntensityBand.bands.getRandom(level.random).get();
+        int spectralIntensity = level.random.nextInt(spectralIntBand.getLowerBound() + 1, spectralIntBand.getUpperBound());
         Star star = new Star(spectralIntensity);
         Constellations constellation = Constellations.values()[level.random.nextInt(0, Constellations.values().length)];
-        int X = level.random.nextInt(11)-10;
-        int Y = level.random.nextInt(11)-10;
-        star.setName(constellation.getName() + " " + star.getLuminosityClass().getClassName() + star.getSpectralClass() + " " + RomanNumeralHelper.toRoman(star.getSpectralIntensity() / 100) + " [" + Math.abs(X) + " of " + getQuadrantFromX(X) + ", " + Math.abs(Y) + " of " + getQuadrantFromY(Y) + "]");
+        int X = level.random.nextInt(10)-10;
+        int Y = level.random.nextInt(10)-10;
+        star.setName(constellation.getName() + " " + star.getLuminosityClass().getClassName() + star.getSpectralClass() + " " + RomanNumeralHelper.toRoman(star.getSpectralIntensity() / 100) + " [" + (Math.abs(X)) + " of " + StringHelper.capitalize(getQuadrantFromX(X).name().toLowerCase(Locale.ROOT)) + ", " + (Math.abs(Y)) + " of " + StringHelper.capitalize(getQuadrantFromY(Y).name().toLowerCase(Locale.ROOT)) + "]");
         StarSavedData.get(level.getServer()).addStar(star, X + 10, Y + 10, constellation);
         return star;
     }
@@ -64,20 +69,20 @@ public class StarUtils {
     }
 
     public static Vec3 generatePosition(Star star, Level level){
-        for(int x = 0; x < 20; x++){
-            for(int z = 0; z < 20; z++){
+        AtomicReference<Vec3> pos = new AtomicReference<>(new Vec3(0, 0, 0));
+        ClientConstellationHolder.constellationInstances.forEach(constellationInstance -> {
+            constellationInstance.getStarMap().forEach((x, yMap) -> {
+                yMap.forEach((y, star1) -> {
+                    if(star1.getName().equals(star.getName())){
+                        pos.set(pos.get().add(x - 10, ClientConstellationHolder.findConstellationFromStar(star).getConstellation().getHeight(), y - 10));
+                    }
+                });
+            });
+        });
+        return pos.get();
+    }
 
-                ConstellationInstance constellationInstance = ClientConstellationHolder.findConstellationFromStar(star);
-                if(constellationInstance == null){
-                    continue;
-                }
-                Star star1 = ClientConstellationHolder.getStar(x, z, constellationInstance.getConstellation());
-
-                if(star1 != null){
-                    return new Vec3((x - 10) / 10.0f, ClientConstellationHolder.findConstellationFromStar(star).getConstellation().getHeight(), (z - 10) / 10.0f);
-                }
-            }
-        }
-        return new Vec3(0, 0, 0);
+    public static String getNameFromNbt(CompoundTag tag){
+        return tag.getString("name");
     }
 }

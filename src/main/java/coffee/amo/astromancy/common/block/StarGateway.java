@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.common.block;
 
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
+import coffee.amo.astromancy.core.systems.block.AstromancyEntityBlock;
 import com.sammy.ortus.systems.block.OrtusEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -19,7 +20,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
 
-public class StarGateway<T extends StarGatewayBlockEntity> extends OrtusEntityBlock<T> {
+public class StarGateway<T extends StarGatewayBlockEntity> extends AstromancyEntityBlock<T> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public final VoxelShape SHAPE = Block.box(3, 0, 4, 13, 15, 12);
     public StarGateway(Properties properties) {

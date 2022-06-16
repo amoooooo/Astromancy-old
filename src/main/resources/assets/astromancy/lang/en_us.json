@@ -1,9 +1,24 @@
 {
+  "__items__": "",
+  "itemGroup.astromancy": "Astromancy",
   "block.astromancy.armillary_sphere": "Armillary Sphere",
   "block.astromancy.star_gateway": "Star Gateway",
+  "block.astromancy.jar": "Jar",
   "item.astromancy.arcana_sequence": "Arcana Sequence",
-  "astromancy.gui.book.entry.page.headline.introduction": "Introduction",
-  "astromancy.gui.book.entry.page.text.introduction.a": "HSDERIFG EHFGHESRIDUGHVS RIGY H;XERUGOSDRT JUHISKDRJG SODEF GODFJ GHUSR",
-  "astromancy.gui.book.entry.page.headline.introductiona": "Introduction B",
-  "astromancy.gui.book.entry.page.text.introduction.b": "DRFEIFUERGUNBSEL9 RYGLSE RUTGISRTYHGI SERHYGIS DRYHGI SEJFOEIUGTJ OSERHG/;AWOE JTUOAERJUHGIDEHNGK ERGSEHRF A;EOR GHISERYHGI ER JGFAWOJURG OERHYG"
+  "item.astromancy.alchemical_brass_ingot": "Alchemical Brass Ingot",
+  "item.astromancy.armillary_sphere_cage": "Armillary Sphere Cage",
+  "item.astromancy.aspecti_phial": "Aspecti Phial",
+
+  "__book__": "",
+  "item.astromancy.stella_libri": "Stella Libri",
+  "astromancy.gui.book.title": "Stella Libri",
+  "astromancy.gui.book.entry.introduction": "On the Stella Libri",
+  "astromancy.gui.book.entry.introduction.description": "It's just a note book.",
+  "astromancy.gui.book.entry.page.headline.introduction": "On the Stella Libri",
+  "astromancy.gui.book.entry.page.text.introduction.a": "This book should prove to be useful as I gather more information about the power of the stars. I plan to keep track of everything I learn here, along with any notes I may need to keep around.",
+  "astromancy.gui.book.entry.page.text.introduction.b": "Who knows what I'll find. I'm sure I'll find something useful, at least.",
+  "astromancy.gui.book.entry.armillary_sphere": "Armillary Sphere",
+  "astromancy.gui.book.entry.armillary_sphere.description": "A device that can be used to divine the locations of a star.",
+  "astromancy.gui.book.entry.page.headline.armillary_sphere": "Armillary Sphere",
+  "astromancy.gui.book.entry.page.text.armillary_sphere.a": "The Armillary Sphere is a device that can be used to divine the locations of a star. It does not seem to give me the full stellar location. Maybe I should look into the rituals of old using Sun Dials"
 }

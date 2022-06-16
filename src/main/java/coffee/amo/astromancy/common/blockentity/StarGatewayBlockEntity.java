@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.common.blockentity;
 
+import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import coffee.amo.astromancy.core.util.StarSavedData;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class StarGatewayBlockEntity extends OrtusBlockEntity {
+public class StarGatewayBlockEntity extends AstromancyBlockEntity {
     public Star star;
     public StarGatewayBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
