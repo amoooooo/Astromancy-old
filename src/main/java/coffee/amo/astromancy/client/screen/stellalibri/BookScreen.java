@@ -8,8 +8,11 @@ import coffee.amo.astromancy.client.screen.stellalibri.objects.ImportantEntryObj
 import coffee.amo.astromancy.client.screen.stellalibri.pages.CraftingPage;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.HeadlineTextPage;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.TextPage;
+import coffee.amo.astromancy.client.screen.stellalibri.tab.BookTab;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookEntriesEvent;
+import coffee.amo.astromancy.core.events.SetupAstromancyBookTabsEvent;
+import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.recipe.IRecipeComponent;
 import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -45,9 +49,13 @@ public class BookScreen extends Screen {
 
     public static final ResourceLocation FRAME_TEXTURE = Astromancy.astromancy("textures/gui/book/frame.png");
     public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/eldritch_tab_thing.png");
+    public static final ResourceLocation VERTICAL_LINE = Astromancy.astromancy("textures/gui/book/line.png");
+    public static final ResourceLocation HORIZONTAL_LINE = Astromancy.astromancy("textures/gui/book/line_horizontal.png");
     public static BookScreen screen;
+    public BookTab tab;
     public static ArrayList<BookEntry> ENTRIES = new ArrayList<>();
     public static ArrayList<BookObject> OBJECTS = new ArrayList<>();
+    public static ArrayList<BookTab> TABS = new ArrayList<>();
     public final int parallax_width = 512;
     public final int parallax_height = 512;
     public int bookWidth = 256;
@@ -66,12 +74,16 @@ public class BookScreen extends Screen {
         setupEntries();
         MinecraftForge.EVENT_BUS.post(new SetupAstromancyBookEntriesEvent());
         setupObjects();
+        setupTabs();
+        MinecraftForge.EVENT_BUS.post(new SetupAstromancyBookTabsEvent());
+        setTab(TABS.get(0));
     }
 
     public static void setupEntries() {
         ENTRIES.clear();
         Item EMPTY = ItemStack.EMPTY.getItem();
 
+        // Introduction
         ENTRIES.add(new BookEntry("introduction", STELLA_LIBRI.get(), 0, 0)
                 .setObjectSupplier(ImportantEntryObject::new)
                 .addPage(new HeadlineTextPage("introduction", "introduction.a"))
@@ -81,14 +93,32 @@ public class BookScreen extends Screen {
                 .addPage(CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()))
                 .addPage(CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get())));
 
-        ENTRIES.add(new BookEntry("armillary_sphere_2", ARMILLARY_SPHERE_CAGE.get(), 0, -2).setObjectSupplier(EntryObject::new)
-                .addPage(new HeadlineTextPage("armillary_sphere_2", "armillary_sphere_2.a")));
+        // Aspecti Phial
+        ENTRIES.add(new BookEntry("aspecti_phial", ASPECTI_PHIAL.get(), 0, 0).setObjectSupplier(ImportantEntryObject::new)
+                .addPage(new HeadlineTextPage("aspecti_phial", "aspecti_phial.a")));
+        ENTRIES.add(new BookEntry("jars", JAR.get(), 0, -1).setObjectSupplier(EntryObject::new)
+                .addPage(new HeadlineTextPage("jars", "jars.a")));
+    }
+
+    public static void setupTabs(){
+        TABS.clear();
+        TABS.add(new BookTab(-22,24, "introduction", 0, 0 , STELLA_LIBRI.get().getDefaultInstance(), BACKGROUND_TEXTURE).addEntries(
+                OBJECTS.stream().filter(s ->
+                        s.identifier.equals("introduction") || s.identifier.equals("armillary_sphere")
+                ).collect(Collectors.toCollection(ArrayList::new))));
+        TABS.add(new BookTab(-22,48, "aspecti", 1, 0 , ASPECTI_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
+                OBJECTS.stream().filter(s ->
+                        s.identifier.equals("aspecti_phial") || s.identifier.equals("jars")
+                ).collect(Collectors.toCollection(ArrayList::new))));
     }
 
     public static boolean isHovering(double mouseX, double mouseY, int posX, int posY, int width, int height) {
         if (!isInView(mouseX, mouseY)) {
             return false;
         }
+        return mouseX > posX && mouseX < posX + width && mouseY > posY && mouseY < posY + height;
+    }
+    public static boolean isHoveringTab(double mouseX, double mouseY, int posX, int posY, int width, int height) {
         return mouseX > posX && mouseX < posX + width && mouseY > posY && mouseY < posY + height;
     }
 
@@ -278,7 +308,7 @@ public class BookScreen extends Screen {
 
     public static void openScreen(boolean ignoreNextMouseClick) {
         Minecraft.getInstance().setScreen(getInstance());
-        if(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof StellaLibri sl){
+        if (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof StellaLibri sl) {
             sl.setOpenness(1);
         }
         screen.playSound();
@@ -304,13 +334,13 @@ public class BookScreen extends Screen {
         int height = 48;
         for (BookEntry entry : ENTRIES) {
 
-            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.identifier, entry.children));
+            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.identifier, entry.children, entry.xOffset, entry.yOffset));
         }
         for (BookObject object : OBJECTS) {
-            if(object.identifier == "introduction"){
+            if (object.identifier == "introduction") {
                 object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere").findFirst().orElse(null));
-            } else if (object.identifier == "armillary_sphere") {
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere_2").findFirst().orElse(null));
+            } else if (object.identifier == "aspecti_phial") {
+                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "jars").findFirst().orElse(null));
             }
         }
         faceObject(OBJECTS.get(0));
@@ -331,20 +361,17 @@ public class BookScreen extends Screen {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        renderBackground(BACKGROUND_TEXTURE, poseStack, 0.1f, 0.1f);
+        renderBackground(tab.BACKGROUND, poseStack, 0.1f, 0.1f);
         GL11.glEnable(GL_SCISSOR_TEST);
         cut();
-        if(Minecraft.getInstance().level.getDayTime() > 13000){
-            renderEntries(poseStack, mouseX, mouseY, partialTicks);
-
-        }
+        renderEntries(poseStack, mouseX, mouseY, partialTicks);
         GL11.glDisable(GL_SCISSOR_TEST);
 
         //renderTransparentTexture(FADE_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
-        renderTransparentTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 256, 256);
-        if(Minecraft.getInstance().level.getDayTime() > 13000){
-            lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
-        }
+        renderTransparentTexture(FRAME_TEXTURE, poseStack, guiLeft, guiTop, 0, 0, bookWidth, bookHeight, 256, 256);
+        renderTabs(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
+        lateTabRender(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
+        lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -358,11 +385,21 @@ public class BookScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         cachedXOffset = xOffset;
         cachedYOffset = yOffset;
+        int guiLeft = (width - bookWidth) / 2;
+        int guiTop = (height - bookHeight) / 2;
+        for (BookTab tab : TABS) {
+            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY)) {
+                Minecraft.getInstance().player.playNotifySound(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, 1.0f, 1.0f);
+                tab.click(guiLeft, guiTop, mouseX, mouseY);
+                break;
+            }
+        }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
+
         if (ignoreNextMouseInput) {
             ignoreNextMouseInput = false;
             return super.mouseReleased(mouseX, mouseY, button);
@@ -371,9 +408,11 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
-            if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
-                object.click(xOffset, yOffset, mouseX, mouseY);
-                break;
+            if(tab.entries.contains(object)){
+                if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
+                    object.click(xOffset, yOffset, mouseX, mouseY);
+                    break;
+                }
             }
         }
         return super.mouseReleased(mouseX, mouseY, button);
@@ -388,7 +427,7 @@ public class BookScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (Minecraft.getInstance().options.keyInventory.matches(keyCode, scanCode)) {
             onClose();
-            if(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof StellaLibri sl){
+            if (Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof StellaLibri sl) {
                 sl.setOpenness(0);
             }
             return true;
@@ -404,19 +443,47 @@ public class BookScreen extends Screen {
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if(ClientResearchHolder.getResearch().contains(object.identifier)){
-                boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
-                object.isHovering = isHovering;
-                object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
-                object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                if(!object.children.isEmpty()){
-                    object.children.forEach(c -> {
-                        boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
-                        c.isHovering = isHovering2;
-                        c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
-                        c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    });
+            if(tab.entries.contains(object)){
+                if (ClientResearchHolder.getResearch().contains(object.identifier)) {
+                    boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
+                    object.isHovering = isHovering;
+                    object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
+                    object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                    // TODO: render a basic line transparent texture FROM the child to the parent
+                    if (!object.children.isEmpty()) {
+                        object.children.forEach(c -> {
+                            if (ClientResearchHolder.getResearch().contains(c.identifier)) {
+                                if (!anyMatch(ClientResearchHolder.getResearch(), c.children)) {
+                                    boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
+                                    c.isHovering = isHovering2;
+                                    c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
+                                    c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                }
+                            }
+                        });
+                    }
                 }
+            }
+        }
+    }
+
+    public void renderTabs(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
+        for (int i = TABS.size() - 1; i >= 0; i--){
+            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier)){
+                BookTab tab = TABS.get(i);
+                boolean isHovering = tab.isHovering(guiLeft, guiTop, mouseX, mouseY);
+                tab.isHovering = isHovering;
+                tab.hover = isHovering ? Math.min(tab.hover++, tab.hoverCap()) : Math.max(tab.hover--, 0);
+                tab.render(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks, this.tab == tab);
+            }
+        }
+    }
+
+    public void lateTabRender(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
+        for (int i = TABS.size() - 1; i >= 0; i--){
+            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier)){
+                BookTab tab = TABS.get(i);
+                tab.lateRender(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks);
             }
         }
     }
@@ -424,10 +491,14 @@ public class BookScreen extends Screen {
     public void lateEntryRender(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if(ClientResearchHolder.getResearch().contains(object.identifier)){
+            if (ClientResearchHolder.getResearch().contains(object.identifier)) {
                 object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                 object.children.forEach(c -> {
-                    c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                    if (ClientResearchHolder.getResearch().contains(c.identifier)) {
+                        if (!anyMatch(ClientResearchHolder.getResearch(), c.children)) {
+                            c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                        }
+                    }
                 });
             }
         }
@@ -436,8 +507,8 @@ public class BookScreen extends Screen {
     public void renderBackground(ResourceLocation texture, PoseStack poseStack, float xModifier, float yModifier) {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        int insideLeft = guiLeft + 15;
-        int insideTop = guiTop + 16;
+        int insideLeft = guiLeft + 16;
+        int insideTop = guiTop + 17;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
@@ -464,5 +535,18 @@ public class BookScreen extends Screen {
     public void playSound() {
         Player playerEntity = Minecraft.getInstance().player;
         playerEntity.playNotifySound(SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0f, 1.0f);
+    }
+
+    public boolean anyMatch(List<String> list1, List<BookObject> list2) {
+        for (BookObject object : list2) {
+            if (list1.contains(object.identifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setTab(BookTab tab) {
+        this.tab = tab;
     }
 }

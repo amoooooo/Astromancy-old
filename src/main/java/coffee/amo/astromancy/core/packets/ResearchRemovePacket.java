@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class ResearchRemovePacket extends ResearchPacket{
     public ResearchRemovePacket(String researchId) {
-        super(researchId);
+        super(researchId, true);
     }
 
     public static void encode(ResearchRemovePacket packet, FriendlyByteBuf buffer){

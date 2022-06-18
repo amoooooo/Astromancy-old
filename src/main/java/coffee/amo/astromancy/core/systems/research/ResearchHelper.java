@@ -9,7 +9,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class ResearchHelper {
     public static void addResearch(String in, Player player){
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(in));
+        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(in, false));
     }
 
     public static void removeResearch(String in, Player player){

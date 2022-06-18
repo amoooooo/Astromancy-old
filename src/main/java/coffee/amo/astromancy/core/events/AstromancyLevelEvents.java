@@ -1,12 +1,17 @@
 package coffee.amo.astromancy.core.events;
 
+import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
+import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,6 +45,21 @@ public class AstromancyLevelEvents {
     public static void sendStars(PlayerEvent.PlayerLoggedInEvent event) {
         if(event.getEntity() instanceof ServerPlayer se) {
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get(event.getEntity().getServer()).getConstellationInstances()));
+        }
+    }
+
+    @SubscribeEvent
+    public static void researchCommand(RegisterCommandsEvent event){
+        AstromancyCommand.registerSubCommands(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void libriObtain(AdvancementEvent event){
+        if(event.getAdvancement().getId().equals(Astromancy.astromancy("stella_libri"))){
+            if(event.getPlayer() instanceof ServerPlayer se){
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("introduction", false));
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("tab:introduction", true));
+            }
         }
     }
 }

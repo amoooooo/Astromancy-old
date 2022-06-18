@@ -13,6 +13,8 @@
   "__book__": "",
   "item.astromancy.stella_libri": "Stella Libri",
   "astromancy.gui.book.title": "Stella Libri",
+  "astromancy.gui.book.tab.introduction": "Introduction",
+    "astromancy.gui.book.tab.aspecti": "Aspecti",
   "astromancy.gui.book.entry.introduction": "On the Stella Libri",
   "astromancy.gui.book.entry.introduction.description": "It's just a note book.",
   "astromancy.gui.book.entry.page.headline.introduction": "On the Stella Libri",
@@ -22,5 +24,13 @@
   "astromancy.gui.book.entry.armillary_sphere.description": "A device that can be used to divine the locations of a star.",
   "astromancy.gui.book.entry.page.headline.armillary_sphere": "Armillary Sphere",
   "astromancy.gui.book.entry.page.text.armillary_sphere.a": "The Armillary Sphere is a device that can be used to divine the locations of a star. It does not seem to give me the full stellar location. Maybe I should look into the rituals of old using Sun Dials",
-  "astromancy.gui.entry.title": "Title"
+  "astromancy.gui.entry.title": "Title",
+  "astromancy.gui.book.entry.aspecti_phial": "Aspecti Phials",
+    "astromancy.gui.book.entry.aspecti_phial.description": "Do you really need a description.",
+    "astromancy.gui.book.entry.page.headline.aspecti_phial": "Aspecti Phials",
+    "astromancy.gui.book.entry.page.text.aspecti_phial.a": "I crafted these phials to store small amounts of Aspecti. They are very light and easy to carry.",
+  "astromancy.gui.book.entry.jars": "Jars",
+    "astromancy.gui.book.entry.jars.description": "Jars are used to store the Aspecti en mass.",
+    "astromancy.gui.book.entry.page.headline.jars": "Jars",
+    "astromancy.gui.book.entry.page.text.jars.a": "I crafted these jars to store the Aspecti en mass. They are much less light than the phials."
 }

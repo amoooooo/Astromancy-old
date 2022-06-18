@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "astromancy:stella_libri"
+    },
+    "title": "Into the Stars",
+    "description": "A book about the stars",
+    "frame": "task",
+    "show_toast": true,
+    "annouce_to_chat": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "astromancy:stella_libri"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

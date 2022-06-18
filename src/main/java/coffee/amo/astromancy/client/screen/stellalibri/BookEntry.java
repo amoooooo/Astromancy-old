@@ -66,6 +66,6 @@ public class BookEntry {
     }
 
     public interface EntryObjectSupplier {
-        EntryObject getBookObject(BookEntry entry, int x, int y, String identifier, List<BookObject> children);
+        EntryObject getBookObject(BookEntry entry, int x, int y, String identifier, List<BookObject> children, int localX, int localY);
     }
 }

@@ -17,11 +17,14 @@ public class BookObject {
     public float hover;
     public int posX;
     public int posY;
+    public int localX;
+    public int localY;
     public int width;
     public int height;
 
-    public BookObject(int posX, int posY, int width, int height, String identifier)
-    {
+    public BookObject(int posX, int posY, int width, int height, String identifier, int localX, int localY) {
+        this.localX = localX;
+        this.localY = localY;
         this.posX = posX;
         this.posY = posY;
         this.width = width;
