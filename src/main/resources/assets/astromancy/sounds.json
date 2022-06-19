@@ -12,5 +12,29 @@
                 "stream": true
             }
         ]
+    },
+    "jar":{
+        "sounds": [
+            {
+                "name": "astromancy:blocks/jar1",
+                "weight": 1,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/jar2",
+                "weight": 1,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/jar3",
+                "weight": 1,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/jar4",
+                "weight": 1,
+                "stream": true
+            }
+        ]
     }
 }

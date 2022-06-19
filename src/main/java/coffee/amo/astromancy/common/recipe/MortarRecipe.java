@@ -20,22 +20,12 @@ import java.util.function.Predicate;
 public class MortarRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
-    private final ItemStack pestle;
     private final NonNullList<Ingredient> ingredients;
 
-    public MortarRecipe(ResourceLocation id, ItemStack output, ItemStack pestle, NonNullList<Ingredient> ingredients) {
+    public MortarRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> ingredients) {
         this.id = id;
         this.output = output;
-        this.pestle = pestle;
         this.ingredients = ingredients;
-    }
-
-    public static MortarRecipe getRecipe(Level level, ItemStack stack, ArrayList<ItemStack> crushables){
-        return getRecipe(level, c -> c.doesPestleMatch(stack) && c.doCrushablesMatch(crushables));
-    }
-
-    public boolean doesPestleMatch(ItemStack stack){
-        return this.pestle.equals(stack, false);
     }
 
     public ArrayList<ItemStack> getSortedCrushables(ArrayList<ItemStack> crushables){
@@ -94,15 +84,11 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
      */
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        if(pestle.equals(pContainer.getItem(0))){
             for(int i = 0; i < ingredients.size(); i++){
                 if(!ingredients.get(i).test(pContainer.getItem(i + 1))){
                     return false;
                 }
             }
-        } else {
-            return false;
-        }
         return true;
     }
 
@@ -164,15 +150,14 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
         @Override
         public MortarRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
-            ItemStack pestle = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "pestle"));
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
-            NonNullList<Ingredient> ingredientList = NonNullList.withSize(1, Ingredient.EMPTY);
+            NonNullList<Ingredient> ingredientList = NonNullList.withSize(ingredients.size(), Ingredient.EMPTY);
 
             for (int i = 0; i < ingredients.size(); i++) {
                 ingredientList.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
-            return new MortarRecipe(pRecipeId, output, pestle, ingredientList);
+            return new MortarRecipe(pRecipeId, output, ingredientList);
         }
 
         @Nullable
@@ -185,8 +170,7 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
             }
 
             ItemStack output = pBuffer.readItem();
-            ItemStack pestle = pBuffer.readItem();
-            return new MortarRecipe(pRecipeId, output, pestle, ingredientList);
+            return new MortarRecipe(pRecipeId, output, ingredientList);
         }
 
         @Override
@@ -196,7 +180,6 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
                 ingredient.toNetwork(pBuffer);
             }
             pBuffer.writeItem(pRecipe.output);
-            pBuffer.writeItem(pRecipe.pestle);
         }
 
         /**

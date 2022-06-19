@@ -150,6 +150,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public TextComponent getAspectiComponent(){
         TextComponent tc = new TextComponent("");
         if(this.aspecti != null){
+            tc.append(new TextComponent("[").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
             tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));

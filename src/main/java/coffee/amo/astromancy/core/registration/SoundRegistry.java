@@ -9,7 +9,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class SoundRegistry {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Astromancy.MODID);
 
-    public static final RegistryObject<SoundEvent> RESEARCH_WRITE =register(new SoundEvent(Astromancy.astromancy("write")));
+    public static final RegistryObject<SoundEvent> RESEARCH_WRITE = register(new SoundEvent(Astromancy.astromancy("write")));
+    public static final RegistryObject<SoundEvent> JAR = register(new SoundEvent(Astromancy.astromancy("jar")));
 
     public static RegistryObject<SoundEvent> register(SoundEvent soundEvent) {
         return SOUNDS.register(soundEvent.getLocation().getPath(), () -> soundEvent);
