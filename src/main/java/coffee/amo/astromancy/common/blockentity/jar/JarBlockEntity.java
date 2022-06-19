@@ -2,6 +2,7 @@ package coffee.amo.astromancy.common.blockentity.jar;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.AspectiEntry;
+import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
@@ -14,6 +15,7 @@ import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +31,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,17 +55,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public void tick() {
         super.tick();
         if(level.isClientSide){
-            if(Minecraft.getInstance().hitResult instanceof BlockHitResult && !Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.MISS)){
-                if(level.getBlockState(((BlockHitResult) Minecraft.getInstance().hitResult).getBlockPos()).getBlock() instanceof JarBlock && ((BlockHitResult) Minecraft.getInstance().hitResult).getBlockPos().equals(this.getBlockPos())){
-                    if(clientLookAtTicks < 10){
-                        clientLookAtTicks++;
-                    }
-                }  else {
-                    clientLookAtTicks = Math.max(0, clientLookAtTicks - 2);
-                }
-            } else {
-                clientLookAtTicks = Math.max(0, clientLookAtTicks - 2);
-            }
+            clientLookAtTicks = ClientRenderHelper.tickStuff((ClientLevel) level, this, clientLookAtTicks);
         }
     }
 
