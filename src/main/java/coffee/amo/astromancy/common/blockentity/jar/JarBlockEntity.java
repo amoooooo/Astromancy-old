@@ -7,6 +7,7 @@ import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.helpers.BlockHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;
+import coffee.amo.astromancy.core.packets.ItemSyncPacket;
 import coffee.amo.astromancy.core.packets.JarUpdatePacket;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
@@ -18,12 +19,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.PacketDistributor;
@@ -106,6 +109,27 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                         this.getBlockPos().getZ(),
                         128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal()));
                 return InteractionResult.SUCCESS;
+            } else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
+                if(count <= 256 && Aspecti.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("aspecti")] == aspecti){
+                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag");
+                    int jarCount = tag.getInt("count");
+                    int cachedJarCount = jarCount;
+                    jarCount = jarCount + count > 256 ? (jarCount + count) - 256 : 0;
+                    count = Math.min(cachedJarCount + count, 256);
+                    if(jarCount == 0){
+                        heldItem.getTag().remove("BlockEntityTag");
+                    } else {
+                        tag.putInt("count", jarCount);
+                        heldItem.getTag().put("BlockEntityTag", tag);
+                    }
+                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
+                            this.getBlockPos().getX(),
+                            this.getBlockPos().getY(),
+                            this.getBlockPos().getZ(),
+                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal()));
+                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(heldItem));
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
         return InteractionResult.SUCCESS;
@@ -159,5 +183,10 @@ public class JarBlockEntity extends AstromancyBlockEntity {
             tc.append(AspectiEntry.intToTextComponent(count).append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
         }
         return tc;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 }

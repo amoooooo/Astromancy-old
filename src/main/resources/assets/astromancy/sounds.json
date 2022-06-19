@@ -36,5 +36,39 @@
                 "stream": true
             }
         ]
+    },
+    "grind": {
+        "sounds": [
+            {
+                "name": "astromancy:blocks/grind",
+                "weight": 1,
+                "pitch": 1,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/grind",
+                "weight": 1,
+                "pitch": 0.7,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/grind",
+                "weight": 1,
+                "pitch": 1.2,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/grind",
+                "weight": 1,
+                "pitch": 0.85,
+                "stream": true
+            },
+            {
+                "name": "astromancy:blocks/grind",
+                "weight": 1,
+                "pitch": 1.1,
+                "stream": true
+            }
+        ]
     }
 }

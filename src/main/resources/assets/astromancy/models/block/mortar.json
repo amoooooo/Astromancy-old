@@ -1,10 +1,10 @@
 {
-	"parent": "block/block",
 	"credit": "Made with Blockbench",
+	"parent": "block/block",
 	"textures": {
-		"0": "minecraft:block/oak_planks",
-		"1": "minecraft:block/deepslate",
-		"particle": "minecraft:block/deepslate"
+		"0": "block/oak_planks",
+		"1": "block/deepslate",
+		"particle": "block/deepslate"
 	},
 	"elements": [
 		{
@@ -82,5 +82,24 @@
 				"down": {"uv": [5, 0, 4, 1], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 7, 0]
+		},
+		"firstperson_righthand": {
+			"translation": [0, 7.25, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [0, 7.25, 0]
+		},
+		"ground": {
+			"translation": [0, 5, 0]
+		},
+		"gui": {
+			"rotation": [45.75, 34.75, 0],
+			"translation": [0.25, 6.5, 0],
+			"scale": [1.5, 1.5, 1.5]
+		}
+	}
 }

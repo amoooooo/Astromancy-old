@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
+import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
@@ -13,10 +14,19 @@ import java.util.Map;
 
 public class ConstellationInstance {
     private final Constellations constellation;
+    private Aspecti attunedAspecti;
     private Map<Integer, Map<Integer, Star>> starMap = new HashMap<>();
 
     public ConstellationInstance(Constellations constellation) {
         this.constellation = constellation;
+    }
+
+    public void setAttunedAspecti(Aspecti attunedAspecti) {
+        this.attunedAspecti = attunedAspecti;
+    }
+
+    public Aspecti getAttunedAspecti() {
+        return attunedAspecti;
     }
 
     public void addStar(Star star, int x, int y) {
@@ -58,6 +68,7 @@ public class ConstellationInstance {
                 starTag.put(""+x, starCompound);
             });
         });
+        tag.putInt("aspecti", attunedAspecti.ordinal());
         tag.put("stars", starTag);
         return tag;
     }
@@ -74,6 +85,7 @@ public class ConstellationInstance {
         }
         ConstellationInstance constellationInstance = new ConstellationInstance(Constellations.valueOf(constellationName));
         constellationInstance.setStars(starMap);
+        constellationInstance.setAttunedAspecti(Aspecti.values()[tag.getInt("aspecti")]);
         return constellationInstance;
     }
 

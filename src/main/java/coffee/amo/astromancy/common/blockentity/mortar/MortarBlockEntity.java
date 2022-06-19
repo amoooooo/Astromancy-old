@@ -4,10 +4,12 @@ import coffee.amo.astromancy.common.item.PestleItem;
 import coffee.amo.astromancy.common.recipe.MortarRecipe;
 import coffee.amo.astromancy.core.helpers.BlockHelper;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
+import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntityInventory;
 import coffee.amo.astromancy.core.systems.blockentity.ItemHolderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class MortarBlockEntity extends ItemHolderBlockEntity {
+    public AstromancyBlockEntityInventory output;
     public MortarRecipe recipe;
     public int progress;
     public int cooldown;
@@ -30,6 +33,13 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
     public MortarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistration.MORTAR.get(), pos, state);
         inventory = new AstromancyBlockEntityInventory(6, 1) {
+            @Override
+            public void onContentsChanged(int slot) {
+                super.onContentsChanged(slot);
+                BlockHelper.updateAndNotifyState(level, pos);
+            }
+        };
+        output = new AstromancyBlockEntityInventory(1, 1) {
             @Override
             public void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
@@ -45,16 +55,23 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
 
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand) {
-        if(player.getItemInHand(hand).isEmpty() && !player.isCrouching()){
+        if(player.getItemInHand(hand).isEmpty() && !player.isCrouching() && output.isEmpty() && !inventory.isEmpty()){
+            level.playSound(null, worldPosition, SoundRegistry.GRIND.get(), SoundSource.BLOCKS, 1f, 1f);
             if(spins < 5){
                 spins++;
             } else {
                 craftItem(this);
             }
-            player.sendMessage(new TextComponent(String.valueOf(spins)), player.getUUID());
             return InteractionResult.SUCCESS;
         }
-        return super.onUse(player, hand);
+        if(spins > 5){
+            spins = 0;
+        }
+        super.onUse(player, hand);
+        if(!output.isEmpty()){
+            output.interact(level, player, hand);
+        }
+        return InteractionResult.SUCCESS;
     }
 
     private static boolean hasRecipe(MortarBlockEntity entity){
@@ -81,7 +98,7 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
             for(int i = 0; i < entity.inventory.nonEmptyItemAmount; i++){
                 entity.inventory.extractItem(i, 1, false);
             }
-            entity.inventory.setStackInSlot(0, match.get().getResultItem());
+            entity.output.setStackInSlot(0, match.get().getResultItem());
             entity.progress = 0;
             entity.spins = 0;
             entity.cooldown = 0;

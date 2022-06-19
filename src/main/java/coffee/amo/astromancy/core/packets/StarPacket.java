@@ -4,6 +4,7 @@ import coffee.amo.astromancy.client.packets.ClientPacketUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;

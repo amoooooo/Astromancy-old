@@ -51,5 +51,9 @@ public class AstromancyPacketHandler {
         INSTANCE.registerMessage(ID++, BookStatePacket.class, BookStatePacket::encode,
                 BookStatePacket::decode,
                 BookStatePacket::handle);
+
+        INSTANCE.registerMessage(ID++, ItemSyncPacket.class, ItemSyncPacket::encode,
+                ItemSyncPacket::decode,
+                ItemSyncPacket::handle);
     }
 }

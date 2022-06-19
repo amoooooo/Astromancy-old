@@ -85,7 +85,7 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
     @Override
     public boolean matches(SimpleContainer pContainer, Level pLevel) {
             for(int i = 0; i < ingredients.size(); i++){
-                if(!ingredients.get(i).test(pContainer.getItem(i + 1))){
+                if(!ingredients.get(i).test(pContainer.getItem(i))){
                     return false;
                 }
             }
@@ -99,7 +99,7 @@ public class MortarRecipe implements Recipe<SimpleContainer> {
      */
     @Override
     public ItemStack assemble(SimpleContainer pContainer) {
-        return output;
+        return output.copy();
     }
 
     /**

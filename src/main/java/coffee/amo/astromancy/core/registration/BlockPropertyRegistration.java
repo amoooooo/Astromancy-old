@@ -10,7 +10,7 @@ public class BlockPropertyRegistration {
     }
 
     public static BlockBehaviour.Properties JAR_PROPERTIES(){
-        return BlockBehaviour.Properties.of(Material.GLASS).sound(SoundTypes.JAR).instabreak().dynamicShape().isViewBlocking((var1, var2, var3) -> false).noOcclusion();
+        return BlockBehaviour.Properties.of(Material.GLASS).sound(SoundTypes.JAR).strength(0.2f).dynamicShape().isViewBlocking((var1, var2, var3) -> false).noOcclusion();
     }
 
     public static BlockBehaviour.Properties STELLARITE() {

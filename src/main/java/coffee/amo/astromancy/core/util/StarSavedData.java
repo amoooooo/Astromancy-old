@@ -2,9 +2,11 @@ package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
+import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
+import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -15,19 +17,32 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
 
     public StarSavedData() {
+        List<Aspecti> shuffledAspecti = Lists.newArrayList(Aspecti.values());
+        shuffledAspecti.remove(Aspecti.EMPTY);
+        Collections.shuffle(shuffledAspecti);
         for(Constellations c : Constellations.values()){
             constellationInstanceList.add(new ConstellationInstance(c));
         }
+        AtomicInteger i = new AtomicInteger();
+        shuffledAspecti.subList(0, constellationInstanceList.size()).forEach(aspecti -> {
+            constellationInstanceList.get(i.get()).setAttunedAspecti(aspecti);
+            i.getAndIncrement();
+        });
         Star sun = new Star(5200);
         sun.setName("The Sun");
         constellationInstanceList.get(8).addStar(sun, 10, 10);
         System.out.println(Arrays.toString(constellationInstanceList.toArray()));
+        constellationInstanceList.forEach(c -> {
+            System.out.println(c.getConstellation().getName() + ": " + c.getAttunedAspecti().name());
+        });
     }
 
     public static StarSavedData get(MinecraftServer server) {

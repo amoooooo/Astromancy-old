@@ -19,7 +19,7 @@ public class AspectiHelper {
     }
 
     public static AspectiEntry getEntry(ResourceKey<Level> levelKey, ItemStack item) {
-        List<CompoundInstance> finalResults = new ArrayList<>(getResults(levelKey).dataFor(item));
+        List<CompoundInstance> finalResults = new ArrayList<>(getResults(levelKey).dataFor(item.getItem().getDefaultInstance()));
         if (item.hasContainerItem() && !item.getContainerItem().equals(item)){
             Set<CompoundInstance> containerValues = getResults(levelKey).dataFor(item.getContainerItem());
             for(CompoundInstance containerValue : containerValues) {

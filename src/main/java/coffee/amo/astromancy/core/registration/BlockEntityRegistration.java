@@ -1,10 +1,7 @@
 package coffee.amo.astromancy.core.registration;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.client.renderer.block.ArmillarySphereRenderer;
-import coffee.amo.astromancy.client.renderer.block.AstrolabeRenderer;
-import coffee.amo.astromancy.client.renderer.block.JarRenderer;
-import coffee.amo.astromancy.client.renderer.block.StarGatewayRenderer;
+import coffee.amo.astromancy.client.renderer.block.*;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCoreBlock;
 import coffee.amo.astromancy.common.blockentity.AstrolabeBlockEntity;
 import coffee.amo.astromancy.common.blockentity.CrucibleBlockEntity;
@@ -64,6 +61,7 @@ public class BlockEntityRegistration {
             event.registerBlockEntityRenderer(STAR_GATEWAY.get(), StarGatewayRenderer::new);
             event.registerBlockEntityRenderer(JAR.get(), JarRenderer::new);
             event.registerBlockEntityRenderer(ASTROLABE.get(), AstrolabeRenderer::new);
+            event.registerBlockEntityRenderer(MORTAR.get(), MortarRenderer::new);
         }
     }
 }

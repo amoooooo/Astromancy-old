@@ -44,7 +44,7 @@ public class AspectiPhial extends Item {
     @Override
     public Component getName(ItemStack pStack) {
         if(pStack.hasTag()){
-            return new TextComponent(StringHelper.capitalize(Aspecti.values()[((CompoundTag) pStack.getTag().get("aspecti")).getInt("aspecti")].name().toLowerCase(Locale.ROOT)) + " Phial");
+            return new TextComponent("Crude " + StringHelper.capitalize(Aspecti.values()[((CompoundTag) pStack.getTag().get("aspecti")).getInt("aspecti")].name().toLowerCase(Locale.ROOT)) + " Phial");
         }
         return super.getName(pStack);
     }

@@ -7,7 +7,25 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "astromancy:jar"
+          "name": "astromancy:jar",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "aspecti",
+                  "target": "BlockEntityTag.aspecti",
+                  "op": "replace"
+                },
+                {
+                  "source": "count",
+                  "target": "BlockEntityTag.count",
+                  "op": "replace"
+                }
+              ]
+            }
+          ]
         }
       ],
       "conditions": [

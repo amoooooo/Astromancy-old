@@ -24,13 +24,13 @@ public class PhialTab extends CreativeModeTab {
 
     @Override
     public void fillItemList(NonNullList<ItemStack> pItems) {
+        super.fillItemList(pItems);
         for(Aspecti aspecti : Aspecti.values()) {
             if(aspecti == Aspecti.EMPTY){
                 continue;
             }
             pItems.add(addAspectiPhial(ItemRegistry.ASPECTI_PHIAL.get().getDefaultInstance(), aspecti.ordinal()));
         }
-        super.fillItemList(pItems);
     }
 
     private ItemStack addAspectiPhial(ItemStack stack, int aspecti) {
