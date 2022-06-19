@@ -1,9 +1,11 @@
 package coffee.amo.astromancy.common.item;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
+import coffee.amo.astromancy.core.systems.research.ResearchHelper;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -45,6 +47,9 @@ public class StellariteDust extends Item {
                 context.getPlayer().playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.MASTER, 5.0f, 1.0f);
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("crucible", false));
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("aspecti_phial", true));
+                context.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
+                    research.addResearch(context.getPlayer(), "crucible");
+                });
             }
         }
         return InteractionResult.PASS;

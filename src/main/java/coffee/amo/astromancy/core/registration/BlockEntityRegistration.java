@@ -11,6 +11,7 @@ import coffee.amo.astromancy.common.blockentity.CrucibleBlockEntity;
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphereCoreBlockEntity;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
+import coffee.amo.astromancy.common.blockentity.mortar.MortarBlockEntity;
 import coffee.amo.astromancy.core.systems.multiblock.IAstromancyMultiblockComponent;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockComponentEntity;
 import net.minecraft.world.level.block.Block;
@@ -39,6 +40,7 @@ public class BlockEntityRegistration {
     public static final RegistryObject<BlockEntityType<JarBlockEntity>> JAR = BLOCK_ENTITY_TYPES.register("jar", () -> BlockEntityType.Builder.of(JarBlockEntity::new, BlockRegistration.JAR.get()).build(null));
     public static final RegistryObject<BlockEntityType<AstrolabeBlockEntity>> ASTROLABE = BLOCK_ENTITY_TYPES.register("astrolabe", () -> BlockEntityType.Builder.of(AstrolabeBlockEntity::new, BlockRegistration.ASTROLABE.get()).build(null));
     public static final RegistryObject<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE = BLOCK_ENTITY_TYPES.register("crucible", () -> BlockEntityType.Builder.of(CrucibleBlockEntity::new, BlockRegistration.CRUCIBLE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MortarBlockEntity>> MORTAR = BLOCK_ENTITY_TYPES.register("mortar", () -> BlockEntityType.Builder.of(MortarBlockEntity::new, BlockRegistration.MORTAR.get()).build(null));
 
     public static void register(){
 

@@ -7,6 +7,7 @@ import coffee.amo.astromancy.common.block.StarGateway;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereComponentBlock;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCoreBlock;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
+import coffee.amo.astromancy.common.block.mortar.MortarBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -25,5 +26,7 @@ public class BlockRegistration {
     public static final RegistryObject<Block> ARMILLARY_SPHERE = BLOCKS.register("armillary_sphere", () -> new ArmillarySphereCoreBlock<>(MAGIC_PROPERTIES().noOcclusion()).setBlockEntity(BlockEntityRegistration.ARMILLARY_SPHERE));
     public static final RegistryObject<Block> ARMILLARY_SPHERE_COMPONENT = BLOCKS.register("armillary_sphere_component", () -> new ArmillarySphereComponentBlock(MAGIC_PROPERTIES().noOcclusion().lootFrom(ARMILLARY_SPHERE)));
     public static final RegistryObject<Block> CRUCIBLE = BLOCKS.register("crucible", () -> new Crucible<>(MAGIC_PROPERTIES().noOcclusion()).setBlockEntity(BlockEntityRegistration.CRUCIBLE));
+    public static final RegistryObject<Block> STELLARITE = BLOCKS.register("stellarite", () -> new Block(BlockPropertyRegistration.STELLARITE()));
+    public static final RegistryObject<Block> MORTAR = BLOCKS.register("mortar", () -> new MortarBlock<>(MAGIC_PROPERTIES().noOcclusion().instabreak()).setBlockEntity(BlockEntityRegistration.MORTAR));
     public static void register(){}
 }

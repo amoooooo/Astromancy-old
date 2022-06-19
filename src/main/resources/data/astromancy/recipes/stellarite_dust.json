@@ -1,0 +1,14 @@
+{
+    "type": "astromancy:mortar",
+    "ingredients": [
+        {
+            "item": "astromancy:stellarite"
+        }
+    ],
+    "pestle": {
+        "item": "minecraft:stick"
+    },
+    "output": {
+        "item": "astromancy:stellarite_dust"
+    }
+}

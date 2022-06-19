@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.aequivaleo.AspectiHelper;
+import coffee.amo.astromancy.common.item.AspectiPhial;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,8 +15,10 @@ public class CientEventsForgeBus {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void aspectiTooltips(ItemTooltipEvent event){
         if(Screen.hasShiftDown()){
-            TextComponent symbols = AspectiHelper.getEntry(event.getPlayer().level.dimension(), event.getItemStack()).sort().getTooltip();
-            event.getToolTip().add(symbols);
+            if(!(event.getItemStack().getItem() instanceof AspectiPhial)){
+                TextComponent symbols = AspectiHelper.getEntry(event.getPlayer().level.dimension(), event.getItemStack()).sort().getTooltip();
+                event.getToolTip().add(symbols);
+            }
         }
 
     }

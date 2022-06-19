@@ -27,8 +27,10 @@ public class ItemRegistry {
     public static final RegistryObject<BlockItem> STAR_GATEWAY = ITEMS.register("star_gateway", () -> new BlockItem(BlockRegistration.STAR_GATEWAY.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> ASTROLABE = ITEMS.register("astrolabe", () -> new BlockItem(BlockRegistration.ASTROLABE.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> CRUCIBLE = ITEMS.register("crucible", () -> new BlockItem(BlockRegistration.CRUCIBLE.get(), DEFAULT_PROPERTIES()));
+    public static final RegistryObject<BlockItem> STELLARITE = ITEMS.register("stellarite", () -> new BlockItem(BlockRegistration.STELLARITE.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> STELLARITE_DUST = ITEMS.register("stellarite_dust", () -> new StellariteDust(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> RESEARCH_NOTE = ITEMS.register("research_note", () -> new ResearchNote(DEFAULT_PROPERTIES().stacksTo(1)));
+    public static final RegistryObject<BlockItem> MORTAR = ITEMS.register("mortar", () -> new BlockItem(BlockRegistration.MORTAR.get(), DEFAULT_PROPERTIES()));
 
 
     public static void register() {}

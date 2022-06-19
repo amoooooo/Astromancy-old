@@ -26,6 +26,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -241,7 +242,15 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     public List<TextComponent> getAspectiInstances(){
         List<TextComponent> list = new ArrayList<>();
         requirements.forEach((aspecti, integer) -> {
-            list.add((TextComponent) new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(" " + integer.toString()).withStyle(style -> style.withFont(Style.DEFAULT_FONT))));
+            TextComponent tc = new TextComponent("");
+            tc.append(new TextComponent("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(AspectiEntry.intToTextComponent(integer).append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
+            list.add(tc);
         });
         return list;
     }
@@ -249,7 +258,15 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     public List<TextComponent> pairToTextComponent(Map<Aspecti, Integer> match){
         List<TextComponent> list = new ArrayList<>();
         match.forEach((aspecti, integer) -> {
-            list.add((TextComponent) new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(" " + integer.toString()).withStyle(style -> style.withFont(Style.DEFAULT_FONT))));
+            TextComponent tc = new TextComponent("");
+            tc.append(new TextComponent("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(AspectiEntry.intToTextComponent(integer).append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
+            list.add(tc);
         });
         return list;
     }

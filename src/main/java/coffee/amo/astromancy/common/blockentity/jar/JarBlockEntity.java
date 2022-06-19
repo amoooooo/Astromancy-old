@@ -1,5 +1,7 @@
 package coffee.amo.astromancy.common.blockentity.jar;
 
+import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.aequivaleo.AspectiEntry;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
@@ -15,6 +17,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -142,5 +145,18 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     @Override
     public void onBreak(@Nullable Player player) {
         super.onBreak(player);
+    }
+
+    public TextComponent getAspectiComponent(){
+        TextComponent tc = new TextComponent("");
+        if(this.aspecti != null){
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
+            tc.append(AspectiEntry.intToTextComponent(count).append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
+        }
+        return tc;
     }
 }

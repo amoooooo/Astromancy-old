@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static coffee.amo.astromancy.core.registration.BlockEntityRegistration.BLOCK_ENTITY_TYPES;
 import static coffee.amo.astromancy.core.registration.BlockRegistration.BLOCKS;
 import static coffee.amo.astromancy.core.registration.ItemRegistry.ITEMS;
+import static coffee.amo.astromancy.core.registration.RecipeRegistry.RECIPE_SERIALIZERS;
 import static coffee.amo.astromancy.core.registration.SoundRegistry.SOUNDS;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -51,6 +52,7 @@ public class Astromancy {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         SOUNDS.register(modBus);
+        RECIPE_SERIALIZERS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);

@@ -1,0 +1,251 @@
+package coffee.amo.astromancy.common.recipe;
+
+import coffee.amo.astromancy.Astromancy;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class MortarRecipe implements Recipe<SimpleContainer> {
+    private final ResourceLocation id;
+    private final ItemStack output;
+    private final ItemStack pestle;
+    private final NonNullList<Ingredient> ingredients;
+
+    public MortarRecipe(ResourceLocation id, ItemStack output, ItemStack pestle, NonNullList<Ingredient> ingredients) {
+        this.id = id;
+        this.output = output;
+        this.pestle = pestle;
+        this.ingredients = ingredients;
+    }
+
+    public static MortarRecipe getRecipe(Level level, ItemStack stack, ArrayList<ItemStack> crushables){
+        return getRecipe(level, c -> c.doesPestleMatch(stack) && c.doCrushablesMatch(crushables));
+    }
+
+    public boolean doesPestleMatch(ItemStack stack){
+        return this.pestle.equals(stack, false);
+    }
+
+    public ArrayList<ItemStack> getSortedCrushables(ArrayList<ItemStack> crushables){
+        ArrayList<ItemStack> sortedCrushables = new ArrayList<>();
+        for(ItemStack stack : crushables){
+            for(Ingredient inv : this.ingredients){
+                if(inv.test(stack)){
+                    sortedCrushables.add(stack);
+                    break;
+                }
+            }
+        }
+        return sortedCrushables;
+    }
+
+    public boolean doCrushablesMatch(ArrayList<ItemStack> crushables){
+        if (this.ingredients.size() == 0) {
+            return true;
+        }
+        if (this.ingredients.size() != crushables.size()) {
+            return false;
+        }
+        ArrayList<ItemStack> sortedStacks = getSortedCrushables(crushables);
+        if(sortedStacks.size() < this.ingredients.size()){
+            return false;
+        }
+        for(int i = 0; i < this.ingredients.size(); i++){
+            Ingredient ing = this.ingredients.get(i);
+            ItemStack stack = sortedStacks.get(i);
+            if(!ing.test(stack)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static MortarRecipe getRecipe(Level level, Predicate<MortarRecipe> predicate){
+        List<MortarRecipe> recipes = getRecipes(level);
+        for(MortarRecipe recipe : recipes){
+            if(predicate.test(recipe)){
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    public static List<MortarRecipe> getRecipes(Level level){
+        return level.getRecipeManager().getAllRecipesFor(Type.INSTANCE);
+    }
+
+    /**
+     * Used to check if a recipe matches current crafting inventory
+     *
+     * @param pContainer
+     * @param pLevel
+     */
+    @Override
+    public boolean matches(SimpleContainer pContainer, Level pLevel) {
+        if(pestle.equals(pContainer.getItem(0))){
+            for(int i = 0; i < ingredients.size(); i++){
+                if(!ingredients.get(i).test(pContainer.getItem(i + 1))){
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns an Item that is the result of this recipe
+     *
+     * @param pContainer
+     */
+    @Override
+    public ItemStack assemble(SimpleContainer pContainer) {
+        return output;
+    }
+
+    /**
+     * Used to determine if this recipe can fit in a grid of the given width/height
+     *
+     * @param pWidth
+     * @param pHeight
+     */
+    @Override
+    public boolean canCraftInDimensions(int pWidth, int pHeight) {
+        return true;
+    }
+
+    /**
+     * Get the result of this recipe, usually for display purposes (e.g. recipe book). If your recipe has more than one
+     * possible result (e.g. it's dynamic and depends on its inputs), then return an empty stack.
+     */
+    @Override
+    public ItemStack getResultItem() {
+        return output.copy();
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return id;
+    }
+
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return Serializer.INSTANCE;
+    }
+
+    @Override
+    public RecipeType<?> getType() {
+        return Type.INSTANCE;
+    }
+
+    public static class Type implements RecipeType<MortarRecipe>{
+        private Type() { }
+        public static final Type INSTANCE = new Type();
+        public static final String ID = "mortar";
+    }
+
+    public static class Serializer implements  RecipeSerializer<MortarRecipe> {
+        public static final Serializer INSTANCE = new Serializer();
+        public static final ResourceLocation ID = Astromancy.astromancy("mortar");
+
+        @Override
+        public MortarRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
+            ItemStack pestle = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "pestle"));
+
+            JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
+            NonNullList<Ingredient> ingredientList = NonNullList.withSize(1, Ingredient.EMPTY);
+
+            for (int i = 0; i < ingredients.size(); i++) {
+                ingredientList.set(i, Ingredient.fromJson(ingredients.get(i)));
+            }
+            return new MortarRecipe(pRecipeId, output, pestle, ingredientList);
+        }
+
+        @Nullable
+        @Override
+        public MortarRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+            NonNullList<Ingredient> ingredientList = NonNullList.withSize(pBuffer.readInt(), Ingredient.EMPTY);
+
+            for (int i = 0; i < ingredientList.size(); i++) {
+                ingredientList.set(i, Ingredient.fromNetwork(pBuffer));
+            }
+
+            ItemStack output = pBuffer.readItem();
+            ItemStack pestle = pBuffer.readItem();
+            return new MortarRecipe(pRecipeId, output, pestle, ingredientList);
+        }
+
+        @Override
+        public void toNetwork(FriendlyByteBuf pBuffer, MortarRecipe pRecipe) {
+            pBuffer.writeInt(pRecipe.ingredients.size());
+            for (Ingredient ingredient : pRecipe.ingredients) {
+                ingredient.toNetwork(pBuffer);
+            }
+            pBuffer.writeItem(pRecipe.output);
+            pBuffer.writeItem(pRecipe.pestle);
+        }
+
+        /**
+         * Sets a unique name for this Item. This should be used for uniquely identify the instance of the Item.
+         * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
+         * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
+         * <p>
+         * The supplied name will be prefixed with the currently active mod's modId.
+         * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
+         * <p>
+         * If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.
+         * <p>
+         * Returns 'this' to allow for chaining.
+         *
+         * @param name Unique registry name
+         * @return This instance
+         */
+        @Override
+        public RecipeSerializer<?> setRegistryName(ResourceLocation name) {
+            return INSTANCE;
+        }
+
+        /**
+         * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
+         * Otherwise it will return the name set in setRegistryName().
+         * If neither are valid null is returned.
+         *
+         * @return Unique identifier or null.
+         */
+        @Nullable
+        @Override
+        public ResourceLocation getRegistryName() {
+            return ID;
+        }
+
+        /**
+         * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one
+         * registry per concrete class.
+         *
+         * @return Root registry type.
+         */
+        @Override
+        public Class<RecipeSerializer<?>> getRegistryType() {
+            return Serializer.castClass(RecipeSerializer.class);
+        }
+
+        @SuppressWarnings("unchecked")
+        private static <G> Class<G> castClass(Class<?> clazz) {
+            return (Class<G>)clazz;
+        }
+    }
+}

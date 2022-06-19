@@ -84,7 +84,7 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
             ps.translate(0,0.1f,-0.5 * (pBlockEntity.clientLookAtTicks / 10.0f));
             ps.scale(0.009f, 0.009f, 0.009f);
             ps.translate(-font.width(pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount())/4,0,0);
-            font.draw(ps, new TextComponent(pBlockEntity.getAspecti().symbol()).withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))).append(new TextComponent(" " + pBlockEntity.getCount()).withStyle(s -> s.withFont(Style.DEFAULT_FONT))), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
+            font.draw(ps, pBlockEntity.getAspectiComponent(), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
             ps.popPose();
         }
         ps.popPose();
