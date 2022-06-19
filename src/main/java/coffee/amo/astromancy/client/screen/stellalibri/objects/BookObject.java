@@ -4,6 +4,7 @@ import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.List;
 
@@ -49,14 +50,28 @@ public class BookObject {
 
     }
 
-    public void renderChildren(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks){
-
-    }
-    public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks)
+    public void lockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks)
     {
 
     }
+
+    public void renderChildren(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks){
+
+    }
+    public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+
+    }
+    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+        if (isHovering)
+        {
+            screen.renderComponentTooltip(poseStack, List.of(new TextComponent("Locked")), mouseX, mouseY, minecraft.font);
+        }
+    }
     public void click(float xOffset, float yOffset, double mouseX, double mouseY)
+    {
+
+    }
+    public void clickLocked(float xOffset, float yOffset, double mouseX, double mouseY)
     {
 
     }

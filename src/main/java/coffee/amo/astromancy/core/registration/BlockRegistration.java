@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.registration;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.block.Astrolabe;
+import coffee.amo.astromancy.common.block.Crucible;
 import coffee.amo.astromancy.common.block.StarGateway;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereComponentBlock;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCoreBlock;
@@ -23,5 +24,6 @@ public class BlockRegistration {
     public static final RegistryObject<Block> JAR = BLOCKS.register("jar", () -> new JarBlock<>(MAGIC_PROPERTIES().noOcclusion().instabreak()).setBlockEntity(BlockEntityRegistration.JAR));
     public static final RegistryObject<Block> ARMILLARY_SPHERE = BLOCKS.register("armillary_sphere", () -> new ArmillarySphereCoreBlock<>(MAGIC_PROPERTIES().noOcclusion()).setBlockEntity(BlockEntityRegistration.ARMILLARY_SPHERE));
     public static final RegistryObject<Block> ARMILLARY_SPHERE_COMPONENT = BLOCKS.register("armillary_sphere_component", () -> new ArmillarySphereComponentBlock(MAGIC_PROPERTIES().noOcclusion().lootFrom(ARMILLARY_SPHERE)));
+    public static final RegistryObject<Block> CRUCIBLE = BLOCKS.register("crucible", () -> new Crucible<>(MAGIC_PROPERTIES().noOcclusion()).setBlockEntity(BlockEntityRegistration.CRUCIBLE));
     public static void register(){}
 }

@@ -199,7 +199,7 @@ repositories {
 //}
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.46'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.51'
 
     //implementation fg.deobf("com.sammy.ortus:ortus:1.18.2-1.1.172")
 

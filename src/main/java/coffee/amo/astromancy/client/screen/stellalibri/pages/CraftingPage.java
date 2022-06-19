@@ -42,13 +42,13 @@ public class CraftingPage extends BookPage {
                 int index = i * 3 + j;
                 if (index < inputStacks.length && !inputStacks[index].isEmpty()) {
                     ItemStack itemStack = inputStacks[index];
-                    int itemPosX = guiLeft + 33 + j * 26;
-                    int itemPosY = guiTop + 19 + i * 26;
+                    int itemPosX = guiLeft + 36 + j * 25;
+                    int itemPosY = guiTop + 22 + i * 25;
                     BookScreen.renderItem(poseStack, itemStack, itemPosX, itemPosY, mouseX, mouseY);
                 }
             }
         }
-        BookScreen.renderItem(poseStack, outputStack, guiLeft + 62, guiTop + 121, mouseX, mouseY);
+        BookScreen.renderItem(poseStack, outputStack, guiLeft + 61, guiTop + 120, mouseX, mouseY);
     }
 
     @Override
@@ -61,8 +61,8 @@ public class CraftingPage extends BookPage {
                 int index = i * 3 + j;
                 if (index < inputStacks.length && !inputStacks[index].isEmpty()) {
                     ItemStack itemStack = inputStacks[index];
-                    int itemPosX = guiLeft + 149 + j * 26;
-                    int itemPosY = guiTop + 19 + i * 26;
+                    int itemPosX = guiLeft + 152 + j * 25;
+                    int itemPosY = guiTop + 22 + i * 25;
                     BookScreen.renderItem(poseStack, itemStack, itemPosX, itemPosY, mouseX, mouseY);
                 }
             }

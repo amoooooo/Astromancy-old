@@ -7,6 +7,7 @@ import coffee.amo.astromancy.client.renderer.block.JarRenderer;
 import coffee.amo.astromancy.client.renderer.block.StarGatewayRenderer;
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCoreBlock;
 import coffee.amo.astromancy.common.blockentity.AstrolabeBlockEntity;
+import coffee.amo.astromancy.common.blockentity.CrucibleBlockEntity;
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphereCoreBlockEntity;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
@@ -37,6 +38,7 @@ public class BlockEntityRegistration {
     public static final RegistryObject<BlockEntityType<StarGatewayBlockEntity>> STAR_GATEWAY = BLOCK_ENTITY_TYPES.register("star_gateway", () -> BlockEntityType.Builder.of(StarGatewayBlockEntity::new, BlockRegistration.STAR_GATEWAY.get()).build(null));
     public static final RegistryObject<BlockEntityType<JarBlockEntity>> JAR = BLOCK_ENTITY_TYPES.register("jar", () -> BlockEntityType.Builder.of(JarBlockEntity::new, BlockRegistration.JAR.get()).build(null));
     public static final RegistryObject<BlockEntityType<AstrolabeBlockEntity>> ASTROLABE = BLOCK_ENTITY_TYPES.register("astrolabe", () -> BlockEntityType.Builder.of(AstrolabeBlockEntity::new, BlockRegistration.ASTROLABE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE = BLOCK_ENTITY_TYPES.register("crucible", () -> BlockEntityType.Builder.of(CrucibleBlockEntity::new, BlockRegistration.CRUCIBLE.get()).build(null));
 
     public static void register(){
 

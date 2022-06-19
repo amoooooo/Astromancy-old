@@ -22,10 +22,13 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ALCHEMICAL_BRASS_INGOT = ITEMS.register("alchemical_brass_ingot", () -> new AlchemicalBrassIngot(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> ARMILLARY_SPHERE_CAGE = ITEMS.register("armillary_sphere_cage", () -> new ArmillarySphereCage(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> ARCANA_SEQUENCE = ITEMS.register("arcana_sequence", () -> new ArcanaSequence(DEFAULT_PROPERTIES()));
-    public static final RegistryObject<Item> STELLA_LIBRI = ITEMS.register("stella_libri", () -> new StellaLibri(DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> STELLA_LIBRI = ITEMS.register("stella_libri", () -> new StellaLibri(DEFAULT_PROPERTIES().stacksTo(1)));
     public static final RegistryObject<BlockItem> JAR = ITEMS.register("jar", () -> new BlockItem(BlockRegistration.JAR.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> STAR_GATEWAY = ITEMS.register("star_gateway", () -> new BlockItem(BlockRegistration.STAR_GATEWAY.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> ASTROLABE = ITEMS.register("astrolabe", () -> new BlockItem(BlockRegistration.ASTROLABE.get(), DEFAULT_PROPERTIES()));
+    public static final RegistryObject<BlockItem> CRUCIBLE = ITEMS.register("crucible", () -> new BlockItem(BlockRegistration.CRUCIBLE.get(), DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> STELLARITE_DUST = ITEMS.register("stellarite_dust", () -> new StellariteDust(DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> RESEARCH_NOTE = ITEMS.register("research_note", () -> new ResearchNote(DEFAULT_PROPERTIES().stacksTo(1)));
 
 
     public static void register() {}

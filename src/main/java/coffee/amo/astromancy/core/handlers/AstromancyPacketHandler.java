@@ -43,5 +43,13 @@ public class AstromancyPacketHandler {
         INSTANCE.registerMessage(ID++, ResearchRemovePacket.class, ResearchRemovePacket::encode,
                 ResearchRemovePacket::decode,
                 ResearchRemovePacket::handle);
+
+        INSTANCE.registerMessage(ID++, ResearchNotePacket.class, ResearchNotePacket::encode,
+                ResearchNotePacket::decode,
+                ResearchNotePacket::handle);
+
+        INSTANCE.registerMessage(ID++, BookStatePacket.class, BookStatePacket::encode,
+                BookStatePacket::decode,
+                BookStatePacket::handle);
     }
 }

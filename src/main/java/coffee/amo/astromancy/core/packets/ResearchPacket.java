@@ -30,7 +30,9 @@ public class ResearchPacket {
 
     public static void handle(ResearchPacket packet, Supplier<NetworkEvent.Context> contextSupplier){
         contextSupplier.get().enqueueWork(() -> {
-            ClientResearchHolder.addResearch(packet.researchId);
+            if(!ClientResearchHolder.getResearch().contains(packet.researchId)){
+                ClientResearchHolder.addResearch(packet.researchId);
+            }
             if(!packet.silent){
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0F, 1.0F);
             }

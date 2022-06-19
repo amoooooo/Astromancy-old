@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static coffee.amo.astromancy.core.registration.BlockEntityRegistration.BLOCK_ENTITY_TYPES;
 import static coffee.amo.astromancy.core.registration.BlockRegistration.BLOCKS;
 import static coffee.amo.astromancy.core.registration.ItemRegistry.ITEMS;
+import static coffee.amo.astromancy.core.registration.SoundRegistry.SOUNDS;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("astromancy")
@@ -49,6 +50,7 @@ public class Astromancy {
         AstromancyPacketHandler.init();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
+        SOUNDS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
@@ -69,12 +71,12 @@ public class Astromancy {
         // do something that can only be done on the client
         ItemProperties.register(ItemRegistry.STELLA_LIBRI.get(), astromancy("book_open"), (pStack, pLevel, pEntity, pSeed) -> {
             if(pStack.getItem() instanceof StellaLibri sl){
-                return StellaLibri.getOpenness(sl);
+                return pStack.getOrCreateTag().getInt("openness");
             }
             return 0;
         });
         ItemProperties.register(ItemRegistry.ASPECTI_PHIAL.get(), astromancy("phial_filled"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(pStack.getItem() instanceof AspectiPhial ap && pStack.hasTag()){
+            if(pStack.getItem() instanceof AspectiPhial && pStack.hasTag()){
                 return 1;
             }
             return 0;

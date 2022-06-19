@@ -1,0 +1,16 @@
+{
+    "write":{
+        "sounds": [
+            {
+                "name": "astromancy:research/write1",
+                "weight": 1,
+                "stream": true
+            },
+            {
+                "name": "astromancy:research/write2",
+                "weight": 1,
+                "stream": true
+            }
+        ]
+    }
+}

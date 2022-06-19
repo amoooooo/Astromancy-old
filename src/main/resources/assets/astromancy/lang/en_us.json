@@ -9,12 +9,13 @@
   "item.astromancy.alchemical_brass_ingot": "Alchemical Brass Ingot",
   "item.astromancy.armillary_sphere_cage": "Armillary Sphere Cage",
   "item.astromancy.aspecti_phial": "Aspecti Phial",
+  "item.astromancy.research_note": "Research Note",
 
   "__book__": "",
   "item.astromancy.stella_libri": "Stella Libri",
   "astromancy.gui.book.title": "Stella Libri",
   "astromancy.gui.book.tab.introduction": "Introduction",
-    "astromancy.gui.book.tab.aspecti": "Aspecti",
+    "astromancy.gui.book.tab.alchemy": "Alchemy",
   "astromancy.gui.book.entry.introduction": "On the Stella Libri",
   "astromancy.gui.book.entry.introduction.description": "It's just a note book.",
   "astromancy.gui.book.entry.page.headline.introduction": "On the Stella Libri",
@@ -32,5 +33,11 @@
   "astromancy.gui.book.entry.jars": "Jars",
     "astromancy.gui.book.entry.jars.description": "Jars are used to store the Aspecti en mass.",
     "astromancy.gui.book.entry.page.headline.jars": "Jars",
-    "astromancy.gui.book.entry.page.text.jars.a": "I crafted these jars to store the Aspecti en mass. They are much less light than the phials."
+    "astromancy.gui.book.entry.page.text.jars.a": "I crafted these jars to store the Aspecti en mass. They are much less light than the phials.",
+    "astromancy.gui.book.entry.stellarite": "The dust of space.",
+    "astromancy.gui.book.entry.stellarite.description": "It is definitely innately magical.",
+    "astromancy.gui.book.entry.alchemical_brass": "Alchemical Brass",
+    "astromancy.gui.book.entry.alchemical_brass.description": "Brass is suprisingly attunable to the stars",
+    "astromancy.gui.book.entry.arcana_sequence": "On Stellar Locations",
+    "astromancy.gui.book.entry.arcana_sequence.description": "The best way to store stellar locations, surprisingly, is on paper"
 }
