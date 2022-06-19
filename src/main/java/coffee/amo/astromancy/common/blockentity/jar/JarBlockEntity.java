@@ -71,14 +71,15 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if(!level.isClientSide){
-            if (player.getItemInHand(hand).getItem() instanceof AspectiPhial && player.getItemInHand(hand).getTag() != null) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            if (heldItem.getItem() instanceof AspectiPhial && heldItem.hasTag()) {
                 if (count <= 240) {
-                    if (aspecti == Aspecti.fromNbt(player.getItemInHand(hand).getTag()).getFirst() || aspecti == Aspecti.EMPTY) {
-                        player.getItemInHand(hand).shrink(1);
+                    if (aspecti == Aspecti.fromNbt(heldItem.getTag()).getFirst() || aspecti == Aspecti.EMPTY) {
+                        heldItem.shrink(1);
                         player.addItem(new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(),1));
                         BlockHelper.updateAndNotifyState(level, worldPosition);
-                        count = count == 0 ? Aspecti.fromNbt(player.getItemInHand(hand).getTag()).getSecond() : count + Aspecti.fromNbt(player.getItemInHand(hand).getTag()).getSecond();
-                        aspecti = Aspecti.fromNbt(player.getItemInHand(hand).getTag()).getFirst();
+                        count = count == 0 ? Aspecti.fromNbt(heldItem.getTag()).getSecond() : count + Aspecti.fromNbt(heldItem.getTag()).getSecond();
+                        aspecti = Aspecti.fromNbt(heldItem.getTag()).getFirst();
                         AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
                                 this.getBlockPos().getX(),
                                 this.getBlockPos().getY(),
@@ -89,14 +90,14 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                     return InteractionResult.PASS;
                 }
                 return InteractionResult.PASS;
-            }  else if (player.getItemInHand(hand).getItem() instanceof AspectiPhial && !player.getItemInHand(hand).hasTag() && this.aspecti != Aspecti.EMPTY) {
+            }  else if (heldItem.getItem() instanceof AspectiPhial && !heldItem.hasTag() && this.aspecti != Aspecti.EMPTY) {
                 CompoundTag tag = new CompoundTag();
                 tag.putInt("count", 16);
                 tag.putInt("aspecti", aspecti.ordinal());
                 ItemStack stack = new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(), 1);
                 stack.getOrCreateTag().put("aspecti", tag);
                 player.addItem(stack);
-                player.getItemInHand(hand).shrink(1);
+                heldItem.shrink(1);
                 if (count - 16 <= 0) {
                     this.count = 0;
                     this.aspecti = Aspecti.EMPTY;
