@@ -33,33 +33,35 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
     @Override
     public void render(JarBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
+        if(pBlockEntity.label) {
+            renderLabel(pBlockEntity, pPartialTick, ps, pBufferSource, pPackedLight, pPackedOverlay);
+        }
         ps.mulPose(Vector3f.YP.rotationDegrees(180));
         ps.translate(-0.75,0.5,0);
         //RenderHelper.renderNormalCuboid(ps, pBufferSource, 0.875f, RenderType.lightning());
         if(pBlockEntity.getAspecti() != null && pBlockEntity.getCount() > 0){
             //RenderHelper.renderText(ps, pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount(), pBufferSource, font);
             float scale = Math.min(0.749f,(Math.round((pBlockEntity.getCount() / 256f) * 16.0f) / 32.0f ) * 1 + ((pBlockEntity.getCount() / 256f)/4f));
-            ps.pushPose();
-            VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")));
-            ps.translate(-0.05,-0.5f,-0.8);
-            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-            ps.translate(-0.6f,0,0);
-            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-            ps.translate(-0.6f,0,0);
-            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-            ps.translate(-0.6f,0,0);
-            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.mulPose(Vector3f.XN.rotationDegrees(90));
-            ps.translate(0,-0.55,0.001);
-            RenderHelper.renderQuad(ps, 0.6f, 0.5f, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.mulPose(Vector3f.XN.rotationDegrees(180));
-            ps.translate(0,-0.55,-scale + 0.001);
-            RenderHelper.renderQuad(ps, 0.6f, 0.6f, buff, pBlockEntity.getAspecti().color().getRGB());
-            ps.popPose();
-
+//            ps.pushPose();
+//            VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")));
+//            ps.translate(-0.05,-0.5f,-0.8);
+//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
+//            ps.translate(-0.6f,0,0);
+//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
+//            ps.translate(-0.6f,0,0);
+//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
+//            ps.translate(-0.6f,0,0);
+//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.mulPose(Vector3f.XN.rotationDegrees(90));
+//            ps.translate(0,-0.55,0.001);
+//            RenderHelper.renderQuad(ps, 0.6f, 0.5f, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.mulPose(Vector3f.XN.rotationDegrees(180));
+//            ps.translate(0,-0.55,-scale + 0.001);
+//            RenderHelper.renderQuad(ps, 0.6f, 0.6f, buff, pBlockEntity.getAspecti().color().getRGB());
+//            ps.popPose();
             ps.pushPose();
             ps.mulPose(Vector3f.ZP.rotation(135));
             ps.translate(-0.25,0,-0.5);
@@ -86,7 +88,8 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
             Q.mul(new Quaternion(new Vector3f(1.0f, 0.0f, 0.0f), pitch + 90, true));
             //Q.mul(-1);
             ps.mulPose(Q);
-            ps.translate(0,0.1f,-0.5 * (pBlockEntity.clientLookAtTicks / 10.0f));
+            float distance = pBlockEntity.clientLookAtTicks == 10 ? 10 : pBlockEntity.clientLookAtTicks + pPartialTick;
+            ps.translate(0,0.1f,-0.5 * (distance / 10.0f));
             ps.scale(0.009f, 0.009f, 0.009f);
             ps.translate(-font.width(pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount())/4,0,0);
             font.draw(ps, pBlockEntity.getAspectiComponent(), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
@@ -103,5 +106,32 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
     @Override
     public boolean shouldRenderOffScreen(JarBlockEntity pBlockEntity) {
         return true;
+    }
+
+    public void renderLabel(JarBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay){
+        ps.pushPose();
+        ps.translate(0.5f,0.5f,0.5f);
+        switch(pBlockEntity.labelDirection){
+            case NORTH:
+                break;
+            case SOUTH:
+                ps.mulPose(Vector3f.YP.rotationDegrees(180));
+                break;
+            case EAST:
+                ps.mulPose(Vector3f.YP.rotationDegrees(270));
+                break;
+            case WEST:
+                ps.mulPose(Vector3f.YP.rotationDegrees(90));
+                break;
+        }
+        ps.translate(-0.225f,-0.35f,-0.315f);
+        VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/block/label.png")));
+        RenderHelper.renderQuad(ps, 0.45f, 0.45f, buff, 0xFFFFFFFF);
+        ps.translate(0,0,-0.0001f);
+        ps.scale(0.05f, 0.05f, 0.05f);
+        ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.translate(-font.width(pBlockEntity.getAspectiSymbolComponent()) + 0.5, -font.lineHeight + 0.5,0);
+        font.draw(ps, pBlockEntity.getAspectiSymbolComponent(), 0, 0, 0xFFFFFFFF);
+        ps.popPose();
     }
 }

@@ -51,7 +51,7 @@ public class BookScreen extends Screen {
     public static final VFXBuilders.ScreenVFXBuilder BUILDER = VFXBuilders.createScreen().setPosTexDefaultFormat();
 
     public static final ResourceLocation FRAME_TEXTURE = Astromancy.astromancy("textures/gui/book/frame.png");
-    public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/eldritch_tab_thing.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/bg.png");
     public static final ResourceLocation VERTICAL_LINE = Astromancy.astromancy("textures/gui/book/line.png");
     public static final ResourceLocation HORIZONTAL_LINE = Astromancy.astromancy("textures/gui/book/line_horizontal.png");
     public static final ResourceLocation LOCKED_VERTICAL_LINE = Astromancy.astromancy("textures/gui/book/locked_line.png");
@@ -65,8 +65,8 @@ public class BookScreen extends Screen {
     public static ArrayList<BookEntry> ENTRIES = new ArrayList<>();
     public static ArrayList<BookObject> OBJECTS = new ArrayList<>();
     public static ArrayList<BookTab> TABS = new ArrayList<>();
-    public final int parallax_width = 768;
-    public final int parallax_height = 512;
+    public final int parallax_width = 670;
+    public final int parallax_height = 670;
     public int bookWidth = 256;
     public int bookHeight = 230;
     public int bookInsideWidth = 224;
@@ -386,7 +386,7 @@ public class BookScreen extends Screen {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        renderBackground(tab.BACKGROUND, poseStack, 0.1f, 0.1f);
+        renderBackground(tab.BACKGROUND, poseStack, 0.075f, 0.075f);
         GL11.glEnable(GL_SCISSOR_TEST);
         cut();
         renderEntries(poseStack, mouseX, mouseY, partialTicks);

@@ -1,7 +1,55 @@
 {
   "variants": {
-    "":{
+    "count=0":{
       "model": "astromancy:block/jar"
+    },
+    "count=1":{
+      "model": "astromancy:block/jar/jar_stage_1"
+    },
+    "count=2":{
+      "model": "astromancy:block/jar/jar_stage_2"
+    },
+    "count=3":{
+      "model": "astromancy:block/jar/jar_stage_3"
+    },
+    "count=4":{
+      "model": "astromancy:block/jar/jar_stage_4"
+    },
+    "count=5":{
+      "model": "astromancy:block/jar/jar_stage_5"
+    },
+    "count=6":{
+      "model": "astromancy:block/jar/jar_stage_6"
+    },
+    "count=7":{
+      "model": "astromancy:block/jar/jar_stage_7"
+    },
+    "count=8":{
+      "model": "astromancy:block/jar/jar_stage_8"
+    },
+    "count=9":{
+      "model": "astromancy:block/jar/jar_stage_9"
+    },
+    "count=10":{
+      "model": "astromancy:block/jar/jar_stage_10"
+    },
+    "count=11":{
+      "model": "astromancy:block/jar/jar_stage_11"
+    },
+    "count=12":{
+      "model": "astromancy:block/jar/jar_stage_12"
+    },
+    "count=13":{
+      "model": "astromancy:block/jar/jar_stage_13"
+    },
+    "count=14":{
+      "model": "astromancy:block/jar/jar_stage_14"
+    },
+    "count=15":{
+      "model": "astromancy:block/jar/jar_stage_15"
+    },
+    "count=16":{
+      "model": "astromancy:block/jar/jar_stage_16"
     }
   }
 }

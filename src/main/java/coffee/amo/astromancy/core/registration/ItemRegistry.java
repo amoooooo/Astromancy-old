@@ -37,33 +37,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ARMILLARY_SPHERE_CAGE = ITEMS.register("armillary_sphere_cage", () -> new ArmillarySphereCage(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> ARCANA_SEQUENCE = ITEMS.register("arcana_sequence", () -> new ArcanaSequence(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> STELLA_LIBRI = ITEMS.register("stella_libri", () -> new StellaLibri(DEFAULT_PROPERTIES().stacksTo(1)));
-    public static final RegistryObject<BlockItem> JAR = ITEMS.register("jar", () -> new BlockItem(BlockRegistration.JAR.get(), DEFAULT_PROPERTIES()){
-        @Override
-        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-            if(pStack.hasTag() && ((CompoundTag)pStack.getTag().get("BlockEntityTag")).getInt("aspecti") != 23){
-                TextComponent tc = new TextComponent("");
-                CompoundTag tag = pStack.getOrCreateTagElement("BlockEntityTag");
-                tc.append(new TextComponent("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))));
-                tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-                tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-                tc.append(new TextComponent(Aspecti.values()[tag.getInt("aspecti")].symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
-                tc.append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-                tc.append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-                tc.append(AspectiEntry.intToTextComponent(tag.getInt("count")).append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
-                pTooltip.add(tc);
-            }
-        }
-
-        @Override
-        public Component getName(ItemStack pStack) {
-            if(pStack.hasTag() && ((CompoundTag)pStack.getTag().get("BlockEntityTag")).getInt("aspecti") != 23){
-                CompoundTag tag = (CompoundTag) pStack.getTag().get("BlockEntityTag");
-                return new TranslatableComponent("block.astromancy.jar").append(" of " + StringHelper.capitalize(Aspecti.values()[tag.getInt("aspecti")].toString().toLowerCase(Locale.ROOT)) + " Slurry");
-            }
-            return super.getName(pStack);
-        }
-    });
+    public static final RegistryObject<BlockItem> JAR = ITEMS.register("jar", () -> new JarItem(BlockRegistration.JAR.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> STAR_GATEWAY = ITEMS.register("star_gateway", () -> new BlockItem(BlockRegistration.STAR_GATEWAY.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> ASTROLABE = ITEMS.register("astrolabe", () -> new BlockItem(BlockRegistration.ASTROLABE.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<BlockItem> CRUCIBLE = ITEMS.register("crucible", () -> new BlockItem(BlockRegistration.CRUCIBLE.get(), DEFAULT_PROPERTIES()));

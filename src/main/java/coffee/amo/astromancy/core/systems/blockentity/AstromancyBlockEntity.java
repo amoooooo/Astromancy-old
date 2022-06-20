@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
@@ -41,6 +42,10 @@ public class AstromancyBlockEntity extends BlockEntity {
     }
 
     public InteractionResult onUse(Player player, InteractionHand hand) {
+        return InteractionResult.PASS;
+    }
+
+    public InteractionResult onUse(Player player, InteractionHand hand, BlockHitResult ray){
         return InteractionResult.PASS;
     }
 

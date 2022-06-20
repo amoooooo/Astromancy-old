@@ -1,6 +1,8 @@
 package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
+import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import net.minecraft.nbt.CompoundTag;
@@ -22,5 +24,26 @@ public class ClientEventsModBus {
             }
             return 0xFFFFFF;
         }, ItemRegistry.ASPECTI_PHIAL.get());
+        event.getItemColors().register((stack, tintIndex) -> {
+            if(stack.hasTag()){
+                if(tintIndex == 1){
+                    return Aspecti.values()[((CompoundTag) stack.getTag().get("BlockEntityTag")).getInt("aspecti")].color().getRGB();
+                }
+            }
+            return 0xFFFFFF;
+        }, BlockRegistration.JAR.get());
+    }
+
+    @SubscribeEvent
+    public static void registerBlockColors(final ColorHandlerEvent.Block event){
+        Astromancy.LOGGER.debug("Registering block colors");
+        event.getBlockColors().register((state, world, pos, tintIndex) -> {
+            if(tintIndex == 1){
+                if(world.getBlockEntity(pos) instanceof JarBlockEntity jb) {
+                    return jb.getAspecti().color().getRGB();
+                }
+            }
+            return 0xFFFFFFFF;
+        }, BlockRegistration.JAR.get());
     }
 }

@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.capability;
+package coffee.amo.astromancy.core.systems.research;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;

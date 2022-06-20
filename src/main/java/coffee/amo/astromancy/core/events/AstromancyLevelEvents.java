@@ -2,10 +2,11 @@ package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
-import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
-import coffee.amo.astromancy.common.capability.PlayerResearchCapability;
+import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
-import coffee.amo.astromancy.core.capability.IPlayerResearch;
+import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
+import coffee.amo.astromancy.core.systems.aspecti.*;
+import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
@@ -13,12 +14,20 @@ import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.util.StarSavedData;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -29,6 +38,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
@@ -98,5 +109,39 @@ public class AstromancyLevelEvents {
         if(entity instanceof Player && !(entity instanceof FakePlayer)){
             event.addCapability(Astromancy.astromancy("player_research"), new PlayerResearchProvider());
         }
+    }
+
+    @SubscribeEvent
+    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event){
+        if(!(event.getObject() instanceof JarBlockEntity)) return;
+
+        AspectiTank backend = new AspectiTank(256);
+        LazyOptional<IAspectiHandler> optional = LazyOptional.of(() -> backend);
+        Capability<IAspectiHandler> capability = CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY;
+
+        ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
+
+            @NotNull
+            @Override
+            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                if (cap == capability){
+                    return optional.cast();
+                }
+                return LazyOptional.empty();
+            }
+
+            @Override
+            public CompoundTag serializeNBT() {
+                CompoundTag tag = new CompoundTag();
+                return backend.toNbt(tag);
+            }
+
+            @Override
+            public void deserializeNBT(CompoundTag nbt) {
+                backend.fromNbt(nbt);
+            }
+        };
+
+        event.addCapability(Astromancy.astromancy("aspecti_handler"), provider);
     }
 }

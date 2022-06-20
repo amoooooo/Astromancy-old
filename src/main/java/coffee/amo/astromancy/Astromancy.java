@@ -3,6 +3,7 @@ package coffee.amo.astromancy;
 import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
@@ -10,8 +11,10 @@ import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
@@ -45,6 +48,7 @@ public class Astromancy {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::client);
+        modBus.addListener(this::registerCapabilities);
         BlockRegistration.register();
         AspectiRegistry.register();
         ItemRegistry.register();
@@ -65,6 +69,10 @@ public class Astromancy {
         MinecraftForge.EVENT_BUS.addListener(this::attachDataStorage);
     }
 
+    public void registerCapabilities(RegisterCapabilitiesEvent event){
+        CapabilityAspectiHandler.register(event);
+    }
+
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
     }
@@ -80,6 +88,12 @@ public class Astromancy {
         ItemProperties.register(ItemRegistry.ASPECTI_PHIAL.get(), astromancy("phial_filled"), (pStack, pLevel, pEntity, pSeed) -> {
             if(pStack.getItem() instanceof AspectiPhial && pStack.hasTag()){
                 return 1;
+            }
+            return 0;
+        });
+        ItemProperties.register(ItemRegistry.JAR.get(), astromancy("jar_fill"), (pStack, pLevel, pEntity, pSeed) -> {
+            if(pStack.getItem().equals(ItemRegistry.JAR.get()) && pStack.hasTag()){
+                return ((CompoundTag)pStack.getTag().get("BlockEntityTag")).getInt("count") / 256f;
             }
             return 0;
         });

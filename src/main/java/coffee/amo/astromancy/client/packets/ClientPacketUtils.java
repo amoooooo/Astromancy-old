@@ -8,6 +8,7 @@ import coffee.amo.astromancy.core.packets.StarPacket;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
 public class ClientPacketUtils {
@@ -30,6 +31,8 @@ public class ClientPacketUtils {
         if (level.getBlockEntity(packet.pos) instanceof JarBlockEntity blockEntity) {
             blockEntity.setAspecti(Aspecti.values()[packet.aspecti]);
             blockEntity.setCount(packet.count);
+            blockEntity.label = packet.label;
+            blockEntity.labelDirection = Direction.values()[packet.labelDirection];
         }
     }
 }

@@ -55,5 +55,9 @@ public class AstromancyPacketHandler {
         INSTANCE.registerMessage(ID++, ItemSyncPacket.class, ItemSyncPacket::encode,
                 ItemSyncPacket::decode,
                 ItemSyncPacket::handle);
+
+        INSTANCE.registerMessage(ID++, JarSyncPacket.class, JarSyncPacket::encode,
+                JarSyncPacket::decode,
+                JarSyncPacket::handle);
     }
 }

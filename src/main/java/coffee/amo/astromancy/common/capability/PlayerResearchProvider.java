@@ -1,6 +1,6 @@
 package coffee.amo.astromancy.common.capability;
 
-import coffee.amo.astromancy.core.capability.IPlayerResearch;
+import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

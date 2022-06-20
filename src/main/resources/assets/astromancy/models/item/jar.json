@@ -42,5 +42,103 @@
 			"color": 0,
 			"children": [0, 1]
 		}
-	]
+	],
+	"overrides": [
+        {
+            "predicate": {
+                "astromancy:jar_fill": 0.0625
+            },
+            "model": "astromancy:block/jar/jar_stage_1"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.125
+            },
+            "model": "astromancy:block/jar/jar_stage_2"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.1875
+            },
+            "model": "astromancy:block/jar/jar_stage_3"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.25
+            },
+            "model": "astromancy:block/jar/jar_stage_4"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.3125
+            },
+            "model": "astromancy:block/jar/jar_stage_5"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.375
+            },
+            "model": "astromancy:block/jar/jar_stage_6"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.4375
+            },
+            "model": "astromancy:block/jar/jar_stage_7"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.5
+            },
+            "model": "astromancy:block/jar/jar_stage_8"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.5625
+            },
+            "model": "astromancy:block/jar/jar_stage_9"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.625
+            },
+            "model": "astromancy:block/jar/jar_stage_10"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.6875
+            },
+            "model": "astromancy:block/jar/jar_stage_11"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.75
+            },
+            "model": "astromancy:block/jar/jar_stage_12"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.8125
+            },
+            "model": "astromancy:block/jar/jar_stage_13"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.875
+            },
+            "model": "astromancy:block/jar/jar_stage_14"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 0.9375
+            },
+            "model": "astromancy:block/jar/jar_stage_15"
+        },
+		{
+            "predicate": {
+                "astromancy:jar_fill": 1.0
+            },
+            "model": "astromancy:block/jar/jar_stage_16"
+        }
+    ]
 }
