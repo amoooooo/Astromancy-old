@@ -12,6 +12,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -62,12 +63,15 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
             ps.pushPose();
             ps.mulPose(Vector3f.ZP.rotation(135));
             ps.translate(-0.25,0,-0.5);
-            Vec3 player = Minecraft.getInstance().player.getEyePosition();
+            LocalPlayer player = Minecraft.getInstance().player;
+            Vec3 eyeVec = player.getEyePosition();
+            double oldEyeY = player.yOld + player.getEyeHeight();
+            Vec3 playerVec = new Vec3(player.xOld + (eyeVec.x - player.xOld) * pPartialTick, oldEyeY + (eyeVec.y - oldEyeY) * pPartialTick, player.zOld + (eyeVec.z - player.zOld) * pPartialTick);
             Vec3 center = new Vec3(pBlockEntity.getBlockPos().getX() + 0.5, pBlockEntity.getBlockPos().getY() + 0.5, pBlockEntity.getBlockPos().getZ() + 0.5);
 
             Vec3 startYaw = new Vec3(0.0, 0.0, 1.0);
-            Vec3 endYaw = new Vec3(player.x, 0.0, player.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
-            Vec3 d = player.subtract(center);
+            Vec3 endYaw = new Vec3(playerVec.x, 0.0, playerVec.z).subtract(new Vec3(center.x, 0.0, center.z)).normalize();
+            Vec3 d = playerVec.subtract(center);
 
             // Find angle between start & end in yaw
             float yaw = (float) Math.toDegrees(Math.atan2(endYaw.x - startYaw.x, endYaw.z - startYaw.z)) + 90;
