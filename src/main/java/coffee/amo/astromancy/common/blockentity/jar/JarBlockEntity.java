@@ -106,13 +106,16 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                 return InteractionResult.SUCCESS;
             } else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
                 if(count <= 256 && Aspecti.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("aspecti")] == aspecti){
-                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag");
+                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag").copy();
                     int jarCount = tag.getInt("count");
                     int cachedJarCount = jarCount;
                     jarCount = jarCount + count > 256 ? (jarCount + count) - 256 : 0;
                     count = Math.min(cachedJarCount + count, 256);
                     if(jarCount == 0){
-                        heldItem.getTag().remove("BlockEntityTag");
+                        tag.putInt("count", 0);
+                        tag.putInt("aspecti", 23);
+                        heldItem.getTag().put("BlockEntityTag", tag);
+                        player.setItemInHand(hand, heldItem);
                     } else {
                         tag.putInt("count", jarCount);
                         heldItem.getTag().put("BlockEntityTag", tag);
@@ -122,7 +125,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                             this.getBlockPos().getY(),
                             this.getBlockPos().getZ(),
                             128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal()));
-                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(heldItem));
+                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(ItemRegistry.JAR.get().getDefaultInstance()));
                     return InteractionResult.SUCCESS;
                 }
             }

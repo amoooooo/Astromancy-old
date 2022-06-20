@@ -6,10 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.logging.Level;
 
 public class ClientRenderHelper {
     public static int tickStuff(ClientLevel level, JarBlockEntity jarBlockEntity, int clientLookAtTicks) {
