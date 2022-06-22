@@ -392,10 +392,10 @@ public class BookScreen extends Screen {
 //            } else if (object.identifier == "stellarite"){
 //                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
 //            }
-            if(!object.research.children.isEmpty()){
+            if(!object.research.children.stream().map(s -> s.identifier).equals(ClientResearchHolder.getFromName(object.identifier).children.stream().map(s -> s.identifier))) {
                 object.research.children.forEach(a -> {
-                    object.children.add(OBJECTS.stream().filter(o -> Objects.equals(o.identifier, a.identifier)).findFirst().orElse(null));
-                    Astromancy.LOGGER.info("Added child: " + a.identifier + " to " + object.identifier);
+                        object.children.add(OBJECTS.stream().filter(o -> Objects.equals(o.identifier, a.identifier)).findFirst().orElse(null));
+                        Astromancy.LOGGER.info("Added child: " + a.identifier + " to " + object.identifier);
                 });
             }
         }
@@ -451,7 +451,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         for (BookTab tab : TABS) {
-            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY) && (ClientResearchHolder.getResearch().contains(tab.identifier) || anyMatch(ClientResearchHolder.getTabs().stream().map(s -> s.identifier).toList(), tab.entries))) {
+            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY)) {
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, 0.5f, 1.0f);
                 tab.click(guiLeft, guiTop, mouseX, mouseY);
                 break;
@@ -476,10 +476,12 @@ public class BookScreen extends Screen {
                     object.click(xOffset, yOffset, mouseX, mouseY);
                     break;
                 }
-            } else if (tab.entries.contains(object) && !ClientResearchHolder.containsIdentifier(object.identifier)) {
-                if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
-                    object.clickLocked(xOffset, yOffset, mouseX, mouseY);
-                    break;
+            } else if (tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier)) {
+                if(ClientResearchHolder.getFromName(object.identifier).locked.equals(ResearchProgress.LOCKED)){
+                    if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
+                        object.clickLocked(xOffset, yOffset, mouseX, mouseY);
+                        break;
+                    }
                 }
             }
         }
@@ -512,8 +514,8 @@ public class BookScreen extends Screen {
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if(tab.entries.contains(object)){
-                if (ClientResearchHolder.containsIdentifier(object.identifier)) {
+            if(tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier)){
+                if (ClientResearchHolder.getFromName(object.identifier).locked   == ResearchProgress.COMPLETED) {
                     boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);

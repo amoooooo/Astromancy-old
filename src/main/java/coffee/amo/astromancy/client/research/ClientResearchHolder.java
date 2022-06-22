@@ -48,6 +48,15 @@ public class ClientResearchHolder {
         return false;
     }
 
+    public static ResearchObject getFromName(String in){
+        for(ResearchObject r : research){
+            if(r.identifier.equals(in)){
+                return r;
+            }
+        }
+        return null;
+    }
+
     public static void addTab(ResearchTabObject in){
         tabs.add(in);
     }

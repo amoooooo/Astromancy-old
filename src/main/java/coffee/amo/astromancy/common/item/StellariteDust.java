@@ -6,10 +6,7 @@ import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.research.ResearchHelper;
-import coffee.amo.astromancy.core.systems.research.ResearchObject;
-import coffee.amo.astromancy.core.systems.research.ResearchType;
-import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
+import coffee.amo.astromancy.core.systems.research.*;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -59,6 +56,14 @@ public class StellariteDust extends Item {
                         ResearchObject object = (ResearchObject) type;
                         if (object.identifier.equals("crucible")) {
                             ClientResearchHolder.addResearch(object);
+                            research.addResearch(context.getPlayer(), object);
+                        }
+                    }
+                    List<ResearchTabType> tabObjects = ResearchTypeRegistry.RESEARCH_TABS.get().getValues().stream().toList();
+                    for (ResearchTabType type : tabObjects) {
+                        ResearchTabObject object = (ResearchTabObject) type;
+                        if (object.identifier.equals("crucible")) {
+                            ClientResearchHolder.addTab(object);
                         }
                     }
                 });
