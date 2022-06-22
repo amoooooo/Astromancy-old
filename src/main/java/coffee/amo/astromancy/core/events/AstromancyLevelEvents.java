@@ -6,7 +6,7 @@ import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.systems.aspecti.*;
-import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
+import coffee.amo.astromancy.core.systems.research.*;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
@@ -40,6 +40,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
@@ -95,9 +97,15 @@ public class AstromancyLevelEvents {
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("stellarite", false));
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("tab:introduction", true));
                 se.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
-                    research.addResearch(se, "introduction");
-                    research.addResearch(se, "tab:introduction");
-                    research.addResearch(se, "stellarite");
+                    List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
+                    for (ResearchType type : researchObjects) {
+                        ResearchObject object = (ResearchObject) type;
+                        if (object.identifier.equals("introduction") || object.identifier.equals("stellarite") || object.identifier.equals("tab:introduction")) {
+                            object.locked = ResearchProgress.COMPLETED;
+                            ClientResearchHolder.addResearch(object);
+                            research.addResearch(se, object);
+                        }
+                    }
                 });
             }
         }

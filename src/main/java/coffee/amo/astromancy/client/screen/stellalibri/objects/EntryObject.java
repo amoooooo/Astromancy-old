@@ -11,6 +11,8 @@ import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.packets.ResearchNotePacket;
 import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
@@ -25,6 +27,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
@@ -60,6 +63,9 @@ public class EntryObject extends BookObject {
         if(Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
             Minecraft.getInstance().player.playSound(SoundRegistry.RESEARCH_WRITE.get(), 0.5f, 1f);
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ResearchNotePacket(identifier));
+            ClientResearchHolder.getResearch().stream().filter(s -> Objects.equals(s.identifier, identifier)).findFirst().ifPresent(s -> {
+                s.locked = ResearchProgress.UNLOCKED;
+            });
         }
     }
 
@@ -79,7 +85,7 @@ public class EntryObject extends BookObject {
         int posY = offsetPosY(yOffset);
         if (!children.isEmpty()) {
             for (BookObject child : children) {
-                if (ClientResearchHolder.getResearch().contains(child.identifier)) {
+                if (ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList().contains(child.identifier)) {
                     // TODO: add diagonal curved lines to this and ImportantEntryObject#render}
                     if (child.localX > this.localX && child.localY == this.localY) {
                         renderTransparentTexture(BookTextures.HORIZONTAL_LINE, poseStack, posX + 14, posY + 16, 0, 0, 32, 6, 32, 6);
@@ -119,7 +125,14 @@ public class EntryObject extends BookObject {
                 }
             }
         }
-        renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
+        if(research.locked.equals(ResearchProgress.COMPLETED)){
+            renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
+        } else {
+            float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
+            RenderSystem.setShaderColor(mult, mult, mult, 1f);
+            renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        }
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 0.5f);
         minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 9, posY + 11);

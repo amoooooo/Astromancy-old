@@ -3,6 +3,10 @@ package coffee.amo.astromancy.common.item;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.registration.SoundRegistry;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
+import coffee.amo.astromancy.core.systems.research.ResearchType;
+import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -28,12 +32,24 @@ public class ResearchNote extends Item {
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         if(!pLevel.isClientSide){
             if(pPlayer.getItemInHand(pUsedHand).hasTag()){
-                ClientResearchHolder.addResearch(pPlayer.getItemInHand(pUsedHand).getTag().getString("researchId"));
-                pPlayer.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(p -> {
-                    p.addResearch(pPlayer, pPlayer.getItemInHand(pUsedHand).getTag().getString("researchId"));
-                });
-                Minecraft.getInstance().player.playSound(SoundRegistry.RESEARCH_WRITE.get(), 0.5f, 1f);
-                pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
+                List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
+                for (ResearchType type : researchObjects) {
+                    ResearchObject object = (ResearchObject) type;
+                    if (object.identifier.equals(pPlayer.getItemInHand(pUsedHand).getTag().getString("researchId"))) {
+                        ClientResearchHolder.addResearch(object);
+                        if(ClientResearchHolder.containsIdentifier(object.identifier)){
+                            ClientResearchHolder.getResearch().stream().filter(s -> s.identifier == object.identifier).findFirst().ifPresent(s -> {
+                                s.locked = ResearchProgress.COMPLETED;
+                            });
+                        }
+                        pPlayer.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(p -> {
+                            p.addResearch(pPlayer, object);
+                        });
+                        Minecraft.getInstance().player.playSound(SoundRegistry.RESEARCH_WRITE.get(), 0.5f, 1f);
+                        pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
+                    }
+                }
+
             }
         }
         return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));

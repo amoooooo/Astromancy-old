@@ -5,28 +5,21 @@ import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.BookObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.EntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.ImportantEntryObject;
-import coffee.amo.astromancy.client.screen.stellalibri.pages.CraftingPage;
-import coffee.amo.astromancy.client.screen.stellalibri.pages.HeadlineTextPage;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.ResearchPageRegistry;
-import coffee.amo.astromancy.client.screen.stellalibri.pages.TextPage;
 import coffee.amo.astromancy.client.screen.stellalibri.tab.BookTab;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookEntriesEvent;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookTabsEvent;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.BookStatePacket;
-import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.systems.recipe.IRecipeComponent;
 import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
-import coffee.amo.astromancy.core.systems.research.ResearchObject;
-import coffee.amo.astromancy.core.systems.research.ResearchType;
-import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
+import coffee.amo.astromancy.core.systems.research.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -45,6 +38,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static coffee.amo.astromancy.core.registration.ItemRegistry.*;
@@ -81,7 +75,7 @@ public class BookScreen extends Screen {
         setupObjects();
         setupTabs();
         MinecraftForge.EVENT_BUS.post(new SetupAstromancyBookTabsEvent());
-        setTab(TABS.get(0));
+        setTab(TABS.stream().filter(tab -> tab.identifier.equals("introduction")).findFirst().orElse(TABS.get(0)));
     }
 
     public static void setupEntries() {
@@ -135,16 +129,33 @@ public class BookScreen extends Screen {
 
     public static void setupTabs(){
         TABS.clear();
-        TABS.add(new BookTab(-22,24, "introduction", 0, 0 , STELLA_LIBRI.get().getDefaultInstance(), BookTextures.TAB1_PARALLAX).addEntries(
-                OBJECTS.stream().filter(s ->
-                        s.identifier.equals("introduction") || s.identifier.equals("armillary_sphere")
-                        || s.identifier.equals("alchemical_brass") || s.identifier.equals("stellarite")
-                        || s.identifier.equals("arcana_sequence") || s.identifier.equals("crucible")
-                ).collect(Collectors.toCollection(ArrayList::new))));
-        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , ASPECTI_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
-                OBJECTS.stream().filter(s ->
-                        s.identifier.equals("aspecti_phial") || s.identifier.equals("jars")
-                ).collect(Collectors.toCollection(ArrayList::new))));
+        List<ResearchTabType> tabObjects = ResearchTypeRegistry.RESEARCH_TABS.get().getValues().stream().toList();
+        for(ResearchTabType type : tabObjects){
+            ResearchTabObject object = (ResearchTabObject) type;
+            BookTab tab;
+            if(object.backgroundLocation == null){
+                tab = new BookTab(object.x, object.y, object.identifier, 0, 0, object.icon, object.backgroundLocations);
+            } else {
+                tab = new BookTab(object.x, object.y, object.identifier, 0, 0, object.icon, object.backgroundLocation);
+            }
+            tab.iconStack = object.icon;
+            object.children.forEach(child -> {
+                OBJECTS.stream().filter(s -> s.identifier.equals(child.identifier)).findFirst().ifPresent(tab::addEntry);
+            });
+            TABS.add(tab);
+        }
+//        TABS.add(new BookTab(-22,24, "introduction", 0, 0 , STELLA_LIBRI.get().getDefaultInstance(), BookTextures.TAB1_PARALLAX).addEntries(
+//                OBJECTS.stream().filter(s ->
+//                        s.identifier.equals("introduction") || s.identifier.equals("armillary_sphere")
+//                        || s.identifier.equals("alchemical_brass") || s.identifier.equals("stellarite")
+//                        || s.identifier.equals("arcana_sequence") || s.identifier.equals("crucible")
+//                ).collect(Collectors.toCollection(ArrayList::new))));
+//        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , ASPECTI_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
+//                OBJECTS.stream().filter(s ->
+//                        s.identifier.equals("aspecti_phial") || s.identifier.equals("jars")
+//                ).collect(Collectors.toCollection(ArrayList::new))));
+        Astromancy.LOGGER.debug("Tabs: " + TABS.size());
+        //aaaaaa
     }
 
     public static boolean isHovering(double mouseX, double mouseY, int posX, int posY, int width, int height) {
@@ -369,17 +380,23 @@ public class BookScreen extends Screen {
             OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.children, entry.xOffset, entry.yOffset, entry.research));
         }
         for (BookObject object : OBJECTS) {
-            if (object.identifier == "introduction") {
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "alchemical_brass").findFirst().orElse(null));
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "stellarite").findFirst().orElse(null));
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "arcana_sequence").findFirst().orElse(null));
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
-            } else if (object.identifier == "alchemical_brass") {
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere").findFirst().orElse(null));
-            } else if (object.identifier == "aspecti_phial") {
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "jars").findFirst().orElse(null));
-            } else if (object.identifier == "stellarite"){
-                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
+//            if (object.identifier == "introduction") {
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "alchemical_brass").findFirst().orElse(null));
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "stellarite").findFirst().orElse(null));
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "arcana_sequence").findFirst().orElse(null));
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
+//            } else if (object.identifier == "alchemical_brass") {
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere").findFirst().orElse(null));
+//            } else if (object.identifier == "aspecti_phial") {
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "jars").findFirst().orElse(null));
+//            } else if (object.identifier == "stellarite"){
+//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
+//            }
+            if(!object.research.children.isEmpty()){
+                object.research.children.forEach(a -> {
+                    object.children.add(OBJECTS.stream().filter(o -> Objects.equals(o.identifier, a.identifier)).findFirst().orElse(null));
+                    Astromancy.LOGGER.info("Added child: " + a.identifier + " to " + object.identifier);
+                });
             }
         }
         faceObject(OBJECTS.get(0));
@@ -434,7 +451,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         for (BookTab tab : TABS) {
-            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY) && (ClientResearchHolder.getResearch().contains(tab.identifier) || anyMatch(ClientResearchHolder.getResearch(), tab.entries))) {
+            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY) && (ClientResearchHolder.getResearch().contains(tab.identifier) || anyMatch(ClientResearchHolder.getTabs().stream().map(s -> s.identifier).toList(), tab.entries))) {
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, 0.5f, 1.0f);
                 tab.click(guiLeft, guiTop, mouseX, mouseY);
                 break;
@@ -454,12 +471,12 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
-            if(tab.entries.contains(object) && ClientResearchHolder.getResearch().contains(object.identifier)){
+            if(tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier) && (object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))){
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.click(xOffset, yOffset, mouseX, mouseY);
                     break;
                 }
-            } else if (tab.entries.contains(object)){
+            } else if (tab.entries.contains(object) && !ClientResearchHolder.containsIdentifier(object.identifier)) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.clickLocked(xOffset, yOffset, mouseX, mouseY);
                     break;
@@ -491,30 +508,32 @@ public class BookScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    // TODO: figure out why the entries render twice, fix logic to use new ResearchProgress enum, its a mess
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
             if(tab.entries.contains(object)){
-                if (ClientResearchHolder.getResearch().contains(object.identifier)) {
+                if (ClientResearchHolder.containsIdentifier(object.identifier)) {
                     boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
                     object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    // TODO: render a basic line transparent texture FROM the child to the parent
                     if (!object.children.isEmpty()) {
                         object.children.forEach(c -> {
-                            if (ClientResearchHolder.getResearch().contains(c.identifier)) {
-                                if (!anyMatch(ClientResearchHolder.getResearch(), c.children)) {
+                            if(!c.research.locked.equals(ResearchProgress.COMPLETED)){
+                                if (!(c.research.locked.equals(ResearchProgress.LOCKED))) {
+                                    if (!anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), c.children)) {
+                                        boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
+                                        c.isHovering = isHovering2;
+                                        c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
+                                        c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                    }
+                                } else {
                                     boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
                                     c.isHovering = isHovering2;
                                     c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
-                                    c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                    c.lockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                                 }
-                            } else {
-                                boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
-                                c.isHovering = isHovering2;
-                                c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
-                                c.lockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                             }
                         });
                     }
@@ -525,7 +544,7 @@ public class BookScreen extends Screen {
 
     public void renderTabs(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
         for (int i = TABS.size() - 1; i >= 0; i--){
-            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch(), TABS.get(i).entries)){
+            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), TABS.get(i).entries)){
                 BookTab tab = TABS.get(i);
                 boolean isHovering = tab.isHovering(guiLeft, guiTop, mouseX, mouseY);
                 tab.isHovering = isHovering;
@@ -537,7 +556,7 @@ public class BookScreen extends Screen {
 
     public void lateTabRender(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
         for (int i = TABS.size() - 1; i >= 0; i--){
-            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch(), TABS.get(i).entries)){
+            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), TABS.get(i).entries)){
                 BookTab tab = TABS.get(i);
                 tab.lateRender(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks);
             }
@@ -547,13 +566,11 @@ public class BookScreen extends Screen {
     public void lateEntryRender(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if (ClientResearchHolder.getResearch().contains(object.identifier)) {
+            if (ClientResearchHolder.containsIdentifier(object.identifier)) {
                 object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                 object.children.forEach(c -> {
-                    if (ClientResearchHolder.getResearch().contains(c.identifier)) {
-                        if (!anyMatch(ClientResearchHolder.getResearch(), c.children)) {
+                    if (!(c.research.locked.equals(ResearchProgress.LOCKED))) {
                             c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                        }
                     } else {
                         c.lateLockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                     }

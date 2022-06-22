@@ -3,6 +3,7 @@ package coffee.amo.astromancy.core.registration;
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,6 +23,8 @@ public class ResearchRegistry {
     public static final RegistryObject<ResearchObject> ARMILLARY_SPHERE = RESEARCH.register("armillary_sphere", () -> new ResearchObject("armillary_sphere",2,0,"").setIcon(ItemRegistry.ARMILLARY_SPHERE.get().getDefaultInstance()));
     public static final RegistryObject<ResearchObject> ARCANA_SEQUENCE = RESEARCH.register("arcana_sequence", () -> new ResearchObject("arcana_sequence",-1,1,"").setIcon(ItemRegistry.ARCANA_SEQUENCE.get().getDefaultInstance()));
     public static final RegistryObject<ResearchObject> ASPECTI_PHIAL = RESEARCH.register("aspecti_phial", () -> new ResearchObject("aspecti_phial",0,0,"").setIcon(ItemRegistry.ASPECTI_PHIAL.get().getDefaultInstance()));
+    public static final RegistryObject<ResearchObject> STARGAZING = RESEARCH.register("stargazing", () -> new ResearchObject("stargazing",0,0,"important").setIcon(Items.SPYGLASS.getDefaultInstance()));
+    public static final RegistryObject<ResearchObject> SOLAR_ECLIPSE = RESEARCH.register("solar_eclipse", () -> new ResearchObject("solar_eclipse",-1,-1,"").setIcon(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance()));
 
     public static void register(){
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -34,5 +37,6 @@ public class ResearchRegistry {
         STELLARITE.get().addChild(CRUCIBLE.get());
         ALCHEMICAL_BRASS.get().addChild(ARMILLARY_SPHERE.get());
         ASPECTI_PHIAL.get().addChild(JAR.get());
+        STARGAZING.get().addChild(SOLAR_ECLIPSE.get());
     }
 }

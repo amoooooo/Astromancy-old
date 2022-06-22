@@ -35,8 +35,8 @@ public class BookTab {
     public BookTab(int posX, int posY, String identifier, int localX, int localY, ItemStack iconStack, ResourceLocation background) {
         this.localX = localX;
         this.localY = localY;
-        this.posX = posX;
-        this.posY = posY;
+        this.posX = posX * -22;
+        this.posY = posY * 24;
         this.identifier = identifier;
         this.iconStack = iconStack;
         this.BACKGROUND = background;
@@ -45,8 +45,8 @@ public class BookTab {
     public BookTab(int posX, int posY, String identifier, int localX, int localY, ItemStack iconStack, List<ResourceLocation> parallax) {
         this.localX = localX;
         this.localY = localY;
-        this.posX = posX;
-        this.posY = posY;
+        this.posX = posX * -22;
+        this.posY = posY * 24;
         this.identifier = identifier;
         this.iconStack = iconStack;
         this.backgroundParallax = parallax;

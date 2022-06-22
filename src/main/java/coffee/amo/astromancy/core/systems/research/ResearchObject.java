@@ -13,7 +13,7 @@ public class ResearchObject extends ResearchType {
     public final String identifier;
     public List<ResearchObject> children = new ArrayList<>();
     public List<ResearchObject> parents = new ArrayList<>();
-    public boolean locked = true;
+    public ResearchProgress locked = ResearchProgress.LOCKED;
     public ItemStack icon = ItemStack.EMPTY;
     public int x;
     public int y;

@@ -1,8 +1,6 @@
 package coffee.amo.astromancy.client.screen.stellalibri.pages;
 
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
-import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -16,6 +14,12 @@ public class ResearchPageRegistry {
             pages.put(research, new TreeMap<>());
         }
         pages.get(research).put(page, pageObject);
+    }
+
+    public static void registerPage(ResourceLocation research, BookPage... pages){
+        for(int i = 0; i < pages.length; i++){
+            registerPage(research, i, pages[i]);
+        }
     }
 
     public static TreeMap<Integer, BookPage> getPages(ResourceLocation research) {
@@ -33,5 +37,8 @@ public class ResearchPageRegistry {
 
         registerPage(ResearchRegistry.ASPECTI_PHIAL.get().getResearchName(), 0, new HeadlineTextPage("aspecti_phial", "aspecti_phial.a"));
         registerPage(ResearchRegistry.JAR.get().getResearchName(), 0, new HeadlineTextPage("jars", "jars.a"));
+
+        registerPage(ResearchRegistry.STARGAZING.get().getResearchName(), 0, new HeadlineTextPage("stargazing", "stargazing.a"));
+        registerPage(ResearchRegistry.SOLAR_ECLIPSE.get().getResearchName(), 0, new HeadlineTextPage("solar_eclipse", "solar_eclipse.a"));
     }
 }

@@ -1,19 +1,10 @@
 package coffee.amo.astromancy;
 
-import coffee.amo.astromancy.client.screen.stellalibri.pages.ResearchPageRegistry;
-import coffee.amo.astromancy.common.item.AspectiPhial;
-import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
-import coffee.amo.astromancy.core.registration.AspectiRegistry;
-import coffee.amo.astromancy.core.registration.BlockRegistration;
-import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.registration.ResearchRegistry;
+import coffee.amo.astromancy.core.registration.*;
+import coffee.amo.astromancy.core.systems.research.ResearchTabType;
 import coffee.amo.astromancy.core.util.StarSavedData;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -21,7 +12,6 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
@@ -49,11 +39,11 @@ public class Astromancy {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::client);
         modBus.addListener(this::registerCapabilities);
         BlockRegistration.register();
         AspectiRegistry.register();
         ResearchRegistry.register();
+        TabRegistry.register();
         ItemRegistry.register();
         AstromancyPacketHandler.init();
         BLOCKS.register(modBus);
@@ -79,31 +69,7 @@ public class Astromancy {
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         ResearchRegistry.doSetup();
-    }
-
-    private void client(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        ItemProperties.register(ItemRegistry.STELLA_LIBRI.get(), astromancy("book_open"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(pStack.getItem() instanceof StellaLibri sl){
-                return pStack.getOrCreateTag().getInt("openness");
-            }
-            return 0;
-        });
-        ItemProperties.register(ItemRegistry.ASPECTI_PHIAL.get(), astromancy("phial_filled"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(pStack.getItem() instanceof AspectiPhial && pStack.hasTag()){
-                return 1;
-            }
-            return 0;
-        });
-        ItemProperties.register(ItemRegistry.JAR.get(), astromancy("jar_fill"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(pStack.getItem().equals(ItemRegistry.JAR.get()) && pStack.hasTag()){
-                return ((CompoundTag)pStack.getTag().get("BlockEntityTag")).getInt("count") / 256f;
-            }
-            return 0;
-        });
-        ItemBlockRenderTypes.setRenderLayer(BlockRegistration.JAR.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockRegistration.ARMILLARY_SPHERE_COMPONENT.get(), RenderType.cutout());
-        ResearchPageRegistry.register();
+        TabRegistry.doSetup();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
