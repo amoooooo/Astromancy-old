@@ -8,6 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.lang.ref.WeakReference;
+
 public class CraftingPage extends BookPage {
     private final ItemStack outputStack;
     private final ItemStack[] inputStacks;
@@ -33,7 +35,7 @@ public class CraftingPage extends BookPage {
         this.inputStacks = inputStacks;
     }
 
-    public void renderLeft(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+    public void renderLeft(WeakReference<Minecraft> minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
 

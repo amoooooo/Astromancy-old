@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.client.screen.stellalibri.tab;
 
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
+import coffee.amo.astromancy.client.screen.stellalibri.BookTextures;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.BookObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -20,6 +21,7 @@ public class BookTab {
     public boolean isHovering;
     public List<BookObject> entries = new ArrayList<>();
     public ResourceLocation BACKGROUND;
+    public List<ResourceLocation> backgroundParallax;
     public String identifier;
     public float hover;
     public int posX;
@@ -40,6 +42,16 @@ public class BookTab {
         this.BACKGROUND = background;
     }
 
+    public BookTab(int posX, int posY, String identifier, int localX, int localY, ItemStack iconStack, List<ResourceLocation> parallax) {
+        this.localX = localX;
+        this.localY = localY;
+        this.posX = posX;
+        this.posY = posY;
+        this.identifier = identifier;
+        this.iconStack = iconStack;
+        this.backgroundParallax = parallax;
+    }
+
     public String translationKey(){
         return "astromancy.gui.book.tab." + identifier;
     }
@@ -58,9 +70,9 @@ public class BookTab {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
         if(!selected){
-            renderTransparentTexture(FRAME_TEXTURE, poseStack, posX, posY, 156, 232, 23, 24, 256, 256);
+            renderTransparentTexture(BookTextures.FRAME_TEXTURE, poseStack, posX, posY, 156, 232, 23, 24, 256, 256);
         } else {
-            renderTransparentTexture(FRAME_TEXTURE, poseStack, posX, posY, 184, 232, 23, 24, 256, 256);
+            renderTransparentTexture(BookTextures.FRAME_TEXTURE, poseStack, posX, posY, 184, 232, 23, 24, 256, 256);
         }
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 0.5f);

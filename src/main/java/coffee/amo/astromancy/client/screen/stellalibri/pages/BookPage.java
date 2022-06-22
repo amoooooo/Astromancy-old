@@ -5,6 +5,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
+import java.lang.ref.WeakReference;
+
 import static coffee.amo.astromancy.client.screen.stellalibri.EntryScreen.screen;
 
 public class BookPage {

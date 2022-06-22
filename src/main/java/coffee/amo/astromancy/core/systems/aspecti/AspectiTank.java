@@ -79,7 +79,7 @@ public class AspectiTank implements IAspectiHandler, IAspectiTank {
 
     @Override
     public boolean isAspectiValid(@NotNull AspectiStack aspecti) {
-        return isAspectiValid(aspecti);
+        return validator.test(aspecti);
     }
 
     @Override

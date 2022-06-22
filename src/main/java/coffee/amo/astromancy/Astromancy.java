@@ -1,5 +1,6 @@
 package coffee.amo.astromancy;
 
+import coffee.amo.astromancy.client.screen.stellalibri.pages.ResearchPageRegistry;
 import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
@@ -7,6 +8,7 @@ import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
+import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -51,6 +53,7 @@ public class Astromancy {
         modBus.addListener(this::registerCapabilities);
         BlockRegistration.register();
         AspectiRegistry.register();
+        ResearchRegistry.register();
         ItemRegistry.register();
         AstromancyPacketHandler.init();
         BLOCKS.register(modBus);
@@ -75,6 +78,7 @@ public class Astromancy {
 
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
+        ResearchRegistry.doSetup();
     }
 
     private void client(final FMLClientSetupEvent event) {
@@ -99,6 +103,7 @@ public class Astromancy {
         });
         ItemBlockRenderTypes.setRenderLayer(BlockRegistration.JAR.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(BlockRegistration.ARMILLARY_SPHERE_COMPONENT.get(), RenderType.cutout());
+        ResearchPageRegistry.register();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

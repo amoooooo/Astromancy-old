@@ -9,7 +9,7 @@ public enum LumenType implements WeightedEntry {
     CONSTRUCTIVE("Constructive", 35, 1),
     PURE("Pure", 10, 1.3f),
     DENATURED("Denatured", 10, 1.5f),
-    NULL("Null", 5, 2.0f);
+    EMPTY("Null", 5, 2.0f);
 
     private final String type;
     private final int chance;

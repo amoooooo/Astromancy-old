@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
+import java.lang.ref.WeakReference;
+
 public class HeadlineTextPage extends BookPage
 {
     private final String headlineTranslationKey;
