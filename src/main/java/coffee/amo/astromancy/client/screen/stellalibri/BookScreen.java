@@ -451,7 +451,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         for (BookTab tab : TABS) {
-            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY) && (ClientResearchHolder.getResearch().contains(tab.identifier) || anyMatch(ClientResearchHolder.getTabs().stream().map(s -> s.identifier).toList(), tab.entries))) {
+            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY)) {
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, 0.5f, 1.0f);
                 tab.click(guiLeft, guiTop, mouseX, mouseY);
                 break;
@@ -476,7 +476,7 @@ public class BookScreen extends Screen {
                     object.click(xOffset, yOffset, mouseX, mouseY);
                     break;
                 }
-            } else if (tab.entries.contains(object) && !ClientResearchHolder.containsIdentifier(object.identifier)) {
+            } else if (tab.entries.contains(object) && ClientResearchHolder.getFromName(object.identifier).locked.equals(ResearchProgress.LOCKED)) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.clickLocked(xOffset, yOffset, mouseX, mouseY);
                     break;
@@ -512,8 +512,8 @@ public class BookScreen extends Screen {
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if(tab.entries.contains(object)){
-                if (ClientResearchHolder.containsIdentifier(object.identifier)) {
+            if(tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier)){
+                if (ClientResearchHolder.getFromName(object.identifier).locked   == ResearchProgress.COMPLETED) {
                     boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
