@@ -1,12 +1,13 @@
 package coffee.amo.astromancy.common.item;
 
-import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.research.*;
+import coffee.amo.astromancy.core.systems.research.ResearchHelper;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,8 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
-
-import java.util.List;
 
 public class StellariteDust extends Item {
     public StellariteDust(Properties pProperties) {
@@ -51,21 +50,12 @@ public class StellariteDust extends Item {
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("crucible", false));
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("aspecti_phial", true));
                 context.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
-                    List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
-                    for (ResearchType type : researchObjects) {
-                        ResearchObject object = (ResearchObject) type;
-                        if (object.identifier.equals("crucible")) {
-                            ClientResearchHolder.addResearch(object);
-                            research.addResearch(context.getPlayer(), object);
+                    ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
+                        ResearchObject object = (ResearchObject) s;
+                        if(object.identifier.equals("crucible")){
+                            research.addLockedResearch(context.getPlayer(), object);
                         }
-                    }
-                    List<ResearchTabType> tabObjects = ResearchTypeRegistry.RESEARCH_TABS.get().getValues().stream().toList();
-                    for (ResearchTabType type : tabObjects) {
-                        ResearchTabObject object = (ResearchTabObject) type;
-                        if (object.identifier.equals("crucible")) {
-                            ClientResearchHolder.addTab(object);
-                        }
-                    }
+                    });
                 });
             }
         }

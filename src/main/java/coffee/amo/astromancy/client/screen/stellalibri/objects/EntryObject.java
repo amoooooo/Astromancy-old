@@ -9,6 +9,7 @@ import coffee.amo.astromancy.client.screen.stellalibri.tab.BookTab;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.packets.ResearchNotePacket;
+import coffee.amo.astromancy.core.packets.ServerboundResearchPacket;
 import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
@@ -21,13 +22,13 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
@@ -61,11 +62,9 @@ public class EntryObject extends BookObject {
     public void clickLocked(float xOffset, float yOffset, double mouseX, double mouseY)
     {
         if(Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
-            Minecraft.getInstance().player.playSound(SoundRegistry.RESEARCH_WRITE.get(), 0.5f, 1f);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ResearchNotePacket(identifier));
-            ClientResearchHolder.getResearch().stream().filter(s -> Objects.equals(s.identifier, identifier)).findFirst().ifPresent(s -> {
-                s.locked = ResearchProgress.UNLOCKED;
-            });
+            Minecraft.getInstance().player.playSound(SoundEvents.CHAIN_BREAK, 0.5f, 1f);
+            research.locked = ResearchProgress.IN_PROGRESS;
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier));
         }
     }
 
@@ -83,9 +82,9 @@ public class EntryObject extends BookObject {
     {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        if (!children.isEmpty()) {
+        if (!children.isEmpty() && (research.locked == ResearchProgress.COMPLETED || research.locked == ResearchProgress.IN_PROGRESS)) {
             for (BookObject child : children) {
-                if (ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList().contains(child.identifier)) {
+                if (ClientResearchHolder.contains(child.identifier)) {
                     // TODO: add diagonal curved lines to this and ImportantEntryObject#render}
                     if (child.localX > this.localX && child.localY == this.localY) {
                         renderTransparentTexture(BookTextures.HORIZONTAL_LINE, poseStack, posX + 14, posY + 16, 0, 0, 32, 6, 32, 6);
@@ -125,7 +124,7 @@ public class EntryObject extends BookObject {
                 }
             }
         }
-        if(research.locked.equals(ResearchProgress.COMPLETED)){
+        if( ClientResearchHolder.getResearch().stream().filter(s -> s.identifier.equals(research.identifier)).findFirst().get().locked.equals(ResearchProgress.COMPLETED)){
             renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
         } else {
             float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
@@ -154,10 +153,10 @@ public class EntryObject extends BookObject {
         }
     }
     @Override
-    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
-            screen.renderComponentTooltip(poseStack, List.of(new TextComponent(StringHelper.capitalize(research.identifier)), new TextComponent("Missing research: " + StringHelper.capitalize(research.parents.get(0).identifier))), mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, List.of(new TranslatableComponent("astromancy.gui.book.entry." + research.identifier), new TextComponent("Missing research: "), new TextComponent(" - ").append(new TranslatableComponent(Arrays.stream(parents).toList().get(0)))), mouseX, mouseY, minecraft.font);
         }
     }
 }

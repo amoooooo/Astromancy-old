@@ -21,6 +21,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -38,7 +40,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static coffee.amo.astromancy.core.registration.ItemRegistry.*;
@@ -55,6 +56,8 @@ public class BookScreen extends Screen {
     public static ArrayList<BookTab> TABS = new ArrayList<>();
     public final int parallax_width = 800;
     public final int parallax_height = 800;
+    private final TranslatableComponent lockedComponent = new TranslatableComponent("astromancy.gui.book.entry.");
+    private final TranslatableComponent unlockedComponent = new TranslatableComponent("astromancy.gui.book.entry.none");
     public int bookWidth = 448;
     public int bookHeight = 260;
     public int bookInsideWidth = 416;
@@ -380,6 +383,11 @@ public class BookScreen extends Screen {
             OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.children, entry.xOffset, entry.yOffset, entry.research));
         }
         for (BookObject object : OBJECTS) {
+            for(ResearchObject child : object.research.children) {
+                if(object.research.children.contains(child)) {
+                    object.children.add(OBJECTS.stream().filter(s -> s.research == child).findFirst().orElse(null));
+                }
+            }
 //            if (object.identifier == "introduction") {
 //                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "alchemical_brass").findFirst().orElse(null));
 //                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "stellarite").findFirst().orElse(null));
@@ -392,12 +400,6 @@ public class BookScreen extends Screen {
 //            } else if (object.identifier == "stellarite"){
 //                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
 //            }
-            if(!object.research.children.isEmpty()){
-                object.research.children.forEach(a -> {
-                    object.children.add(OBJECTS.stream().filter(o -> Objects.equals(o.identifier, a.identifier)).findFirst().orElse(null));
-                    Astromancy.LOGGER.info("Added child: " + a.identifier + " to " + object.identifier);
-                });
-            }
         }
         faceObject(OBJECTS.get(0));
     }
@@ -451,7 +453,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         for (BookTab tab : TABS) {
-            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY)) {
+            if (tab.isHovering(guiLeft, guiTop, mouseX, mouseY) && (ClientResearchHolder.contains(tab.identifier) || anyMatch(ClientResearchHolder.getResearch().stream().map(r -> r.identifier).toList(), tab.entries))) {
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.UI_BUTTON_CLICK, SoundSource.MASTER, 0.5f, 1.0f);
                 tab.click(guiLeft, guiTop, mouseX, mouseY);
                 break;
@@ -471,12 +473,12 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
-            if(tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier) && (object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))){
+            if(tab.entries.contains(object) && ClientResearchHolder.contains(object.identifier)) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.click(xOffset, yOffset, mouseX, mouseY);
                     break;
                 }
-            } else if (tab.entries.contains(object) && ClientResearchHolder.getFromName(object.identifier).locked.equals(ResearchProgress.LOCKED)) {
+            } else if (tab.entries.contains(object)){
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.clickLocked(xOffset, yOffset, mouseX, mouseY);
                     break;
@@ -508,74 +510,110 @@ public class BookScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    // TODO: figure out why the entries render twice, fix logic to use new ResearchProgress enum, its a mess
     public void renderEntries(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if(tab.entries.contains(object) && ClientResearchHolder.containsIdentifier(object.identifier)){
-                if (ClientResearchHolder.getFromName(object.identifier).locked   == ResearchProgress.COMPLETED) {
+            if(tab.entries.contains(object)){
+                if (ClientResearchHolder.contains(object.identifier)) {
                     boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
                     object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    if (!object.children.isEmpty()) {
+                    // TODO: render a basic line transparent texture FROM the child to the parent
+                    if (!object.children.isEmpty() && (object.research.locked.equals(ResearchProgress.COMPLETED) || object.research.locked.equals(ResearchProgress.IN_PROGRESS))) {
                         object.children.forEach(c -> {
-                            if(!c.research.locked.equals(ResearchProgress.COMPLETED)){
-                                if (!(c.research.locked.equals(ResearchProgress.LOCKED))) {
-                                    if (!anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), c.children)) {
-                                        boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
-                                        c.isHovering = isHovering2;
-                                        c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
-                                        c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                                    }
+                            if(!c.isRendered){
+                                if(ClientResearchHolder.contains(c.identifier)){
+                                    ClientResearchHolder.getResearch().stream().filter(r -> r.identifier.equals(c.identifier)).findFirst().ifPresent(b -> {
+                                        if(!anyMatch(b.children.stream().map(e -> e.identifier).toList(), c.children)){
+                                            boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
+                                            c.isHovering = isHovering2;
+                                            c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
+                                            c.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                            c.isRendered = true;
+                                        }
+                                    });
                                 } else {
+                                    if(c.isRendered) c.isRendered = false;
                                     boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
                                     c.isHovering = isHovering2;
                                     c.hover = isHovering2 ? Math.min(c.hover++, c.hoverCap()) : Math.max(c.hover--, 0);
                                     c.lockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                    c.isRendered = true;
                                 }
                             }
                         });
                     }
+                } else if (object instanceof ImportantEntryObject){
+                    boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
+                    object.isHovering = isHovering;
+                    object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
+                    object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
                 }
             }
+        }
+        for(BookObject b : OBJECTS){
+            b.isRendered = false;
         }
     }
 
     public void renderTabs(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
         for (int i = TABS.size() - 1; i >= 0; i--){
-            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), TABS.get(i).entries)){
-                BookTab tab = TABS.get(i);
-                boolean isHovering = tab.isHovering(guiLeft, guiTop, mouseX, mouseY);
-                tab.isHovering = isHovering;
-                tab.hover = isHovering ? Math.min(tab.hover++, tab.hoverCap()) : Math.max(tab.hover--, 0);
-                tab.render(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks, this.tab == tab);
-            }
+            int finalI = i;
+            ResearchTypeRegistry.RESEARCH_TABS.get().getValues().forEach(s -> {
+                ResearchTabObject t = (ResearchTabObject) s;
+                if(anyMatch(ClientResearchHolder.getResearch().stream().map(r -> r.identifier).toList(), TABS.get(finalI).entries)){
+                    BookTab tab = TABS.get(finalI);
+                    boolean isHovering = tab.isHovering(guiLeft, guiTop, mouseX, mouseY);
+                    tab.isHovering = isHovering;
+                    tab.hover = isHovering ? Math.min(tab.hover++, tab.hoverCap()) : Math.max(tab.hover--, 0);
+                    tab.render(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks, this.tab == tab);
+                }
+            });
         }
     }
 
     public void lateTabRender(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
         for (int i = TABS.size() - 1; i >= 0; i--){
-            if(ClientResearchHolder.getResearch().contains("tab:" + TABS.get(i).identifier) || anyMatch(ClientResearchHolder.getResearch().stream().map(s -> s.identifier).toList(), TABS.get(i).entries)){
-                BookTab tab = TABS.get(i);
-                tab.lateRender(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks);
-            }
+            int finalI = i;
+            ResearchTypeRegistry.RESEARCH_TABS.get().getValues().forEach(s -> {
+                ResearchTabObject t = (ResearchTabObject) s;
+                if(anyMatch(t.children.stream().map(c -> c.identifier).toList(), TABS.get(finalI).entries)){
+                    BookTab tab = TABS.get(finalI);
+                    tab.lateRender(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks);
+                }
+            });
         }
     }
 
     public void lateEntryRender(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
-            if (ClientResearchHolder.containsIdentifier(object.identifier)) {
+            if (ClientResearchHolder.contains(object.identifier)) {
                 object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                object.children.forEach(c -> {
-                    if (!(c.research.locked.equals(ResearchProgress.LOCKED))) {
-                            c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    } else {
-                        c.lateLockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    }
-                });
+                // TODO: render a basic line transparent texture FROM the child to the parent
+                if (!object.children.isEmpty()) {
+                    object.children.forEach(c -> {
+                        if(!c.isRendered){
+                            if(ClientResearchHolder.contains(c.identifier)){
+                                ClientResearchHolder.getResearch().stream().filter(r -> r.identifier.equals(c.identifier)).findFirst().ifPresent(b -> {
+                                    if(!anyMatch(b.children.stream().map(e -> e.identifier).toList(), c.children)){
+                                        c.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
+                                        c.isRendered = true;
+                                    }
+                                });
+                            } else {
+                                MutableComponent lock = object.research.locked.equals(ResearchProgress.COMPLETED) ? unlockedComponent : (TranslatableComponent) lockedComponent.copy().append(object.identifier);
+                                c.lateLockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks, lock.getString());
+                                c.isRendered = true;
+                            }
+                        }
+                    });
+                }
             }
+        }
+        for(BookObject b : OBJECTS){
+            b.isRendered = false;
         }
     }
 
@@ -616,7 +654,7 @@ public class BookScreen extends Screen {
         }
         for(int i = 0; i < textures.size(); i++){
             uOffset *= 1+(i/10f);
-            uOffset *= (Minecraft.getInstance().level.getGameTime() / 24000.0f) / 3f;
+            uOffset *= (Minecraft.getInstance().level.getDayTime() / 2400.0f) / 5f;
             vOffset *= 1+(i/10f);
             int scale = i == textures.size() - 1 ? Math.round(0.1f) : i;
             renderTexture(textures.get(i), poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / (2-(i/3.5f))), Math.round(parallax_height / (2-(i/3.5f))));

@@ -1,10 +1,12 @@
 package coffee.amo.astromancy.common.capability;
 
-import coffee.amo.astromancy.client.research.ClientResearchHolder;
-import coffee.amo.astromancy.core.systems.research.*;
+import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.packets.ResearchRemovePacket;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -27,14 +29,36 @@ public class PlayerResearchCapability implements IPlayerResearch {
 
     @Override
     public void addResearch(Player player, ResearchObject researchId) {
-        RESEARCH.add(researchId);
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.identifier, false));
+        if(!RESEARCH.contains(researchId)) {
+            researchId.locked = ResearchProgress.IN_PROGRESS;
+            RESEARCH.add(researchId);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), false));
+        }
+    }
+
+    @Override
+    public void addLockedResearch(Player player, ResearchObject researchId) {
+        if(!RESEARCH.contains(researchId)) {
+            researchId.locked = ResearchProgress.LOCKED;
+            RESEARCH.add(researchId);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true));
+        }
+    }
+
+    @Override
+    public void completeResearch(Player player, ResearchObject researchId) {
+        if(RESEARCH.contains(researchId)) {
+            researchId.locked = ResearchProgress.COMPLETED;
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true));
+        }
     }
 
     @Override
     public void removeResearch(Player player, ResearchObject researchId) {
-        RESEARCH.remove(researchId);
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchRemovePacket(researchId.identifier));
+        if(RESEARCH.contains(researchId)) {
+            RESEARCH.remove(researchId);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchRemovePacket(researchId.getIdentifier()));
+        }
     }
 
     @Override
@@ -43,10 +67,20 @@ public class PlayerResearchCapability implements IPlayerResearch {
     }
 
     @Override
+    public boolean contains(Player player, String researchId) {
+        for(ResearchObject research : RESEARCH) {
+            if(research.getIdentifier().equals(researchId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public CompoundTag toNBT(CompoundTag tag) {
         ListTag research = new ListTag();
         for(ResearchObject id : RESEARCH){
-            research.add(StringTag.valueOf(id.identifier));
+            research.add(id.toNBT(new CompoundTag()));
         }
         tag.put("research", research);
         return tag;
@@ -55,24 +89,10 @@ public class PlayerResearchCapability implements IPlayerResearch {
     @Override
     public void fromNBT(CompoundTag tag) {
         RESEARCH.clear();
-        ListTag research = tag.getList("research", Tag.TAG_STRING);
-        for(int i = 0; i < research.size(); i++){
-            List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
-            for (ResearchType type : researchObjects) {
-                ResearchObject object = (ResearchObject) type;
-                if (object.identifier.equals(research.getString(i))) {
-                    ClientResearchHolder.addResearch(object);
-                    RESEARCH.add(object);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void setResearchState(Player player, ResearchObject researchId, ResearchProgress progress) {
-        RESEARCH.stream().filter(id -> id.identifier.equals(researchId.identifier)).findFirst().ifPresent(s -> {
-            s.locked = progress;
+        ListTag research = tag.getList("research", Tag.TAG_COMPOUND);
+        research.forEach(rTag -> {
+            RESEARCH.add(ResearchObject.fromNBT((CompoundTag) rTag));
+            Astromancy.LOGGER.debug("Loaded research: " + ((CompoundTag) rTag).getString("id"));
         });
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.identifier, true));
     }
 }

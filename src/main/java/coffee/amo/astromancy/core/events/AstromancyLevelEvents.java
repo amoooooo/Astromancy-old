@@ -4,27 +4,31 @@ import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
-import coffee.amo.astromancy.core.systems.aspecti.*;
-import coffee.amo.astromancy.core.systems.research.*;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
-import coffee.amo.astromancy.core.packets.StarDataPacket;
-import coffee.amo.astromancy.core.util.StarSavedData;
+import coffee.amo.astromancy.core.registration.SoundRegistry;
+import coffee.amo.astromancy.core.systems.aspecti.AspectiTank;
+import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpyglassItem;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -41,18 +45,17 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
     public static boolean setForDay = false;
     public static float pity = 0;
+
     @SubscribeEvent
     public static void checkSolarEclipse(TickEvent.WorldTickEvent event) {
         if (event.world instanceof ServerLevel se) {
             long time = event.world.getDayTime() % 24000;
             boolean day = time == 22500;
-            if(day && !setForDay){
+            if (day && !setForDay) {
                 setForDay = true;
                 pity += 10;
             }
@@ -61,7 +64,7 @@ public class AstromancyLevelEvents {
                 System.out.println("Solar Eclipse!");
                 SolarEclipseHandler.setEnabled(se, true);
                 pity = 0;
-            } else if (time >= 13500 && time < 22500){
+            } else if (time >= 13500 && time < 22500) {
                 SolarEclipseHandler.setEnabled(se, false);
             }
         }
@@ -69,59 +72,65 @@ public class AstromancyLevelEvents {
 
     @SubscribeEvent
     public static void sendStars(PlayerEvent.PlayerLoggedInEvent event) {
-        if(event.getEntity() instanceof ServerPlayer se) {
+        if (event.getEntity() instanceof ServerPlayer se) {
             ClientResearchHolder.research.clear();
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get(event.getEntity().getServer()).getConstellationInstances()));
-            LazyOptional<IPlayerResearch> optional = event.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY);
-            if(optional.isPresent() && optional.resolve().isPresent()) {
-                IPlayerResearch research = optional.resolve().get();
+            event.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
                 CompoundTag tag = research.toNBT(new CompoundTag());
                 ListTag researchTag = (ListTag) tag.get("research");
-                for(int i = 0; i < researchTag.size(); i++) {
-                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(researchTag.getString(i), true));
+                if (!researchTag.isEmpty()) {
+                    researchTag.forEach(r -> {
+                        ResearchObject ro = ResearchObject.fromNBT((CompoundTag) r);
+                        Astromancy.LOGGER.debug("Sending " + se.getName() + " research: " + ro.getResearchName());
+                        switch (ro.locked) {
+                            case LOCKED -> {
+                            }
+                            case IN_PROGRESS -> AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(ro.identifier, true));
+                            case COMPLETED -> {
+                                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(ro.identifier, false));
+                                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(ro.identifier, true));
+                            }
+                        }
+                    });
                 }
-            }
+            });
         }
     }
 
     @SubscribeEvent
-    public static void researchCommand(RegisterCommandsEvent event){
+    public static void researchCommand(RegisterCommandsEvent event) {
         AstromancyCommand.registerSubCommands(event.getDispatcher());
     }
 
     @SubscribeEvent
-    public static void libriObtain(AdvancementEvent event){
-        if(event.getAdvancement().getId().equals(Astromancy.astromancy("stella_libri"))){
-            if(event.getPlayer() instanceof ServerPlayer se){
+    public static void libriObtain(AdvancementEvent event) {
+        if (event.getAdvancement().getId().equals(Astromancy.astromancy("stella_libri"))) {
+            if (event.getPlayer() instanceof ServerPlayer se) {
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("introduction", false));
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("stellarite", false));
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket("tab:introduction", true));
-                se.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
-                    List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
-                    for (ResearchType type : researchObjects) {
-                        ResearchObject object = (ResearchObject) type;
-                        if (object.identifier.equals("introduction") || object.identifier.equals("stellarite") || object.identifier.equals("tab:introduction")) {
-                            object.locked = ResearchProgress.COMPLETED;
-                            ClientResearchHolder.addResearch(object);
+                se.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
+                    ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
+                        ResearchObject object = (ResearchObject) s;
+                        if (object.identifier.equals("introduction") || object.identifier.equals("stellarite")) {
                             research.addResearch(se, object);
                         }
-                    }
+                    });
                 });
             }
         }
     }
 
     @SubscribeEvent
-    public static void attachPlayerResearchCapability(AttachCapabilitiesEvent<Entity> event){
+    public static void attachPlayerResearchCapability(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if(entity instanceof Player && !(entity instanceof FakePlayer)){
+        if (entity instanceof Player && !(entity instanceof FakePlayer)) {
             event.addCapability(Astromancy.astromancy("player_research"), new PlayerResearchProvider());
         }
     }
 
     @SubscribeEvent
-    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event){
-        if(!(event.getObject() instanceof JarBlockEntity)) return;
+    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+        if (!(event.getObject() instanceof JarBlockEntity)) return;
 
         AspectiTank backend = new AspectiTank(256);
         LazyOptional<IAspectiHandler> optional = LazyOptional.of(() -> backend);
@@ -132,7 +141,7 @@ public class AstromancyLevelEvents {
             @NotNull
             @Override
             public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                if (cap == capability){
+                if (cap == capability) {
                     return optional.cast();
                 }
                 return LazyOptional.empty();
@@ -151,5 +160,29 @@ public class AstromancyLevelEvents {
         };
 
         event.addCapability(Astromancy.astromancy("aspecti_handler"), provider);
+    }
+
+    @SubscribeEvent
+    public static void playerTick(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SpyglassItem) {
+            if (player.getUseItem().getItem() instanceof SpyglassItem) {
+                if (player.getXRot() < -30 && !event.player.level.isDay() && event.player.level.dimension().equals(Level.OVERWORLD)) {
+//                    MinecraftForge.EVENT_BUS.post(new PlayerLookAtSkyEvent(event.phase, event.player));
+                    if(!player.level.isClientSide){
+                        player.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
+                            if(research.contains(player, "stargazing")){return;}
+                            ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
+                                ResearchObject object = (ResearchObject) s;
+                                if(object.identifier.equals("stargazing")){
+                                    research.addResearch(player, object);
+                                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(object.identifier, false));
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+        }
     }
 }

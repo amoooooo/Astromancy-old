@@ -18,6 +18,7 @@ public class BookObject {
     public List<BookObject> children;
     public ResearchObject research;
     public String identifier;
+    public boolean isRendered = false;
     public float hover;
     public int posX;
     public int posY;
@@ -66,7 +67,7 @@ public class BookObject {
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
 
     }
-    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
             screen.renderComponentTooltip(poseStack, List.of(new TextComponent("Locked")), mouseX, mouseY, minecraft.font);

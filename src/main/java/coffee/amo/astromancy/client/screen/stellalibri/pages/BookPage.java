@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.client.screen.stellalibri.pages;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -11,9 +12,13 @@ import static coffee.amo.astromancy.client.screen.stellalibri.EntryScreen.screen
 
 public class BookPage {
     public final ResourceLocation BACKGROUND;
-    public BookPage(ResourceLocation background)
+    public final ResourceLocation PLAIN = Astromancy.astromancy("textures/gui/book/pages/entry.png");
+    public String research;
+    public boolean hidden;
+    public BookPage(ResourceLocation background, String research)
     {
         this.BACKGROUND = background;
+        this.research = research;
     }
 
     public boolean isValid()
@@ -47,5 +52,11 @@ public class BookPage {
     public int guiTop()
     {
         return (screen.height - screen.bookHeight) / 2;
+    }
+
+    public BookPage setHidden(boolean hidden)
+    {
+        this.hidden = hidden;
+        return this;
     }
 }

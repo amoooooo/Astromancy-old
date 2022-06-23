@@ -63,5 +63,9 @@ public class AstromancyPacketHandler {
         INSTANCE.registerMessage(ID++, SyncLevelEventPacket.class, SyncLevelEventPacket::encode,
                 SyncLevelEventPacket::decode,
                 SyncLevelEventPacket::handle);
+
+        INSTANCE.registerMessage(ID++, ServerboundResearchPacket.class, ServerboundResearchPacket::encode,
+                ServerboundResearchPacket::decode,
+                ServerboundResearchPacket::handle);
     }
 }
