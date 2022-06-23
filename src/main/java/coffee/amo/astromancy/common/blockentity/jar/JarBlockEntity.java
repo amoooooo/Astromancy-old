@@ -6,14 +6,13 @@ import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.helpers.BlockHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.packets.ItemSyncPacket;
 import coffee.amo.astromancy.core.packets.JarUpdatePacket;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.*;
+import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -37,11 +36,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -52,10 +47,6 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public int clientLookAtTicks;
     public boolean label = false;
     public Direction labelDirection = Direction.UP;
-
-    protected AspectiTank tank = new AspectiTank(256);
-    private final LazyOptional<IAspectiHandler> holder = LazyOptional.of(() -> tank);
-
     public JarBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -94,66 +85,71 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                             128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
                 }
             }
-//            if (heldItem.getItem() instanceof AspectiPhial && heldItem.hasTag()) {
-//                if (count <= 240) {
-//                    if (aspecti == Aspecti.fromNbt(heldItem.getTag()).getFirst() || aspecti == Aspecti.EMPTY) {
-//                        heldItem.shrink(1);
-//                        player.addItem(new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(),1));
-//                        BlockHelper.updateAndNotifyState(level, worldPosition);
-//                        count = count == 0 ? Aspecti.fromNbt(heldItem.getTag()).getSecond() : count + Aspecti.fromNbt(heldItem.getTag()).getSecond();
-//                        aspecti = Aspecti.fromNbt(heldItem.getTag()).getFirst();
-//                        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-//                                this.getBlockPos().getX(),
-//                                this.getBlockPos().getY(),
-//                                this.getBlockPos().getZ(),
-//                                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
-//                        return InteractionResult.SUCCESS;
-//                    }
-//                    return InteractionResult.PASS;
-//                }
-//                return InteractionResult.PASS;
-//            }  else
-            if (heldItem.getItem() instanceof AspectiPhial && heldItem.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_ITEM_CAPABILITY).isPresent() && this.count > 0) {
-                holder.ifPresent(tank -> {
-                    LazyOptional<IAspectiHandlerItem> itemCap = heldItem.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_ITEM_CAPABILITY, null);
-                    itemCap.ifPresent(i -> {
-                        AspectiStack as = new AspectiStack(aspecti, 16);
-                        i.fill(as, IAspectiHandler.AspectiAction.EXECUTE);
-                        tank.drain(as, IAspectiHandler.AspectiAction.EXECUTE);
-                    });
-                });
+            if (heldItem.getItem() instanceof AspectiPhial && heldItem.hasTag()) {
+                if (count <= 240) {
+                    if (aspecti == Aspecti.fromNbt(heldItem.getTag()).getFirst() || aspecti == Aspecti.EMPTY) {
+                        heldItem.shrink(1);
+                        player.addItem(new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(),1));
+                        BlockHelper.updateAndNotifyState(level, worldPosition);
+                        count = count == 0 ? Aspecti.fromNbt(heldItem.getTag()).getSecond() : count + Aspecti.fromNbt(heldItem.getTag()).getSecond();
+                        aspecti = Aspecti.fromNbt(heldItem.getTag()).getFirst();
+                        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
+                                this.getBlockPos().getX(),
+                                this.getBlockPos().getY(),
+                                this.getBlockPos().getZ(),
+                                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                        return InteractionResult.SUCCESS;
+                    }
+                    return InteractionResult.PASS;
+                }
+                return InteractionResult.PASS;
+            }  else if (heldItem.getItem() instanceof AspectiPhial && !heldItem.hasTag() && this.aspecti != Aspecti.EMPTY && this.count > 0) {
+                CompoundTag tag = new CompoundTag();
+                tag.putInt("count", 16);
+                tag.putInt("aspecti", aspecti.ordinal());
+                ItemStack stack = new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(), 1);
+                stack.getOrCreateTag().put("aspecti", tag);
+                player.addItem(stack);
+                heldItem.shrink(1);
+                if (count - 16 <= 0) {
+                    this.count = 0;
+                    if(!label){
+                        this.aspecti = Aspecti.EMPTY;
+                    }
+                } else {
+                    this.count = count - 16;
+                }
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
                         this.getBlockPos().getX(),
                         this.getBlockPos().getY(),
                         this.getBlockPos().getZ(),
                         128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
                 return InteractionResult.SUCCESS;
+            } else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
+                if(count <= 256 && Aspecti.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("aspecti")] == aspecti){
+                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag").copy();
+                    int jarCount = tag.getInt("count");
+                    int cachedJarCount = jarCount;
+                    jarCount = jarCount + count > 256 ? (jarCount + count) - 256 : 0;
+                    count = Math.min(cachedJarCount + count, 256);
+                    if(jarCount == 0){
+                        tag.putInt("count", 0);
+                        tag.putInt("aspecti", 23);
+                        heldItem.getTag().put("BlockEntityTag", tag);
+                        player.setItemInHand(hand, heldItem);
+                    } else {
+                        tag.putInt("count", jarCount);
+                        heldItem.getTag().put("BlockEntityTag", tag);
+                    }
+                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
+                            this.getBlockPos().getX(),
+                            this.getBlockPos().getY(),
+                            this.getBlockPos().getZ(),
+                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(ItemRegistry.JAR.get().getDefaultInstance()));
+                    return InteractionResult.SUCCESS;
+                }
             }
-//            else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
-//                if(count <= 256 && Aspecti.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("aspecti")] == aspecti){
-//                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag").copy();
-//                    int jarCount = tag.getInt("count");
-//                    int cachedJarCount = jarCount;
-//                    jarCount = jarCount + count > 256 ? (jarCount + count) - 256 : 0;
-//                    count = Math.min(cachedJarCount + count, 256);
-//                    if(jarCount == 0){
-//                        tag.putInt("count", 0);
-//                        tag.putInt("aspecti", 23);
-//                        heldItem.getTag().put("BlockEntityTag", tag);
-//                        player.setItemInHand(hand, heldItem);
-//                    } else {
-//                        tag.putInt("count", jarCount);
-//                        heldItem.getTag().put("BlockEntityTag", tag);
-//                    }
-//                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-//                            this.getBlockPos().getX(),
-//                            this.getBlockPos().getY(),
-//                            this.getBlockPos().getZ(),
-//                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
-//                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(ItemRegistry.JAR.get().getDefaultInstance()));
-//                    return InteractionResult.SUCCESS;
-//                }
-//            }
         }
         return InteractionResult.SUCCESS;
     }
@@ -173,15 +169,21 @@ public class JarBlockEntity extends AstromancyBlockEntity {
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
+        pTag.putInt("count", count);
+        if(this.aspecti != null){
+            pTag.putInt("aspecti", aspecti.ordinal());
+        }
         pTag.putInt("labelDirection", labelDirection.ordinal());
         pTag.putBoolean("label", label);
         super.saveAdditional(pTag);
-        tank.toNbt(pTag);
     }
 
     @Override
     public void load(CompoundTag pTag) {
-        tank.fromNbt(pTag);
+        count = pTag.getInt("count");
+        if(pTag.contains("aspecti")){
+            aspecti = Aspecti.values()[pTag.getInt("aspecti")];
+        }
         labelDirection = Direction.values()[pTag.getInt("labelDirection")];
         label = pTag.getBoolean("label");
         super.load(pTag);
@@ -235,13 +237,5 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                 this.getBlockPos().getY(),
                 this.getBlockPos().getZ(),
                 128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY)
-            return holder.cast();
-        return super.getCapability(cap, side);
     }
 }
