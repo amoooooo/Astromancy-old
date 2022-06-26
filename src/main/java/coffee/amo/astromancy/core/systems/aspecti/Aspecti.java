@@ -1,11 +1,14 @@
 package coffee.amo.astromancy.core.systems.aspecti;
 
+import coffee.amo.astromancy.core.util.AstroKeys;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
 public enum Aspecti {
+    EMPTY("", new Color(0,0,0,0)),
     CONJUNCTION("a", new Color(120,120,120,255)), // Basic
     OPPOSITION("b", new Color(127,252,124,255)), // Complete
     SQUARE("c", Color.YELLOW), // Formed, but not complete
@@ -28,9 +31,8 @@ public enum Aspecti {
     NEPTURA("t", new Color(116,142,84,255)), // Water, fluid
     PLUTUS("u", new Color(22,48,43,255)), // Power source
     CHIROS("v", new Color(105,72,115,255)), // Healing, pain
-    LILITHIA("w", new Color(0x85B79D)), // Life, death
-    EMPTY("", new Color(0,0,0,0));
-    ;
+    LILITHIA("w", new Color(0x85B79D)); // Life, death
+
     private final String symbol;
     private final Color color;
 
@@ -47,8 +49,16 @@ public enum Aspecti {
         return color;
     }
 
-    public static Pair<Aspecti, Integer> fromNbt(CompoundTag ptag){
-        CompoundTag tag = ptag.getCompound("aspecti");
-        return Pair.of(values()[tag.getInt("aspecti")], tag.getInt("count"));
+    public static Aspecti get(int type) {
+        return values()[type];
+    }
+
+    public static Aspecti fromItemStack(ItemStack stack) {
+        if(stack.getOrCreateTag().contains(AstroKeys.KEY_ASPECTI_TAG))
+            return get(stack.getOrCreateTag()
+                    .getCompound(AstroKeys.KEY_ASPECTI_TAG)
+                    .getCompound(AstroKeys.KEY_ASPECTI_STACK)
+                    .getInt(AstroKeys.KEY_ASPECTI_TYPE));
+        return EMPTY;
     }
 }

@@ -22,22 +22,22 @@ public class PhialTab extends CreativeModeTab {
         return ItemRegistry.ASPECTI_PHIAL.get().getDefaultInstance();
     }
 
-    @Override
-    public void fillItemList(NonNullList<ItemStack> pItems) {
-        super.fillItemList(pItems);
-        for(Aspecti aspecti : Aspecti.values()) {
-            if(aspecti == Aspecti.EMPTY){
-                continue;
-            }
-            pItems.add(addAspectiPhial(ItemRegistry.ASPECTI_PHIAL.get().getDefaultInstance(), aspecti.ordinal()));
-        }
-    }
-
-    private ItemStack addAspectiPhial(ItemStack stack, int aspecti) {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("aspecti", aspecti);
-        tag.putInt("count", 16);
-        stack.getOrCreateTag().put("aspecti", tag);
-        return stack;
-    }
+//    @Override
+//    public void fillItemList(NonNullList<ItemStack> pItems) {
+//        super.fillItemList(pItems);
+//        for(Aspecti aspecti : Aspecti.values()) {
+//            if(aspecti == Aspecti.EMPTY){
+//                continue;
+//            }
+//            pItems.add(addAspectiPhial(ItemRegistry.ASPECTI_PHIAL.get().getDefaultInstance(), aspecti.ordinal()));
+//        }
+//    }
+//
+//    private ItemStack addAspectiPhial(ItemStack stack, int aspecti) {
+//        CompoundTag tag = new CompoundTag();
+//        tag.putInt("aspecti", aspecti);
+//        tag.putInt("count", 16);
+//        stack.getOrCreateTag().put("aspecti", tag);
+//        return stack;
+//    }
 }

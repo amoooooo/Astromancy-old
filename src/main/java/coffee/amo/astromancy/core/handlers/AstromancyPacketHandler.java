@@ -32,9 +32,9 @@ public class AstromancyPacketHandler {
                 StarDataPacket::decode,
                 StarDataPacket::handle);
 
-        INSTANCE.registerMessage(ID++, JarUpdatePacket.class, JarUpdatePacket::encode,
-                JarUpdatePacket::decode,
-                JarUpdatePacket::handle);
+//        INSTANCE.registerMessage(ID++, JarUpdatePacket.class, JarUpdatePacket::encode,
+//                JarUpdatePacket::decode,
+//                JarUpdatePacket::handle);
 
         INSTANCE.registerMessage(ID++, ResearchPacket.class, ResearchPacket::encode,
                 ResearchPacket::decode,
@@ -56,9 +56,9 @@ public class AstromancyPacketHandler {
                 ItemSyncPacket::decode,
                 ItemSyncPacket::handle);
 
-        INSTANCE.registerMessage(ID++, JarSyncPacket.class, JarSyncPacket::encode,
-                JarSyncPacket::decode,
-                JarSyncPacket::handle);
+//        INSTANCE.registerMessage(ID++, JarSyncPacket.class, JarSyncPacket::encode,
+//                JarSyncPacket::decode,
+//                JarSyncPacket::handle);
 
         INSTANCE.registerMessage(ID++, SyncLevelEventPacket.class, SyncLevelEventPacket::encode,
                 SyncLevelEventPacket::decode,
