@@ -1,6 +1,9 @@
 package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
+import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -21,7 +24,12 @@ public class ResearchRemovePacket extends ResearchPacket{
 
     public static void handle(ResearchRemovePacket packet, Supplier<NetworkEvent.Context> contextSupplier){
         contextSupplier.get().enqueueWork(() -> {
-            ClientResearchHolder.removeResearch(packet.researchId);
+            ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
+                ResearchObject object = (ResearchObject) s;
+                if(object.identifier.equals(packet.researchId)){
+                    ClientResearchHolder.removeResearch(object);
+                }
+            });
         });
         contextSupplier.get().setPacketHandled(true);
     }

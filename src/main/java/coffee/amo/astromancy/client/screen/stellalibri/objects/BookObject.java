@@ -2,9 +2,11 @@ package coffee.amo.astromancy.client.screen.stellalibri.objects;
 
 import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
+import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
 
@@ -14,7 +16,9 @@ public class BookObject {
     public boolean isHovering;
     // TODO: Make this a list, check of BookObject has children in the render method, if so, render those.
     public List<BookObject> children;
+    public ResearchObject research;
     public String identifier;
+    public boolean isRendered = false;
     public float hover;
     public int posX;
     public int posY;
@@ -23,22 +27,24 @@ public class BookObject {
     public int width;
     public int height;
 
-    public BookObject(int posX, int posY, int width, int height, String identifier, int localX, int localY) {
+    public BookObject(int posX, int posY, int width, int height, int localX, int localY, ResearchObject research) {
         this.localX = localX;
         this.localY = localY;
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
-        this.identifier = identifier;
+        this.identifier = research.identifier;
+        this.research = research;
     }
-    public BookObject(int posX, int posY, int width, int height, BookObject... child)
+    public BookObject(int posX, int posY, int width, int height, ResearchObject research, BookObject... child)
     {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
         this.children = List.of(child);
+        this.research = research;
     }
     public int hoverCap()
     {
@@ -61,7 +67,7 @@ public class BookObject {
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
 
     }
-    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
+    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
             screen.renderComponentTooltip(poseStack, List.of(new TextComponent("Locked")), mouseX, mouseY, minecraft.font);

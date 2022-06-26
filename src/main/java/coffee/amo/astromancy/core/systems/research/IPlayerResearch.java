@@ -7,11 +7,17 @@ import java.util.List;
 
 public interface IPlayerResearch {
 
-    List<String> research();
+    List<ResearchObject> research();
 
-    void addResearch(Player player, String researchId);
+    void addResearch(Player player, ResearchObject researchId);
 
-    void removeResearch(Player player, String researchId);
+    void addLockedResearch(Player player, ResearchObject researchId);
+
+    void removeResearch(Player player, ResearchObject researchId);
+
+    void completeResearch(Player player, ResearchObject researchId);
+
+    boolean contains(Player player, ResearchObject researchId);
 
     boolean contains(Player player, String researchId);
 

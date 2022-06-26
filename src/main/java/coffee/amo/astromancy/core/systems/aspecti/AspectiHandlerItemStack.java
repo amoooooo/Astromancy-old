@@ -22,7 +22,7 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
     protected ItemStack container;
     protected int capacity;
 
-    public AspectiHandlerItemStack(@Nonnull ItemStack container, int capacity){
+    public AspectiHandlerItemStack(@Nonnull ItemStack container, int capacity) {
         this.container = container;
         this.capacity = capacity;
     }
@@ -70,16 +70,16 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
         AspectiStack contained = getAspecti();
         if (contained.isEmpty()) {
             int fillAmount = Math.min(capacity, resource.getCount());
-            if(action.execute()){
+            if (action.execute()) {
                 AspectiStack filled = resource.copy();
                 filled.setCount(fillAmount);
                 setAspecti(filled);
             }
             return fillAmount;
         } else {
-            if(contained.equals(resource)){
+            if (contained.equals(resource)) {
                 int fillAmount = Math.min(capacity - contained.getCount(), resource.getCount());
-                if(action.execute() && fillAmount > 0){
+                if (action.execute() && fillAmount > 0) {
                     contained.grow(fillAmount);
                     setAspecti(contained);
                 }
@@ -93,7 +93,7 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
     @NotNull
     @Override
     public AspectiStack drain(AspectiStack resource, AspectiAction action) {
-        if(container.getCount() != 1 || resource.isEmpty() || !canDrainAspectiType(resource))
+        if (container.getCount() != 1 || resource.isEmpty() || !canDrainAspectiType(resource))
             return AspectiStack.EMPTY;
         return drain(resource.getCount(), action);
     }
@@ -111,9 +111,9 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
         AspectiStack drained = contained.copy();
         drained.setCount(drainAmount);
 
-        if(action.execute()){
+        if (action.execute()) {
             contained.shrink(drainAmount);
-            if(contained.isEmpty()){
+            if (contained.isEmpty()) {
                 setContainerToEmpty();
             } else {
                 setAspecti(contained);
@@ -122,15 +122,15 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
         return drained;
     }
 
-    public boolean canFillAspectiType(AspectiStack aspecti){
+    public boolean canFillAspectiType(AspectiStack aspecti) {
         return true;
     }
 
-    public boolean canDrainAspectiType(AspectiStack aspecti){
+    public boolean canDrainAspectiType(AspectiStack aspecti) {
         return true;
     }
 
-    protected void setContainerToEmpty(){
+    protected void setContainerToEmpty() {
         container.removeTagKey(ASPECTI_NBT_KEY);
     }
 
@@ -139,6 +139,7 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
     public ItemStack getContainer() {
         return container;
     }
+
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
@@ -157,9 +158,10 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
         }
     }
 
-public static class NonConsumable extends AspectiHandlerItemStack {
+    public static class NonConsumable extends AspectiHandlerItemStack {
         protected final ItemStack emptyContainer;
-        public NonConsumable(@Nonnull ItemStack container, ItemStack emptyContainer,int capacity) {
+
+        public NonConsumable(@Nonnull ItemStack container, ItemStack emptyContainer, int capacity) {
             super(container, capacity);
             this.emptyContainer = emptyContainer;
         }
