@@ -3,6 +3,7 @@ package coffee.amo.astromancy.core.packets;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 public class ResearchRemovePacket extends ResearchPacket{
     public ResearchRemovePacket(String researchId) {
-        super(researchId, true);
+        super(researchId, true, false, ResearchProgress.IN_PROGRESS.ordinal());
     }
 
     public static void encode(ResearchRemovePacket packet, FriendlyByteBuf buffer){

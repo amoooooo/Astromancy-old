@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -121,7 +122,7 @@ public class EntryScreen extends Screen {
             return true;
         }
         if(isHovering(mouseX, mouseY, guiLeft + 58, guiTop + 158, 16, 16)){
-            if(openObject.research.locked.equals(ResearchProgress.IN_PROGRESS) && !Minecraft.getInstance().player.getInventory().contains(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance())){
+            if(openObject.research.locked.equals(ResearchProgress.IN_PROGRESS) && !Minecraft.getInstance().player.getInventory().contains(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ResearchNotePacket(openObject.identifier));
                 Minecraft.getInstance().player.playNotifySound(SoundRegistry.RESEARCH_WRITE.get(), SoundSource.MASTER, 1.0f, 1.0f);
             } else if (!openObject.research.locked.equals(ResearchProgress.COMPLETED)){

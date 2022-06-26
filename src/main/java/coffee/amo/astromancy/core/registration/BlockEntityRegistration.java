@@ -38,6 +38,7 @@ public class BlockEntityRegistration {
     public static final RegistryObject<BlockEntityType<AstrolabeBlockEntity>> ASTROLABE = BLOCK_ENTITY_TYPES.register("astrolabe", () -> BlockEntityType.Builder.of(AstrolabeBlockEntity::new, BlockRegistration.ASTROLABE.get()).build(null));
     public static final RegistryObject<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE = BLOCK_ENTITY_TYPES.register("crucible", () -> BlockEntityType.Builder.of(CrucibleBlockEntity::new, BlockRegistration.CRUCIBLE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MortarBlockEntity>> MORTAR = BLOCK_ENTITY_TYPES.register("mortar", () -> BlockEntityType.Builder.of(MortarBlockEntity::new, BlockRegistration.MORTAR.get()).build(null));
+//    public static final RegistryObject<BlockEntityType<ResearchTableCoreBlockEntity>> RESEARCH_TABLE = BLOCK_ENTITY_TYPES.register("research_table", () -> BlockEntityType.Builder.of(ResearchTableCoreBlockEntity::new, BlockRegistration.RESEARCH_TABLE.get()).build(null));
 
     public static void register(){
 

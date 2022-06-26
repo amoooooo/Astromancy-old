@@ -31,8 +31,11 @@ public class PlayerResearchCapability implements IPlayerResearch {
     public void addResearch(Player player, ResearchObject researchId) {
         if(!RESEARCH.contains(researchId)) {
             researchId.locked = ResearchProgress.IN_PROGRESS;
+            researchId.children.forEach(c -> {
+                c.locked = ResearchProgress.UNAVAILABLE;
+            });
             RESEARCH.add(researchId);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), false));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), false, false, ResearchProgress.IN_PROGRESS.ordinal()));
         }
     }
 
@@ -41,15 +44,30 @@ public class PlayerResearchCapability implements IPlayerResearch {
         if(!RESEARCH.contains(researchId)) {
             researchId.locked = ResearchProgress.LOCKED;
             RESEARCH.add(researchId);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true));
+            researchId.children.forEach(c -> {
+                c.locked = ResearchProgress.UNAVAILABLE;
+            });
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true, false, ResearchProgress.LOCKED.ordinal()));
         }
     }
 
     @Override
     public void completeResearch(Player player, ResearchObject researchId) {
         if(RESEARCH.contains(researchId)) {
+            RESEARCH.stream().filter(s -> s.equals(researchId)).findFirst().ifPresent(r -> {
+                r.locked = ResearchProgress.COMPLETED;
+                r.children.forEach(c -> {
+                    c.locked = ResearchProgress.LOCKED;
+                });
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(r.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
+            });
+        } else {
             researchId.locked = ResearchProgress.COMPLETED;
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true));
+            researchId.children.forEach(c -> {
+                c.locked = ResearchProgress.LOCKED;
+            });
+            RESEARCH.add(researchId);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
         }
     }
 

@@ -14,11 +14,13 @@ import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
@@ -29,6 +31,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
@@ -61,10 +64,11 @@ public class EntryObject extends BookObject {
     @Override
     public void clickLocked(float xOffset, float yOffset, double mouseX, double mouseY)
     {
-        if(Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
+        if(Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance()) && research.locked.equals(ResearchProgress.LOCKED)){
             Minecraft.getInstance().player.playSound(SoundEvents.CHAIN_BREAK, 0.5f, 1f);
             research.locked = ResearchProgress.IN_PROGRESS;
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier));
+            ClientResearchHolder.getResearch().stream().filter(s -> Objects.equals(s.identifier, research.identifier)).findFirst().ifPresent(s -> s.locked = ResearchProgress.IN_PROGRESS);
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier, research.locked.ordinal()));
         }
     }
 
@@ -125,15 +129,16 @@ public class EntryObject extends BookObject {
             }
         }
         if( ClientResearchHolder.getResearch().stream().filter(s -> s.identifier.equals(research.identifier)).findFirst().get().locked.equals(ResearchProgress.COMPLETED)){
-            renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
+            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 27, 24, 25, 51, 105);
         } else {
             float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
             RenderSystem.setShaderColor(mult, mult, mult, 1f);
-            renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 6, posY + 8, 80, 232, 22, 22, 256, 256);
+            poseStack.pushPose();
+            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 27, 24, 25, 51, 105);
+            poseStack.popPose();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
         poseStack.pushPose();
-        poseStack.scale(0.5f, 0.5f, 0.5f);
         minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 9, posY + 11);
         poseStack.popPose();
     }
@@ -141,8 +146,7 @@ public class EntryObject extends BookObject {
     public void lockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        renderTexture(BookTextures.LOCKED_ICONS, poseStack, posX + 6, posY + 8, 22, 0, 22, 22, 100, 22);
-        renderTexture(BookTextures.LOCKED_CHAINS, poseStack, posX + 6, posY + 8, 22, 0, 22, 22, 100, 22);
+        renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 26, 27, 24, 25, 51, 105);
     }
 
     @Override

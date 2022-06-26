@@ -33,7 +33,7 @@ public class ImportantEntryObject extends EntryObject {
         if(Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
             Minecraft.getInstance().player.playSound(SoundEvents.CHAIN_BREAK, 0.5f, 1f);
             research.locked = ResearchProgress.IN_PROGRESS;
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier, research.locked.ordinal()));
         }
     }
 
@@ -44,7 +44,7 @@ public class ImportantEntryObject extends EntryObject {
         if(research.locked.equals(ResearchProgress.LOCKED)){
             lockedRender(minecraft, poseStack, xOffset, yOffset, mouseX, mouseY, partialTicks);
         } else {
-            if (!children.isEmpty() && research.locked == ResearchProgress.COMPLETED) {
+            if (!children.isEmpty() && (research.locked == ResearchProgress.COMPLETED || research.locked == ResearchProgress.IN_PROGRESS)) {
                 for (BookObject child : children) {
                     if (ClientResearchHolder.contains(child.identifier)) {
                         // TODO: add diagonal curved lines to this and ImportantEntryObject#render}
@@ -87,11 +87,11 @@ public class ImportantEntryObject extends EntryObject {
                 }
             }
             if(research.locked.equals(ResearchProgress.COMPLETED)){
-                renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 7, posY + 8, 133, 232, 20, 22, 256, 256);
+                renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 1, 1, 24, 24, 51, 105);
             } else {
                 float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
                 RenderSystem.setShaderColor(mult, mult, mult, 1f);
-                renderTexture(BookTextures.FRAME_TEXTURE, poseStack, posX + 7, posY + 8, 133, 232, 20, 22, 256, 256);
+                renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 1, 1, 24, 24, 51, 105);
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             }
             poseStack.pushPose();
@@ -105,7 +105,6 @@ public class ImportantEntryObject extends EntryObject {
     public void lockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        renderTexture(BookTextures.LOCKED_ICONS, poseStack, posX + 6, posY + 8, 0, 0, 22, 22, 100, 22);
-        renderTransparentTexture(BookTextures.LOCKED_CHAINS, poseStack, posX + 6, posY + 8, 0, 0, 22, 22, 100, 22);
+        renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 26, 1, 24, 24, 51, 105);
     }
 }

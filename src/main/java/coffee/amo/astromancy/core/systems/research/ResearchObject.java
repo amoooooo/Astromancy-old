@@ -14,7 +14,7 @@ import java.util.List;
 public class ResearchObject extends ResearchType {
     public final String identifier;
     public List<ResearchObject> children = new ArrayList<>();
-    public ResearchProgress locked = ResearchProgress.LOCKED;
+    public ResearchProgress locked = ResearchProgress.UNAVAILABLE;
     public ItemStack icon = ItemStack.EMPTY;
     public int x;
     public int y;

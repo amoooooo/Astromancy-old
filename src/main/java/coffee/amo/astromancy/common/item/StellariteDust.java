@@ -7,6 +7,7 @@ import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchHelper;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
@@ -47,8 +48,7 @@ public class StellariteDust extends Item {
             } else if (context.getLevel().getBlockState(context.getClickedPos()).getBlock() == Blocks.CAULDRON){
                 context.getLevel().setBlock(context.getClickedPos(), BlockRegistration.CRUCIBLE.get().defaultBlockState(), 11);
                 context.getPlayer().playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.MASTER, 5.0f, 1.0f);
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("crucible", false));
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("aspecti_phial", true));
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), new ResearchPacket("aspecti_phial", true, false, ResearchProgress.IN_PROGRESS.ordinal()));
                 context.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
                     ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
                         ResearchObject object = (ResearchObject) s;
