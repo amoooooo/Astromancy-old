@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.systems.aspecti;
-/*
+
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -172,4 +172,4 @@ public class AspectiHandlerItemStack implements IAspectiHandlerItem, ICapability
             container = emptyContainer;
         }
     }
-}*/
+}

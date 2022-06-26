@@ -1,115 +1,105 @@
 package coffee.amo.astromancy.core.systems.aspecti;
 
-import coffee.amo.astromancy.core.util.AstroKeys;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
 
-public class AspectiStack implements INBTSerializable<CompoundTag> {
+public class AspectiStack {
     private Aspecti aspecti;
-    private int amount;
-    public static final AspectiStack EMPTY = new AspectiStack();
-
-    public AspectiStack(Aspecti aspecti, int amount) {
+    private int count;
+    private boolean isEmpty;
+    public static final AspectiStack EMPTY = new AspectiStack(Aspecti.EMPTY, 0);
+    public AspectiStack(Aspecti aspecti, int count) {
         this.aspecti = aspecti;
-        this.amount = amount;
+        this.count = count;
     }
 
-    public AspectiStack(AspectiStack stack, int amount) {
-        this(stack.aspecti, amount);
+    public AspectiStack(AspectiStack stack, int count){
+        this.aspecti = stack.aspecti;
+        this.count = count;
     }
 
-    public AspectiStack() {
-        this(Aspecti.EMPTY, 0);
+    public static AspectiStack fromNbt(CompoundTag tag){
+        if(tag==null){
+            return EMPTY;
+        }
+        if(!tag.contains("aspecti")){
+            return EMPTY;
+        }
+        Aspecti aspecti = Aspecti.values()[tag.getInt("aspecti")];
+        int count = tag.getInt("count");
+        return new AspectiStack(aspecti, count);
     }
 
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        if(nbt != null) {
-            aspecti = Aspecti.get(nbt.getInt(AstroKeys.KEY_ASPECTI_TYPE));
-            amount = nbt.getInt(AstroKeys.KEY_ASPECTI_AMOUNT);
-        } else setEmpty();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt(AstroKeys.KEY_ASPECTI_TYPE, aspecti.ordinal());
-        tag.putInt(AstroKeys.KEY_ASPECTI_AMOUNT, amount);
-        return tag;
+    public CompoundTag toNbt(CompoundTag nbt){
+        nbt.putInt("aspecti", aspecti.ordinal());
+        nbt.putInt("count", count);
+        return nbt;
     }
 
     public void writeToPacket(FriendlyByteBuf buf){
         buf.writeInt(aspecti.ordinal());
-        buf.writeInt(amount);
+        buf.writeInt(count);
     }
 
-    public static AspectiStack readFromPacket(FriendlyByteBuf buf){
-        int type = buf.readInt();
-        int amount = buf.readInt();
-        AspectiStack as = new AspectiStack(Aspecti.get(type), amount);
-        as.updateEmpty(); // As a double check.
-        return as;
+    public static AspectiStack fromPacket(FriendlyByteBuf buf){
+        int aspecti = buf.readInt();
+        int count = buf.readInt();
+        if(Aspecti.values()[aspecti] == Aspecti.EMPTY) return EMPTY;
+        return new AspectiStack(Aspecti.values()[aspecti], count);
     }
 
     public final Aspecti getAspecti() {
-        return aspecti;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAspecti(Aspecti aspecti) {
-        this.aspecti = aspecti;
-        updateEmpty();
-    }
-
-    public void setAmount(int amount) {
-        if (!isEmpty())
-            this.amount = amount;
-        updateEmpty();
-    }
-
-    public void set(Aspecti aspecti, int amount) {
-        this.aspecti = aspecti;
-        this.amount = amount;
-        updateEmpty();
-    }
-
-    public void setEmpty() {
-        aspecti = Aspecti.EMPTY;
-        amount = 0;
+        return isEmpty ? Aspecti.EMPTY : aspecti;
     }
 
     public boolean isEmpty() {
-        return aspecti == Aspecti.EMPTY || amount == 0;
+        return isEmpty;
     }
 
-    public void updateEmpty() {
-        if(isEmpty())
-            setEmpty();
+    protected void updateEmpty() {
+        isEmpty = getAspecti() == Aspecti.EMPTY || count <= 0;
     }
 
-    public void grow(int amount) {
-        setAmount(Math.min(256, this.amount + amount)); // max of 256 in stack?
+    public int getCount() {
+        return isEmpty ? 0 : count;
     }
 
-    public void shrink(int amount) {
-        setAmount(Math.max(0, this.amount - amount));
+    public void setCount(int count) {
+        if (getAspecti() == Aspecti.EMPTY) throw new IllegalStateException("Cannot set count on empty aspecti stack");
+        this.count = count;
+        updateEmpty();
     }
 
-    public AspectiStack copy() {
-        return new AspectiStack(aspecti, amount);
+    public void grow(int amount){
+        setCount(this.count + amount);
     }
 
-    public boolean isSameAspecti(@Nonnull AspectiStack other) {
+    public void shrink(int amount){
+        setCount(this.count - amount);
+    }
+
+    public AspectiStack copy(){
+        return new AspectiStack(getAspecti(), count);
+    }
+
+    public boolean equals(@Nonnull AspectiStack other){
         return getAspecti() == other.getAspecti();
     }
 
-    public boolean isSameAspectiStack(@Nonnull AspectiStack stack) {
-        return isSameAspecti(stack) && amount == stack.getAmount();
+    public boolean containsAspecti(@Nonnull AspectiStack stack){
+        return equals(stack) && getCount() >= stack.getCount();
+    }
+
+    public boolean isAspectiStackIdentical(@Nonnull AspectiStack stack){
+        return equals(stack) && getCount() == stack.getCount();
+    }
+
+    public final boolean equals(Object obj) {
+        if(!(obj instanceof AspectiStack)){
+            return false;
+        }
+        return equals((AspectiStack)obj);
     }
 }
