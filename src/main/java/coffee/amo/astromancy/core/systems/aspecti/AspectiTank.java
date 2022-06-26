@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.systems.aspecti;
-
+/*
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,4 +156,4 @@ public class AspectiTank implements IAspectiHandler, IAspectiTank {
     public int getSpace(){
         return Math.max(0, capacity - aspecti.getCount());
     }
-}
+}*/

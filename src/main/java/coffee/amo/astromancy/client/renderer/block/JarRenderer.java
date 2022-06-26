@@ -39,9 +39,9 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
         ps.mulPose(Vector3f.YP.rotationDegrees(180));
         ps.translate(-0.75,0.5,0);
         //RenderHelper.renderNormalCuboid(ps, pBufferSource, 0.875f, RenderType.lightning());
-        if(pBlockEntity.getAspecti() != null && pBlockEntity.getCount() > 0){
+        if(!pBlockEntity.isEmpty()){
             //RenderHelper.renderText(ps, pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount(), pBufferSource, font);
-            float scale = Math.min(0.749f,(Math.round((pBlockEntity.getCount() / 256f) * 16.0f) / 32.0f ) * 1 + ((pBlockEntity.getCount() / 256f)/4f));
+            float scale = Math.min(0.749f,(Math.round((pBlockEntity.getAmount() / 256f) * 16.0f) / 32.0f ) * 1 + ((pBlockEntity.getAmount() / 256f)/4f));
 //            ps.pushPose();
 //            VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")));
 //            ps.translate(-0.05,-0.5f,-0.8);
@@ -91,7 +91,7 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
             float distance = pBlockEntity.clientLookAtTicks == 10 ? 10 : pBlockEntity.clientLookAtTicks + pPartialTick;
             ps.translate(0,0.1f,-0.5 * (distance / 10.0f));
             ps.scale(0.009f, 0.009f, 0.009f);
-            ps.translate(-font.width(pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount())/4,0,0);
+            ps.translate(-font.width(pBlockEntity.getAspecti().name() + " " + pBlockEntity.getAmount())/4,0,0);
             font.draw(ps, pBlockEntity.getAspectiComponent(), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
             ps.popPose();
         }

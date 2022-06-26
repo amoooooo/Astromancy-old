@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.systems.aspecti;
-
+/*
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -170,4 +170,4 @@ public static class NonConsumable extends AspectiHandlerItemStack {
             container = emptyContainer;
         }
     }
-}
+}*/

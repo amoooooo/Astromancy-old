@@ -111,37 +111,36 @@ public class AstromancyLevelEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event){
-        if(!(event.getObject() instanceof JarBlockEntity)) return;
-
-        AspectiTank backend = new AspectiTank(256);
-        LazyOptional<IAspectiHandler> optional = LazyOptional.of(() -> backend);
-        Capability<IAspectiHandler> capability = CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY;
-
-        ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
-
-            @NotNull
-            @Override
-            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                if (cap == capability){
-                    return optional.cast();
-                }
-                return LazyOptional.empty();
-            }
-
-            @Override
-            public CompoundTag serializeNBT() {
-                CompoundTag tag = new CompoundTag();
-                return backend.toNbt(tag);
-            }
-
-            @Override
-            public void deserializeNBT(CompoundTag nbt) {
-                backend.fromNbt(nbt);
-            }
-        };
-
-        event.addCapability(Astromancy.astromancy("aspecti_handler"), provider);
-    }
+//    @SubscribeEvent
+//    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event){
+//        if(!(event.getObject() instanceof JarBlockEntity)) return;
+//
+//        AspectiStackHandler backend = new AspectiStackHandler(256);
+//        LazyOptional<IAspectiHandler> optional = LazyOptional.of(() -> backend);
+//        Capability<IAspectiHandler> capability = CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY;
+//
+//        ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
+//
+//            @NotNull
+//            @Override
+//            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+//                if (cap == capability){
+//                    return optional.cast();
+//                }
+//                return LazyOptional.empty();
+//            }
+//
+//            @Override
+//            public CompoundTag serializeNBT() {
+//                return backend.writeToNBT(new CompoundTag());
+//            }
+//
+//            @Override
+//            public void deserializeNBT(CompoundTag nbt) {
+//                backend.readFromNBT(nbt);
+//            }
+//        };
+//
+//        event.addCapability(Astromancy.astromancy("aspecti_handler"), provider);
+//    }
 }

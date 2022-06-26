@@ -1,8 +1,8 @@
 package coffee.amo.astromancy.common.blockentity.jar;
-
+/*
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
+import coffee.amo.astromancy.core.systems.aspecti.AspectiStackHandler;
 import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiTank;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class JarFluidHandler extends AstromancyBlockEntity {
 
-    protected AspectiTank tank = new AspectiTank(256);
+    protected AspectiStackHandler tank = new AspectiStackHandler(256);
 
     private final LazyOptional<IAspectiHandler> holder = LazyOptional.of(() -> tank);
 
@@ -27,13 +27,13 @@ public class JarFluidHandler extends AstromancyBlockEntity {
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        tank.fromNbt(pTag);
+        tank.readFromNBT(pTag);
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
-        tank.toNbt(pTag);
+        tank.writeToNBT(pTag);
     }
 
     @NotNull
@@ -43,4 +43,4 @@ public class JarFluidHandler extends AstromancyBlockEntity {
             return holder.cast();
         return super.getCapability(cap, side);
     }
-}
+}*/
