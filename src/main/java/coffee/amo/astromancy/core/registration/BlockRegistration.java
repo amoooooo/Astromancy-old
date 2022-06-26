@@ -29,5 +29,7 @@ public class BlockRegistration {
     public static final RegistryObject<Block> CRUCIBLE = BLOCKS.register("crucible", () -> new Crucible<>(MAGIC_PROPERTIES().noOcclusion()).setBlockEntity(BlockEntityRegistration.CRUCIBLE));
     public static final RegistryObject<Block> STELLARITE = BLOCKS.register("stellarite", () -> new Block(BlockPropertyRegistration.STELLARITE()));
     public static final RegistryObject<Block> MORTAR = BLOCKS.register("mortar", () -> new MortarBlock<>(MAGIC_PROPERTIES().noOcclusion().instabreak()).setBlockEntity(BlockEntityRegistration.MORTAR));
+//    public static final RegistryObject<Block> RESEARCH_TABLE = BLOCKS.register("research_table", () -> new ResearchTableCoreBlock<>(BlockPropertyRegistration.MAGIC_PROPERTIES()));
+//    public static final RegistryObject<Block> RESEARCH_TABLE_COMPONENT = BLOCKS.register("research_table_component", () -> new ResearchTableComponentBlock(BlockPropertyRegistration.MAGIC_PROPERTIES()));
     public static void register(){}
 }

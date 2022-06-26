@@ -23,7 +23,7 @@ public class TabRegistry {
     }
 
     public static void doSetup() {
-        INTRODUCTION.get().addChildren(ResearchRegistry.INTRODUCTION.get(), ResearchRegistry.STELLARITE.get(), ResearchRegistry.CRUCIBLE.get(), ResearchRegistry.ALCHEMICAL_BRASS.get(), ResearchRegistry.ARCANA_SEQUENCE.get(), ResearchRegistry.ARMILLARY_SPHERE.get());
+        INTRODUCTION.get().addChildren(ResearchRegistry.INTRODUCTION.get(), ResearchRegistry.STELLARITE.get(), ResearchRegistry.CRUCIBLE.get(), ResearchRegistry.ALCHEMICAL_BRASS.get(), ResearchRegistry.ARCANA_SEQUENCE.get(), ResearchRegistry.ARMILLARY_SPHERE.get(), ResearchRegistry.STELLAR_OBSERVATORY.get());
         ALCHEMY.get().addChildren(ResearchRegistry.ASPECTI_PHIAL.get(), ResearchRegistry.JAR.get());
         STARGAZING.get().addChildren(ResearchRegistry.STARGAZING.get(), ResearchRegistry.SOLAR_ECLIPSE.get());
     }

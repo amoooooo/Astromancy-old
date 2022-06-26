@@ -17,9 +17,12 @@ import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
 import coffee.amo.astromancy.core.systems.research.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -33,6 +36,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
@@ -234,6 +240,19 @@ public class BookScreen extends Screen {
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
         if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
             screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
+        }
+    }
+
+    public static void renderBlockState(PoseStack poseStack, BlockState state, int posX, int posY, int mouseX, int mouseY) {
+        poseStack.pushPose();
+        poseStack.translate(16.75 + posX,-8.9 + posY,0);
+        poseStack.mulPose(Vector3f.XP.rotationDegrees(35));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(45));
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        poseStack.popPose();
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
+            screen.renderTooltip(poseStack, new TranslatableComponent(state.getBlock().asItem().getDescriptionId()), mouseX, mouseY);
         }
     }
 
@@ -473,12 +492,12 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
-            if(tab.entries.contains(object) && ClientResearchHolder.contains(object.identifier)) {
+            if(tab.entries.contains(object) && (object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.click(xOffset, yOffset, mouseX, mouseY);
                     break;
                 }
-            } else if (tab.entries.contains(object)){
+            } else if (tab.entries.contains(object) && object.research.locked.equals(ResearchProgress.LOCKED)) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.clickLocked(xOffset, yOffset, mouseX, mouseY);
                     break;
@@ -514,7 +533,7 @@ public class BookScreen extends Screen {
         for (int i = OBJECTS.size() - 1; i >= 0; i--) {
             BookObject object = OBJECTS.get(i);
             if(tab.entries.contains(object)){
-                if (ClientResearchHolder.contains(object.identifier)) {
+                if (ClientResearchHolder.contains(object.identifier) && (object.research.locked.equals(ResearchProgress.COMPLETED) || object.research.locked.equals(ResearchProgress.IN_PROGRESS))) {
                     boolean isHovering = object.isHovering(xOffset, yOffset, mouseX, mouseY);
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
@@ -523,7 +542,7 @@ public class BookScreen extends Screen {
                     if (!object.children.isEmpty() && (object.research.locked.equals(ResearchProgress.COMPLETED) || object.research.locked.equals(ResearchProgress.IN_PROGRESS))) {
                         object.children.forEach(c -> {
                             if(!c.isRendered){
-                                if(ClientResearchHolder.contains(c.identifier)){
+                                if(ClientResearchHolder.contains(c.identifier) && (c.research.locked.equals(ResearchProgress.LOCKED) || c.research.locked.equals(ResearchProgress.COMPLETED) || c.research.locked.equals(ResearchProgress.IN_PROGRESS))){
                                     ClientResearchHolder.getResearch().stream().filter(r -> r.identifier.equals(c.identifier)).findFirst().ifPresent(b -> {
                                         if(!anyMatch(b.children.stream().map(e -> e.identifier).toList(), c.children)){
                                             boolean isHovering2 = c.isHovering(xOffset, yOffset, mouseX, mouseY);
@@ -654,7 +673,7 @@ public class BookScreen extends Screen {
         }
         for(int i = 0; i < textures.size(); i++){
             uOffset *= 1+(i/10f);
-            uOffset *= (Minecraft.getInstance().level.getDayTime() / 2400.0f) / 5f;
+            uOffset *= (Minecraft.getInstance().level.getDayTime() / 2400.0f) / 10f;
             vOffset *= 1+(i/10f);
             int scale = i == textures.size() - 1 ? Math.round(0.1f) : i;
             renderTexture(textures.get(i), poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / (2-(i/3.5f))), Math.round(parallax_height / (2-(i/3.5f))));

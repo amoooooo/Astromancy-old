@@ -25,10 +25,27 @@ public class ClientResearchHolder {
             ResearchObject object = (ResearchObject) type;
             if (object.identifier.equals(in)) {
                 object.locked = ResearchProgress.IN_PROGRESS;
+                object.children.forEach(c -> {
+                    c.locked = ResearchProgress.UNAVAILABLE;
+                });
                 research.add(object);
                 return;
             }
         }
+    }
+
+    public static void addResearch(ResearchObject in, ResearchProgress progress) {
+        in.locked = progress;
+        if(progress.equals(ResearchProgress.COMPLETED)){
+            in.children.forEach(c -> {
+                c.locked = ResearchProgress.LOCKED;
+            });
+        } else {
+            in.children.forEach(s -> {
+                s.locked = ResearchProgress.UNAVAILABLE;
+            });
+        }
+        research.add(in);
     }
 
     public static void completeResearch(String in){
@@ -36,7 +53,36 @@ public class ClientResearchHolder {
         for (ResearchType type : researchObjects) {
             ResearchObject object = (ResearchObject) type;
             if (object.identifier.equals(in)) {
+                object.children.forEach(c -> {
+                    c.locked = ResearchProgress.LOCKED;
+                });
                 object.locked = ResearchProgress.COMPLETED;
+                return;
+            }
+        }
+    }
+
+    public static boolean isResearchInProgress(String in){
+        List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
+        for (ResearchType type : researchObjects) {
+            ResearchObject object = (ResearchObject) type;
+            if (object.identifier.equals(in)) {
+                return object.locked == ResearchProgress.IN_PROGRESS;
+            }
+        }
+        return false;
+    }
+
+    public static void addSyncResearch(String in) {
+        List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
+        for (ResearchType type : researchObjects) {
+            ResearchObject object = (ResearchObject) type;
+            if (object.identifier.equals(in)) {
+                object.locked = ResearchProgress.IN_PROGRESS;
+                object.children.forEach(c -> {
+                    c.locked = ResearchProgress.UNAVAILABLE;
+                });
+                research.add(object);
                 return;
             }
         }

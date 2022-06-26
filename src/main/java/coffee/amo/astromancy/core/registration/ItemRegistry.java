@@ -46,6 +46,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> STELLARITE_DUST = ITEMS.register("stellarite_dust", () -> new StellariteDust(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> RESEARCH_NOTE = ITEMS.register("research_note", () -> new ResearchNote(DEFAULT_PROPERTIES().stacksTo(1)));
     public static final RegistryObject<BlockItem> MORTAR = ITEMS.register("mortar", () -> new BlockItem(BlockRegistration.MORTAR.get(), DEFAULT_PROPERTIES()));
+//    public static final RegistryObject<BlockItem> RESEARCH_TABLE = ITEMS.register("research_table", () -> new BlockItem(BlockRegistration.RESEARCH_TABLE.get(), DEFAULT_PROPERTIES()));
 
 
     public static void register() {}

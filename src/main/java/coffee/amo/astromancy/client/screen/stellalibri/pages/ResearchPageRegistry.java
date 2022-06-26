@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.client.screen.stellalibri.pages;
 
+import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +36,7 @@ public class ResearchPageRegistry {
         registerPage(ResearchRegistry.STELLARITE.get().getResearchName(), 0, new HeadlineTextPage("stellarite", "stellarite.a", "stellarite").setHidden(false));
         registerPage(ResearchRegistry.ARCANA_SEQUENCE.get().getResearchName(), 0, new HeadlineTextPage("arcana_sequence", "arcana_sequence.a", "arcana_sequence").setHidden(false));
         registerPage(ResearchRegistry.ALCHEMICAL_BRASS.get().getResearchName(), 0, new HeadlineTextPage("alchemical_brass", "alchemical_brass.a", "alchemical_brass").setHidden(false));
-        registerPage(ResearchRegistry.CRUCIBLE.get().getResearchName(), 0, new HeadlineTextPage("crucible", "crucible.a", "crucible").setHidden(false));
+        registerPages(ResearchRegistry.CRUCIBLE.get().getResearchName(), new HeadlineTextPage("crucible", "crucible.a", "crucible").setHidden(false), StructurePage.cruciblePage(BlockRegistration.CRUCIBLE.get()));
 
         registerPages(ResearchRegistry.ASPECTI_PHIAL.get().getResearchName(), new HeadlineTextPage("aspecti_phial", "aspecti_phial.a", "aspecti_phial").setHidden(false),
                 new TextPage("aspecti_phial.b", "aspecti_phial").setHidden(false),
@@ -49,5 +50,6 @@ public class ResearchPageRegistry {
                 CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()).setHidden(true),
                 CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()).setHidden(true));
 
+        registerPage(ResearchRegistry.STELLAR_OBSERVATORY.get().getResearchName(), 0, new HeadlineTextPage("stellar_observatory", "stellar_observatory.a", "stellar_observatory").setHidden(false));
     }
 }

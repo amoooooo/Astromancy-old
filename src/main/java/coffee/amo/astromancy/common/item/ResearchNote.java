@@ -6,6 +6,7 @@ import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
+import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,7 @@ public class ResearchNote extends Item {
                         ResearchObject object = (ResearchObject) s;
                         if(object.identifier.equals(pPlayer.getItemInHand(pUsedHand).getTag().getString("researchId"))){
                             research.completeResearch(pPlayer, object);
-                            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) pPlayer), new ResearchPacket(object.identifier, true));
+                            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) pPlayer), new ResearchPacket(object.identifier, true, true, ResearchProgress.IN_PROGRESS.ordinal()));
                         }
                     });
                 });
