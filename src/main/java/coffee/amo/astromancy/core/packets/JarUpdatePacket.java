@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.packets;
-
+/*
 import coffee.amo.astromancy.client.packets.ClientPacketUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -45,4 +45,4 @@ public class JarUpdatePacket {
         });
         contextSupplier.get().setPacketHandled(true);
     }
-}
+}*/

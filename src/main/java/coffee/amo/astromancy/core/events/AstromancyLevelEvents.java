@@ -12,8 +12,6 @@ import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchClearPacket;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
-import coffee.amo.astromancy.core.registration.SoundRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiTank;
 import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
@@ -130,40 +128,6 @@ public class AstromancyLevelEvents {
         if (entity instanceof Player && !(entity instanceof FakePlayer)) {
             event.addCapability(Astromancy.astromancy("player_research"), new PlayerResearchProvider());
         }
-    }
-
-    @SubscribeEvent
-    public static void attachBECapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-        if (!(event.getObject() instanceof JarBlockEntity)) return;
-
-        AspectiTank backend = new AspectiTank(256);
-        LazyOptional<IAspectiHandler> optional = LazyOptional.of(() -> backend);
-        Capability<IAspectiHandler> capability = CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY;
-
-        ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
-
-            @NotNull
-            @Override
-            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                if (cap == capability) {
-                    return optional.cast();
-                }
-                return LazyOptional.empty();
-            }
-
-            @Override
-            public CompoundTag serializeNBT() {
-                CompoundTag tag = new CompoundTag();
-                return backend.toNbt(tag);
-            }
-
-            @Override
-            public void deserializeNBT(CompoundTag nbt) {
-                backend.fromNbt(nbt);
-            }
-        };
-
-        event.addCapability(Astromancy.astromancy("aspecti_handler"), provider);
     }
 
     @SubscribeEvent

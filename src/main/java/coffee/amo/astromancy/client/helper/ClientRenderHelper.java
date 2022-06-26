@@ -3,7 +3,6 @@ package coffee.amo.astromancy.client.helper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.packets.JarSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.BlockHitResult;
@@ -26,12 +25,12 @@ public class ClientRenderHelper {
         return clientLookAtTicks;
     }
 
-    public static void jarOrientation(){
-        if(Minecraft.getInstance().hitResult instanceof BlockHitResult && !Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.MISS)){
-            if(Minecraft.getInstance().level.getBlockEntity(((BlockHitResult) Minecraft.getInstance().hitResult).getBlockPos()) instanceof JarBlockEntity je){
-                je.labelDirection = ((BlockHitResult) Minecraft.getInstance().hitResult).getDirection();
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new JarSyncPacket(je.labelDirection.ordinal(), je.getBlockPos()));
-            }
-        }
-    }
+//    public static void jarOrientation(){
+//        if(Minecraft.getInstance().hitResult instanceof BlockHitResult && !Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.MISS)){
+//            if(Minecraft.getInstance().level.getBlockEntity(((BlockHitResult) Minecraft.getInstance().hitResult).getBlockPos()) instanceof JarBlockEntity je){
+//                je.labelDirection = ((BlockHitResult) Minecraft.getInstance().hitResult).getDirection();
+//                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new JarSyncPacket(je.labelDirection.ordinal(), je.getBlockPos()));
+//            }
+//        }
+//    }
 }

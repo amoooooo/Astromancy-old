@@ -5,6 +5,7 @@ import coffee.amo.astromancy.common.item.AspectiPhial;
 import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
+import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -29,7 +30,7 @@ public class AstromancyClient {
             return 0;
         });
         ItemProperties.register(ItemRegistry.ASPECTI_PHIAL.get(), astromancy("phial_filled"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(pStack.getItem() instanceof AspectiPhial && pStack.hasTag()){
+            if(Aspecti.fromItemStack(pStack) != Aspecti.EMPTY){
                 return 1;
             }
             return 0;

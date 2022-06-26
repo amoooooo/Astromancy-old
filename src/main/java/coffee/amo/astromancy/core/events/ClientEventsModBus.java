@@ -19,7 +19,7 @@ public class ClientEventsModBus {
         event.getItemColors().register((stack, tintIndex) -> {
             if(stack.hasTag()){
                 if(tintIndex == 1){
-                    return Aspecti.values()[((CompoundTag) stack.getTag().get("aspecti")).getInt("aspecti")].color().getRGB();
+                    return Aspecti.fromItemStack(stack).color().getRGB();
                 }
             }
             return 0xFFFFFF;

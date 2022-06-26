@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.packets;
-
+/* i don't think you need it
 import coffee.amo.astromancy.client.packets.ClientPacketUtils;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -37,4 +37,4 @@ public class JarSyncPacket {
         });
         contextSupplier.get().setPacketHandled(true);
     }
-}
+}*/
