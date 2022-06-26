@@ -6,6 +6,7 @@ import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphere
 import coffee.amo.astromancy.common.item.*;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.setup.content.item.tabs.ContentTab;
+import coffee.amo.astromancy.core.setup.content.item.tabs.PhialTab;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockItem;
 import net.minecraft.nbt.CompoundTag;
@@ -55,6 +56,6 @@ public class ItemRegistry {
     }
 
     public static Item.Properties PHIAL_PROPERTIES() {
-        return new Item.Properties().tab(Astromancy.PHIALS);
+        return new Item.Properties().tab(PhialTab.INSTANCE);
     }
 }

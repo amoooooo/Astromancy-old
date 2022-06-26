@@ -5,7 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
-/*
+
 public class ItemAspectiNonConsumableContainer extends Item {
     protected final int capacity;
     private final ItemStack container;
@@ -20,4 +20,4 @@ public class ItemAspectiNonConsumableContainer extends Item {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new AspectiHandlerItemStack.NonConsumable(stack, container, capacity);
     }
-}*/
+}

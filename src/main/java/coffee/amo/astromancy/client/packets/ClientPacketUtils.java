@@ -1,10 +1,14 @@
 package coffee.amo.astromancy.client.packets;
 
 import coffee.amo.astromancy.common.blockentity.armillary_sphere.ArmillarySphereCoreBlockEntity;
+import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
+import coffee.amo.astromancy.core.packets.JarUpdatePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
+import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
 public class ClientPacketUtils {
@@ -22,13 +26,13 @@ public class ClientPacketUtils {
         }
     }
 
-//    public static void jarUpdateHandle(JarUpdatePacket packet) {
-//        Level level = Minecraft.getInstance().level;
-//        if (level.getBlockEntity(packet.pos) instanceof JarBlockEntity blockEntity) {
-//            blockEntity.setAspecti(Aspecti.values()[packet.aspecti]);
-//            blockEntity.setCount(packet.count);
-//            blockEntity.label = packet.label;
-//            blockEntity.labelDirection = Direction.values()[packet.labelDirection];
-//        }
-//    }
+    public static void jarUpdateHandle(JarUpdatePacket packet) {
+        Level level = Minecraft.getInstance().level;
+        if (level.getBlockEntity(packet.pos) instanceof JarBlockEntity blockEntity) {
+            blockEntity.setAspecti(Aspecti.values()[packet.aspecti]);
+            blockEntity.setCount(packet.count);
+            blockEntity.label = packet.label;
+            blockEntity.labelDirection = Direction.values()[packet.labelDirection];
+        }
+    }
 }

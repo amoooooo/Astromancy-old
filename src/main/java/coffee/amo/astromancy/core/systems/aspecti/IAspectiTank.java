@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.systems.aspecti;
-/*
+
 import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler.AspectiAction;
 
 import javax.annotation.Nonnull;
@@ -21,4 +21,3 @@ public interface IAspectiTank {
     @Nonnull
     AspectiStack drain(AspectiStack aspecti, AspectiAction action);
 }
-*/
