@@ -16,14 +16,13 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-import java.awt.*;
 
 
 public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySphereCoreBlockEntity> {
@@ -144,7 +143,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.scale(0.01f * (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
-        for (TextComponent requirement : blockEntity.pairToTextComponent(blockEntity.getMatchFromInventory())) {
+        for (Component requirement : blockEntity.pairToComponent(blockEntity.getMatchFromInventory())) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
@@ -182,7 +181,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
         ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
-        for (TextComponent requirement : blockEntity.getAspectiInstances()) {
+        for (Component requirement : blockEntity.getAspectiInstances()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);

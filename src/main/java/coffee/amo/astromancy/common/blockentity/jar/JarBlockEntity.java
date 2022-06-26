@@ -4,6 +4,7 @@ import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.AspectiEntry;
 import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
+import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
@@ -16,9 +17,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,6 +31,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,6 +77,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                 labelDirection = ray.getDirection();
                 heldItem.shrink(1);
                 setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2|4|16);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -208,21 +210,21 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     }
 
     public MutableComponent getAspectiComponent() {
-        return new TextComponent("")
-                .append(new TextComponent("[").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))))
-                .append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(new TextComponent(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
-                .append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(AspectiEntry.intToTextComponent(tank.getAspectiStack().getAmount()))
-                .append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
+        return ((MutableComponent)Component.literal(""))
+                .append(Component.literal("[").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))))
+                .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                .append(Component.literal(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
+                .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                .append(AspectiEntry.intToComponent(tank.getAspectiStack().getAmount()))
+                .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
     }
 
-    public TextComponent getAspectiSymbolComponent(){
-        TextComponent tc = new TextComponent("");
+    public Component getAspectiSymbolComponent(){
+        MutableComponent tc = Component.literal("");
         if(tank != null){
-            tc.append(new TextComponent(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
         }
         return tc;
     }
@@ -238,6 +240,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
         ItemEntity e = new ItemEntity(this.level, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, Items.PAPER.getDefaultInstance());
         level.addFreshEntity(e);
         setChanged();
+        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2|4|16);
 //        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
 //                this.getBlockPos().getX(),
 //                this.getBlockPos().getY(),

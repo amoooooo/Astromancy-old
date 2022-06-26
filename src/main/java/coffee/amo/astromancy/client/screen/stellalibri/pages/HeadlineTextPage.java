@@ -6,7 +6,6 @@ import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.lang.ref.WeakReference;
 
@@ -37,7 +36,7 @@ public class HeadlineTextPage extends BookPage
         if(hidden){if(!ClientResearchHolder.isResearchCompleted(research)){return;}}
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        Component component = new TranslatableComponent(headlineTranslationKey());
+        Component component = Component.translatable(headlineTranslationKey());
         BookScreen.renderText(poseStack, component, guiLeft+64 - minecraft.font.width(component.getString())/2,guiTop+10);
         BookScreen.renderTransparentTexture(BACKGROUND, poseStack, guiLeft+23, guiTop+19, 29, 184, 86, 3, 256, 256);
         BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+19,guiTop+31,100);
@@ -49,7 +48,7 @@ public class HeadlineTextPage extends BookPage
         if(hidden){if(!ClientResearchHolder.isResearchCompleted(research)){return;}}
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        Component component = new TranslatableComponent(headlineTranslationKey());
+        Component component = Component.translatable(headlineTranslationKey());
         BookScreen.renderText(poseStack, component, guiLeft+190 - minecraft.font.width(component.getString())/2,guiTop+10);
         BookScreen.renderTransparentTexture(BACKGROUND, poseStack, guiLeft+148, guiTop+19, 29, 184, 86, 3, 256, 256);
         BookScreen.renderWrappingText(poseStack, translationKey(), guiLeft+138,guiTop+31,100);

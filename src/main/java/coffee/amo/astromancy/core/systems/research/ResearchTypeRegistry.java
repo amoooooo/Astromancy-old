@@ -22,12 +22,10 @@ public class ResearchTypeRegistry {
     public static void onNewRegistry(NewRegistryEvent event){
         RegistryBuilder<ResearchType> registryBuilder = new RegistryBuilder<>();
         registryBuilder.setName(registryLocation);
-        registryBuilder.setType(ResearchType.class);
         RESEARCH_TYPES = event.create(registryBuilder);
 
         RegistryBuilder<ResearchTabType> tabBuilder = new RegistryBuilder<>();
         tabBuilder.setName(tabLoc);
-        tabBuilder.setType(ResearchTabType.class);
         RESEARCH_TABS = event.create(tabBuilder);
     }
 }

@@ -180,8 +180,7 @@ public class VFXBuilders {
         }
 
         public ScreenVFXBuilder end() {
-            bufferbuilder.end();
-            BufferUploader.end(bufferbuilder);
+            BufferUploader.drawWithShader(bufferbuilder.end());
             return this;
         }
 

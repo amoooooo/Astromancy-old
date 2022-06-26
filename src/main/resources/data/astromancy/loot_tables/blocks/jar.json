@@ -14,23 +14,28 @@
               "source": "block_entity",
               "ops": [
                 {
-                  "source": "aspecti",
-                  "target": "BlockEntityTag.aspecti",
+                  "source": "Aspecti",
+                  "target": "BlockEntityTag.Aspecti",
                   "op": "replace"
                 },
                 {
-                  "source": "count",
-                  "target": "BlockEntityTag.count",
-                  "op": "replace"
+                  "source": "Aspecti.AspectiStack",
+                  "target": "BlockEntityTag.Aspecti.AspectiStack",
+                    "op": "replace"
                 },
                 {
-                  "source": "label",
-                  "target": "BlockEntityTag.label",
-                  "op": "replace"
+                  "source": "Aspecti.AspectiStack.Amount",
+                    "target": "BlockEntityTag.Aspecti.AspectiStack.Amount",
+                    "op": "replace"
                 },
                 {
-                  "source": "labelDirection",
-                  "target": "BlockEntityTag.labelDirection",
+                  "source": "Aspecti.AspectiStack.Type",
+                    "target": "BlockEntityTag.Aspecti.AspectiStack.Type",
+                    "op": "replace"
+                },
+                {
+                  "source": "Aspecti.Capacity",
+                    "target": "BlockEntityTag.Aspecti.Capacity",
                     "op": "replace"
                 }
               ]

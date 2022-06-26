@@ -12,7 +12,7 @@ public class DataGenerators {
     public static void gatherData(GatherDataEvent event){
         DataGenerator generator = event.getGenerator();
         if(event.includeServer()){
-            generator.addProvider(new AequivaleoInformationProvider(generator));
+            generator.addProvider(false, new AequivaleoInformationProvider(generator));
         }
     }
 }

@@ -12,7 +12,7 @@ import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -32,8 +32,8 @@ public class EntryScreen extends Screen {
     public static EntryObject openObject;
     private boolean cannotResearch;
     private long delayTime;
-    private static TranslatableComponent cannotResearchMessage1 = new TranslatableComponent("astromancy.research.ongoing1");
-    private static TranslatableComponent cannotResearchMessage2 = new TranslatableComponent("astromancy.research.ongoing2");
+    private static Component cannotResearchMessage1 = Component.translatable("astromancy.research.ongoing1");
+    private static Component cannotResearchMessage2 = Component.translatable("astromancy.research.ongoing2");
 
     public final int bookWidth = 256;
     public final int bookHeight = 181;
@@ -41,7 +41,7 @@ public class EntryScreen extends Screen {
     public int grouping;
 
     protected EntryScreen() {
-        super(new TranslatableComponent("astromancy.gui.entry.title"));
+        super(Component.translatable("astromancy.gui.entry.title"));
     }
 
     @Override

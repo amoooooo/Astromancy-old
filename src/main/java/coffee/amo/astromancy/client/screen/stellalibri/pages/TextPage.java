@@ -6,7 +6,6 @@ import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.lang.ref.WeakReference;
 

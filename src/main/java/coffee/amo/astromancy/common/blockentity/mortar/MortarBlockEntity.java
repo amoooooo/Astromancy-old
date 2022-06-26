@@ -8,7 +8,6 @@ import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntityInventory;
 import coffee.amo.astromancy.core.systems.blockentity.ItemHolderBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

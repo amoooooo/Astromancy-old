@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandomList;
 
 import java.util.*;
@@ -37,16 +38,16 @@ public class Star {
         this.mass = 1000 * random.nextFloat(this.classification.getMassRange().getFirst(), this.classification.getMassRange().getSecond());
         this.randomOffset = random.nextFloat(0.01f)-0.005f;
         this.spectralClass = classification.getSpectralClass();
-        this.type = StarType.list.getRandom(random).isPresent() ? StarType.list.getRandom(random).get() : StarType.NORMAL;
+        this.type = StarType.list.getRandom(RandomSource.create()).isPresent() ? StarType.list.getRandom(RandomSource.create()).get() : StarType.NORMAL;
         //TODO: figure out how to add lumen types with weights
         int lumenCount = random.nextInt(3) + 1;
         float lumenStrength = 1;
         for (int i = 0; i < lumenCount - 1; i++) {
             float lumenStrengthRandom = random.nextFloat(Math.abs(lumenStrength)) + 0.1f;
-            this.lumen.put(LumenType.LIST.getRandom(random).get(), lumenStrengthRandom);
+            this.lumen.put(LumenType.LIST.getRandom(RandomSource.create()).get(), lumenStrengthRandom);
             lumenStrength -= lumenStrengthRandom;
         }
-        this.lumen.put(LumenType.LIST.getRandom(random).get(), lumenStrength);
+        this.lumen.put(LumenType.LIST.getRandom(RandomSource.create()).get(), lumenStrength);
         System.out.println("Created star with spectral intensity " + spectralIntensity);
     }
 

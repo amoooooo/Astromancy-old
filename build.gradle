@@ -21,7 +21,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'coffee.amo'
-version = '1.0-SNAPSHOT'
+version = '0.0.5-1.19'
 
 java {
     archivesBaseName = 'astromancy'
@@ -40,7 +40,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'parchment', version: '2022.06.05-1.18.2'
+    mappings channel: 'official', version: '1.19'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -176,44 +176,21 @@ repositories {
         name 'JEI maven'
         url "https://dvs1.progwml6.com/files/maven"
     }
-//    maven { // Registrate
-//        url "https://maven.tterrag.com/"
-//    }
-    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-    // flatDir {
-    //     dir 'libs'
-    // }
     mavenLocal()
 }
 
-//configurations {
-//    shade
-//}
-//
-//shadowJar {
-//    configurations = [project.configurations.shade]
-//    relocate 'com.tterrag.registrate', 'coffee.amo.astromancy.repack.registrate'
-//}
-//reobf {
-//    shadowJar {}
-//}
-
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.51'
+    minecraft "net.minecraftforge:forge:1.19-${forgeVersion}"
 
-    //implementation fg.deobf("com.sammy.ortus:ortus:1.18.2-1.1.172")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curiosVersion}")
+    compileOnly fg.deobf("mezz.jei:jei-1.19-forge-api:${jeiVersion}")
+    compileOnly fg.deobf("mezz.jei:jei-1.19-common-api:${jeiVersion}")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19-forge:${jeiVersion}")
 
-    implementation fg.deobf("curse.maven:curios-309927:3748873")
-    compileOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.193:api')
-    runtimeOnly fg.deobf('mezz.jei:jei-1.18.2:9.7.0.193')
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:${aequivaleoVersion}:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:${aequivaleoVersion}:api")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:${aequivaleoVersion}:vanillaapi")
 
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:universal")
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:api")
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:vanillaapi")
-
-//    def registrate = "com.tterrag.registrate:Registrate:MC1.18.2-1.0.25"
-//    implementation fg.deobf(registrate)
-//    shade registrate
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

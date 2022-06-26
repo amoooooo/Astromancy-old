@@ -7,13 +7,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 
 import java.util.Arrays;
 
 public class AstromancyCommand {
-    protected static final SimpleCommandExceptionType NO_PERMISSION_EXCEPTION = new SimpleCommandExceptionType(new TextComponent("You don't have permission to use this command."));
+    protected static final SimpleCommandExceptionType NO_PERMISSION_EXCEPTION = new SimpleCommandExceptionType(Component.literal("You don't have permission to use this command."));
 
     public static void registerSubCommands(CommandDispatcher<CommandSourceStack> dispatcher){
         LiteralArgumentBuilder<CommandSourceStack> cmd = Commands.literal("astromancy")
@@ -22,8 +22,8 @@ public class AstromancyCommand {
                 dispatcher.register(cmd);
     }
 
-    protected static TextComponent getCmdPrefix(String cmdName){
-        return new TextComponent(ChatFormatting.GOLD + "[Astromancy " + cmdName + "] " + ChatFormatting.RESET);
+    protected static Component getCmdPrefix(String cmdName){
+        return Component.literal(ChatFormatting.GOLD + "[Astromancy " + cmdName + "] " + ChatFormatting.RESET);
     }
 
     protected enum CommandFeedbackType{
@@ -44,10 +44,10 @@ public class AstromancyCommand {
     }
 
     protected static void feedback(CommandSourceStack source, String commandName, String langKey, CommandFeedbackType type, Component... args) {
-        source.sendSuccess(AstromancyCommand.getCmdPrefix(commandName).append(new TextComponent(Arrays.toString(args)).setStyle(Style.EMPTY.applyFormat(type.getColor()))), true);
+        source.sendSuccess(((MutableComponent)AstromancyCommand.getCmdPrefix(commandName)).append(Component.literal(Arrays.toString(args)).setStyle(Style.EMPTY.applyFormat(type.getColor()))), true);
     }
 
     protected static void error(CommandSourceStack source, String commandName, String langKey, Component... args) {
-        source.sendFailure(AstromancyCommand.getCmdPrefix(commandName).append(new TextComponent(Arrays.toString(args)).setStyle(Style.EMPTY.applyFormat(CommandFeedbackType.ERROR.getColor()))));
+        source.sendFailure(((MutableComponent)AstromancyCommand.getCmdPrefix(commandName)).append(Component.literal(Arrays.toString(args)).setStyle(Style.EMPTY.applyFormat(CommandFeedbackType.ERROR.getColor()))));
     }
 }

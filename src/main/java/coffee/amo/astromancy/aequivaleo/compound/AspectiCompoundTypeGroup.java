@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.aequivaleo.compound;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.aequivaleo.AspectiInstance;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.container.ICompoundContainer;
@@ -8,16 +9,16 @@ import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
 import com.ldtteam.aequivaleo.vanilla.api.recipe.equivalency.ITagEquivalencyRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Set;
 
-public class AspectiCompoundTypeGroup extends ForgeRegistryEntry<ICompoundTypeGroup> implements ICompoundTypeGroup {
+public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
     /**
      * The mediation engine.
      *
@@ -42,6 +43,11 @@ public class AspectiCompoundTypeGroup extends ForgeRegistryEntry<ICompoundTypeGr
                                                           i2.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum());
                     }).map(IMediationCandidate::getValues);
         };
+    }
+
+    @Override
+    public ResourceLocation getRegistryName() {
+        return Astromancy.astromancy("aspecti");
     }
 
     @Override

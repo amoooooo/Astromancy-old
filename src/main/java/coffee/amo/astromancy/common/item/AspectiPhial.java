@@ -15,8 +15,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -45,11 +43,11 @@ public class AspectiPhial extends Item {
     @Override
     public Component getName(ItemStack pStack) {
         // TODO: Refactor name
-        MutableComponent name = new TextComponent("Crude ");
+        MutableComponent name = Component.literal("Crude ");
         pStack.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY).ifPresent(h -> {
-            name.append(new TextComponent(StringHelper.capitalize(h.getAspectiInTank(0).getAspecti().name().toLowerCase(Locale.ROOT))+ " "));
+            name.append(Component.literal(StringHelper.capitalize(h.getAspectiInTank(0).getAspecti().name().toLowerCase(Locale.ROOT))+ " "));
         });
-        name.append(new TextComponent("Phial"));
+        name.append(Component.literal("Phial"));
         return name;
     }
 
@@ -60,15 +58,15 @@ public class AspectiPhial extends Item {
         pStack.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY).ifPresent(handler -> {
             Aspecti aspecti = handler.getAspectiInTank(0).getAspecti();
             int amount = handler.getAspectiInTank(0).getAmount();
-            MutableComponent component = new TextComponent("")
-                    .append(new TextComponent("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))))
-                    .append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(new TextComponent(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
-                    .append(new TranslatableComponent("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(new TranslatableComponent("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(AspectiEntry.intToTextComponent(amount))
-                    .append(new TextComponent("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
+            MutableComponent component = Component.literal("")
+                    .append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))))
+                    .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                    .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                    .append(Component.literal(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
+                    .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                    .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
+                    .append(AspectiEntry.intToComponent(amount))
+                    .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
             pTooltipComponents.add(component);
         });
     }
@@ -127,7 +125,7 @@ public class AspectiPhial extends Item {
     }
 
     public void fillItemCategory(@Nonnull CreativeModeTab pCategory, @Nonnull NonNullList<ItemStack> pItems) {
-        if (allowdedIn(pCategory)) {
+        if (allowedIn(pCategory)) {
             for(Aspecti aspecti : Aspecti.values())
                 pItems.add(createForAspecti(new AspectiStack(aspecti, aspecti == Aspecti.EMPTY ? 0 : 16)));
         }

@@ -51,7 +51,6 @@ public class JarBlock<T extends JarBlockEntity> extends AstromancyEntityBlock<T>
         super.createBlockStateDefinition(pBuilder);
     }
 
-    private static final ResourceLocation JARDROPS = Astromancy.astromancy("jardrops");
     public VoxelShape SHAPE = Stream.of(
             Block.box(4, 11, 4, 12, 14, 12),
             Block.box(3, 0, 3, 13, 12, 13)

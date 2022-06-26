@@ -5,7 +5,7 @@ import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
@@ -70,7 +70,7 @@ public class BookObject {
     public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
-            screen.renderComponentTooltip(poseStack, List.of(new TextComponent("Locked")), mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, List.of(Component.literal("Locked")), mouseX, mouseY, minecraft.font);
         }
     }
     public void click(float xOffset, float yOffset, double mouseX, double mouseY)

@@ -17,8 +17,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,30 +36,8 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
         }
         ps.mulPose(Vector3f.YP.rotationDegrees(180));
         ps.translate(-0.75,0.5,0);
-        //RenderHelper.renderNormalCuboid(ps, pBufferSource, 0.875f, RenderType.lightning());
         if(!pBlockEntity.isEmpty()){
-            //RenderHelper.renderText(ps, pBlockEntity.getAspecti().name() + " " + pBlockEntity.getCount(), pBufferSource, font);
             float scale = Math.min(0.749f,(Math.round((pBlockEntity.getAmount() / 256f) * 16.0f) / 32.0f ) * 1 + ((pBlockEntity.getAmount() / 256f)/4f));
-//            ps.pushPose();
-//            VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")));
-//            ps.translate(-0.05,-0.5f,-0.8);
-//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-//            ps.translate(-0.6f,0,0);
-//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-//            ps.translate(-0.6f,0,0);
-//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.mulPose(Vector3f.YP.rotationDegrees(90));
-//            ps.translate(-0.6f,0,0);
-//            RenderHelper.renderQuad(ps, 0.6f, scale, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.mulPose(Vector3f.XN.rotationDegrees(90));
-//            ps.translate(0,-0.55,0.001);
-//            RenderHelper.renderQuad(ps, 0.6f, 0.5f, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.mulPose(Vector3f.XN.rotationDegrees(180));
-//            ps.translate(0,-0.55,-scale + 0.001);
-//            RenderHelper.renderQuad(ps, 0.6f, 0.6f, buff, pBlockEntity.getAspecti().color().getRGB());
-//            ps.popPose();
             ps.pushPose();
             ps.mulPose(Vector3f.ZP.rotation(135));
             ps.translate(-0.25,0,-0.5);

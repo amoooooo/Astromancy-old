@@ -25,8 +25,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -62,8 +60,8 @@ public class BookScreen extends Screen {
     public static ArrayList<BookTab> TABS = new ArrayList<>();
     public final int parallax_width = 800;
     public final int parallax_height = 800;
-    private final TranslatableComponent lockedComponent = new TranslatableComponent("astromancy.gui.book.entry.");
-    private final TranslatableComponent unlockedComponent = new TranslatableComponent("astromancy.gui.book.entry.none");
+    private final MutableComponent lockedComponent = Component.translatable("astromancy.gui.book.entry.");
+    private final MutableComponent unlockedComponent = Component.translatable("astromancy.gui.book.entry.none");
     public int bookWidth = 448;
     public int bookHeight = 260;
     public int bookInsideWidth = 416;
@@ -77,7 +75,7 @@ public class BookScreen extends Screen {
     public boolean ignoreNextMouseInput;
 
     protected BookScreen() {
-        super(new TranslatableComponent("astromancy.gui.book.title"));
+        super(Component.translatable("astromancy.gui.book.title"));
         minecraft = Minecraft.getInstance();
         setupEntries();
         MinecraftForge.EVENT_BUS.post(new SetupAstromancyBookEntriesEvent());
@@ -213,7 +211,7 @@ public class BookScreen extends Screen {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, posX, posY);
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
         if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
-            screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
+            screen.renderTooltip(poseStack, Component.translatable(stack.getDescriptionId()), mouseX, mouseY);
         }
     }
 
@@ -231,7 +229,7 @@ public class BookScreen extends Screen {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, posX, posY);
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
         if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
-            screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
+            screen.renderTooltip(poseStack, Component.translatable(stack.getDescriptionId()), mouseX, mouseY);
         }
     }
 
@@ -239,7 +237,7 @@ public class BookScreen extends Screen {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, posX, posY);
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
         if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
-            screen.renderTooltip(poseStack, new TranslatableComponent(stack.getDescriptionId()), mouseX, mouseY);
+            screen.renderTooltip(poseStack, Component.translatable(stack.getDescriptionId()), mouseX, mouseY);
         }
     }
 
@@ -252,7 +250,7 @@ public class BookScreen extends Screen {
         poseStack.popPose();
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
-            screen.renderTooltip(poseStack, new TranslatableComponent(state.getBlock().asItem().getDescriptionId()), mouseX, mouseY);
+            screen.renderTooltip(poseStack, Component.translatable(state.getBlock().asItem().getDescriptionId()), mouseX, mouseY);
         }
     }
 
@@ -323,7 +321,7 @@ public class BookScreen extends Screen {
 
     public static void renderWrappingText(PoseStack mStack, String text, int x, int y, int w) {
         Font font = Minecraft.getInstance().font;
-        text = new TranslatableComponent(text).getString();
+        text = Component.translatable(text).getString();
         List<String> lines = new ArrayList<>();
         String[] words = text.split(" ");
         String line = "";
@@ -341,7 +339,7 @@ public class BookScreen extends Screen {
     }
 
     public static void renderText(PoseStack stack, String text, int x, int y) {
-        renderText(stack, new TranslatableComponent(text), x, y, getTextGlow(0));
+        renderText(stack, Component.translatable(text), x, y, getTextGlow(0));
     }
 
     public static void renderText(PoseStack stack, Component component, int x, int y) {
@@ -350,7 +348,7 @@ public class BookScreen extends Screen {
     }
 
     public static void renderText(PoseStack stack, String text, int x, int y, float glow) {
-        renderText(stack, new TranslatableComponent(text), x, y, glow);
+        renderText(stack, Component.translatable(text), x, y, glow);
     }
 
     public static void renderText(PoseStack stack, Component component, int x, int y, float glow) {
@@ -622,7 +620,7 @@ public class BookScreen extends Screen {
                                     }
                                 });
                             } else {
-                                MutableComponent lock = object.research.locked.equals(ResearchProgress.COMPLETED) ? unlockedComponent : (TranslatableComponent) lockedComponent.copy().append(object.identifier);
+                                MutableComponent lock = object.research.locked.equals(ResearchProgress.COMPLETED) ? unlockedComponent : lockedComponent.copy().append(object.identifier);
                                 c.lateLockedRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks, lock.getString());
                                 c.isRendered = true;
                             }

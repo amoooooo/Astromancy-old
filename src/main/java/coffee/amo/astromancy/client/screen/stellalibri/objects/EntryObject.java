@@ -21,8 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Items;
@@ -153,14 +152,14 @@ public class EntryObject extends BookObject {
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         if (isHovering)
         {
-            screen.renderComponentTooltip(poseStack, Arrays.asList(new TranslatableComponent(entry.translationKey()), new TranslatableComponent(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)), mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, Arrays.asList(Component.translatable(entry.translationKey()), Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)), mouseX, mouseY, minecraft.font);
         }
     }
     @Override
     public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
-            screen.renderComponentTooltip(poseStack, List.of(new TranslatableComponent("astromancy.gui.book.entry." + research.identifier), new TextComponent("Missing research: "), new TextComponent(" - ").append(new TranslatableComponent(Arrays.stream(parents).toList().get(0)))), mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier),Component.literal("Missing research: "),Component.literal(" - ").append(Component.translatable(Arrays.stream(parents).toList().get(0)))), mouseX, mouseY, minecraft.font);
         }
     }
 }
