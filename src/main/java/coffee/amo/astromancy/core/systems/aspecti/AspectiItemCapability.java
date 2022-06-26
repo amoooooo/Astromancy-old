@@ -1,5 +1,5 @@
 package coffee.amo.astromancy.core.systems.aspecti;
-
+/*
 import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -22,3 +22,4 @@ public class AspectiItemCapability implements ICapabilityProvider {
         return CapabilityAspectiHandler.ASPECTI_HANDLER_ITEM_CAPABILITY.orEmpty(cap, opt);
     }
 }
+*/
