@@ -48,7 +48,7 @@ public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
 
     @Override
     public ResourceLocation getRegistryName() {
-        return ModRegistries.COMPOUND_TYPE_GROUP.get().getRegistryName();
+        return Astromancy.astromancy("aspecti_compound_type_group");
     }
 
     @Override

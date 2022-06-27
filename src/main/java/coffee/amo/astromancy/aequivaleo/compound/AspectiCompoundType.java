@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 
 public class AspectiCompoundType implements ICompoundType {
     public final Aspecti aspecti;
+    public ResourceLocation registryName;
     public final Supplier<AspectiCompoundTypeGroup> group;
 
     public AspectiCompoundType(Aspecti aspecti, Supplier<AspectiCompoundTypeGroup> group) {
@@ -38,11 +39,12 @@ public class AspectiCompoundType implements ICompoundType {
 
     @Override
     public ICompoundType setRegistryName(ResourceLocation registryName) {
-        return null;
+        this.registryName = registryName;
+        return this;
     }
 
     @Override
     public ResourceLocation getRegistryName() {
-        return null;
+        return registryName;
     }
 }
