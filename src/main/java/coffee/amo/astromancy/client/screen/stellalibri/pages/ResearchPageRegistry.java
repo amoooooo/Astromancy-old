@@ -51,5 +51,7 @@ public class ResearchPageRegistry {
                 CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()).setHidden(true));
 
         registerPage(ResearchRegistry.STELLAR_OBSERVATORY.get().getResearchName(), 0, new HeadlineTextPage("stellar_observatory", "stellar_observatory.a", "stellar_observatory").setHidden(false));
+
+        registerPage(ResearchRegistry.TEST_1.get().getResearchName(), 0, new HeadlineTextPage("test_1", "test_1.a", "test_1").setHidden(false));
     }
 }

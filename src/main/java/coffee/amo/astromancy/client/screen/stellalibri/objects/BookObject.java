@@ -92,11 +92,11 @@ public class BookObject {
     public int offsetPosX(float xOffset)
     {
         int guiLeft = (width - screen.bookWidth) / 2;
-        return (int) (guiLeft+ this.posX + xOffset);
+        return (int) (guiLeft+ (this.posX * 1.05) + xOffset);
     }
     public int offsetPosY(float yOffset)
     {
         int guiTop = (height - screen.bookHeight) / 2;
-        return (int) (guiTop + this.posY + yOffset);
+        return (int) (guiTop + (this.posY * 1.05) + yOffset);
     }
 }

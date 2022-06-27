@@ -1,17 +1,19 @@
 package coffee.amo.astromancy.aequivaleo.compound;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.registration.AspectiRegistry;
 import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
+import com.ldtteam.aequivaleo.api.util.ModRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public class AspectiCompoundType implements ICompoundType {
     public final Aspecti aspecti;
-    public ResourceLocation registryName;
     public final Supplier<AspectiCompoundTypeGroup> group;
 
     public AspectiCompoundType(Aspecti aspecti, Supplier<AspectiCompoundTypeGroup> group) {
@@ -36,12 +38,11 @@ public class AspectiCompoundType implements ICompoundType {
 
     @Override
     public ICompoundType setRegistryName(ResourceLocation registryName) {
-        this.registryName = registryName;
-        return this;
+        return null;
     }
 
     @Override
     public ResourceLocation getRegistryName() {
-        return this.registryName;
+        return null;
     }
 }

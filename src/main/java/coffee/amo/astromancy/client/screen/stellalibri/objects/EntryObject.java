@@ -90,39 +90,39 @@ public class EntryObject extends BookObject {
                 if (ClientResearchHolder.contains(child.identifier)) {
                     // TODO: add diagonal curved lines to this and ImportantEntryObject#render}
                     if (child.localX > this.localX && child.localY == this.localY) {
-                        renderTransparentTexture(BookTextures.HORIZONTAL_LINE, poseStack, posX + 14, posY + 16, 0, 0, 32, 6, 32, 6);
+                        renderTransparentTexture(BookTextures.HORIZONTAL_LINE, poseStack, posX + 17, posY + 16, 0, 0, 32, 6, 32, 6);
                     } else if (child.localX == this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.VERTICAL_LINE, poseStack, posX + 14, posY + 29, 0, 0, 6, 27, 6, 32);
+                        renderTransparentTexture(BookTextures.VERTICAL_LINE, poseStack, posX + 14, posY + 30, 0, 0, 6, 27, 6, 32);
                     } else if (child.localX < this.localX && child.localY == this.localY) {
                         renderTransparentTexture(BookTextures.HORIZONTAL_LINE, poseStack, posX - 14, posY + 16, 0, 0, 32, 6, 32, 6);
                     } else if (child.localX == this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.VERTICAL_LINE, poseStack, posX + 14, posY - 19, 0, 0, 6, 27, 6, 32);
+                        renderTransparentTexture(BookTextures.VERTICAL_LINE, poseStack, posX + 18, posY - 19, 0, 0, 6, 27, 6, 32);
                     } else if (child.localX > this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX + 22, posY - 18, 0, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX + 22, posY - 20, 0, 0,40,40,160,40);
                     } else if (child.localX < this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX - 22, posY -18, 120, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX - 28, posY - 20, 120, 0,40,40,160,40);
                     } else if (child.localX > this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX + 22, posY + 18, 80, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX + 22, posY + 17, 80, 0,40,40,160,40);
                     } else if (child.localX < this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX - 22, posY + 18, 40, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.SPLINES, poseStack, posX - 28, posY + 17, 40, 0,40,40,160,40);
                     }
                 } else {
                     if (child.localX > this.localX && child.localY == this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_HORIZONTAL_LINE, poseStack, posX + 14, posY + 16, 0, 0, 32, 6, 32, 6);
+                        renderTransparentTexture(BookTextures.LOCKED_HORIZONTAL_LINE, poseStack, posX + 17, posY + 16, 0, 0, 32, 6, 32, 6);
                     } else if (child.localX == this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_VERTICAL_LINE, poseStack, posX + 14, posY + 29, 0, 0, 6, 27, 6, 32);
+                        renderTransparentTexture(BookTextures.LOCKED_VERTICAL_LINE, poseStack, posX + 14, posY + 30, 0, 0, 6, 27, 6, 32);
                     } else if (child.localX < this.localX && child.localY == this.localY) {
                         renderTransparentTexture(BookTextures.LOCKED_HORIZONTAL_LINE, poseStack, posX - 14, posY + 16, 0, 0, 32, 6, 32, 6);
                     } else if (child.localX == this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_VERTICAL_LINE, poseStack, posX + 14, posY - 19, 0, 0, 6, 27, 6, 32);
+                        renderTransparentTexture(BookTextures.LOCKED_VERTICAL_LINE, poseStack, posX + 18, posY - 19, 0, 0, 6, 27, 6, 32);
                     } else if (child.localX > this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX + 22, posY - 18, 0, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX + 22, posY - 20, 0, 0,40,40,160,40);
                     } else if (child.localX < this.localX && child.localY > this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX - 22, posY -18, 120, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX - 28, posY -20, 120, 0,40,40,160,40);
                     } else if (child.localX > this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX + 22, posY + 18, 80, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX + 22, posY + 17, 80, 0,40,40,160,40);
                     } else if (child.localX < this.localX && child.localY < this.localY) {
-                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX - 22, posY + 18, 40, 0,40,40,160,40);
+                        renderTransparentTexture(BookTextures.LOCKED_SPLINES, poseStack, posX - 28, posY + 17, 40, 0,40,40,160,40);
                     }
                 }
             }

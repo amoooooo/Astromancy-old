@@ -26,6 +26,7 @@ public class ResearchRegistry {
     public static final RegistryObject<ResearchObject> STARGAZING = RESEARCH.register("stargazing", () -> new ResearchObject("stargazing",0,0,"").setIcon(Items.SPYGLASS.getDefaultInstance()));
     public static final RegistryObject<ResearchObject> SOLAR_ECLIPSE = RESEARCH.register("solar_eclipse", () -> new ResearchObject("solar_eclipse",-1,-1,"").setIcon(Items.SUNFLOWER.getDefaultInstance()));
     public static final RegistryObject<ResearchObject> STELLAR_OBSERVATORY = RESEARCH.register("stellar_observatory", () -> new ResearchObject("stellar_observatory",3,0,"").setIcon(ItemRegistry.STAR_GATEWAY.get().getDefaultInstance()));
+    public static final RegistryObject<ResearchObject> TEST_1 = RESEARCH.register("test_1", () -> new ResearchObject("test_1",-1,1,"").setIcon(Items.STONE.getDefaultInstance()));
 
     public static void register(){
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -34,7 +35,7 @@ public class ResearchRegistry {
     }
 
     public static void doSetup(){
-        INTRODUCTION.get().addChildren(STELLARITE.get(), ALCHEMICAL_BRASS.get());
+        INTRODUCTION.get().addChildren(STELLARITE.get(), ALCHEMICAL_BRASS.get(), TEST_1.get());
         STELLARITE.get().addChild(CRUCIBLE.get());
         ALCHEMICAL_BRASS.get().addChild(ARMILLARY_SPHERE.get());
         ASPECTI_PHIAL.get().addChild(JAR.get());

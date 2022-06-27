@@ -671,7 +671,7 @@ public class BookScreen extends Screen {
         }
         for(int i = 0; i < textures.size(); i++){
             uOffset *= 1+(i/10f);
-            uOffset *= (Minecraft.getInstance().level.getDayTime() / 2400.0f) / 10f;
+            uOffset *= (Minecraft.getInstance().level.getDayTime() / 24000.0f);
             vOffset *= 1+(i/10f);
             int scale = i == textures.size() - 1 ? Math.round(0.1f) : i;
             renderTexture(textures.get(i), poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / (2-(i/3.5f))), Math.round(parallax_height / (2-(i/3.5f))));

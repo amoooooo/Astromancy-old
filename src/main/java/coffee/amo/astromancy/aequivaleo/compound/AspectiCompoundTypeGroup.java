@@ -8,6 +8,7 @@ import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
+import com.ldtteam.aequivaleo.api.util.ModRegistries;
 import com.ldtteam.aequivaleo.vanilla.api.recipe.equivalency.ITagEquivalencyRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -47,7 +48,7 @@ public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
 
     @Override
     public ResourceLocation getRegistryName() {
-        return Astromancy.astromancy("aspecti");
+        return ModRegistries.COMPOUND_TYPE_GROUP.get().getRegistryName();
     }
 
     @Override
