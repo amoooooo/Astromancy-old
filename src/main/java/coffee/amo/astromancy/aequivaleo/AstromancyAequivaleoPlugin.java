@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.aequivaleo;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.core.registration.AspectiRegistry;
+import coffee.amo.astromancy.core.registration.GlyphRegistry;
 import com.ldtteam.aequivaleo.api.plugin.AequivaleoPlugin;
 import com.ldtteam.aequivaleo.api.plugin.IAequivaleoPlugin;
 import net.minecraft.resources.ResourceLocation;
@@ -14,13 +14,13 @@ public class AstromancyAequivaleoPlugin implements IAequivaleoPlugin {
         return new ResourceLocation("aequivaleo", name);
     }
 
-    public static final String ID = Astromancy.astromancy("aspecti_types").toString();
+    public static final String ID = Astromancy.astromancy("glyph_types").toString();
 
     @Override
     public void onConstruction() {
         ModList.get().getModContainerById(Astromancy.MODID).ifPresent(mod -> {
-            AspectiRegistry.TYPES.register(((FMLModContainer)mod).getEventBus());
-            AspectiRegistry.TYPE_GROUPS.register(((FMLModContainer)mod).getEventBus());
+            GlyphRegistry.TYPES.register(((FMLModContainer)mod).getEventBus());
+            GlyphRegistry.TYPE_GROUPS.register(((FMLModContainer)mod).getEventBus());
         });
     }
 

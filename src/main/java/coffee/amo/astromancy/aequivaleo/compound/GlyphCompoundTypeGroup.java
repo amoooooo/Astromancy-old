@@ -1,14 +1,13 @@
 package coffee.amo.astromancy.aequivaleo.compound;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.aequivaleo.AspectiInstance;
+import coffee.amo.astromancy.aequivaleo.GlyphInstance;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.container.ICompoundContainer;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
-import com.ldtteam.aequivaleo.api.util.ModRegistries;
 import com.ldtteam.aequivaleo.vanilla.api.recipe.equivalency.ITagEquivalencyRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.Set;
 
-public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
+public class GlyphCompoundTypeGroup implements ICompoundTypeGroup {
     /**
      * The mediation engine.
      *
@@ -48,12 +47,12 @@ public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
 
     @Override
     public ResourceLocation getRegistryName() {
-        return Astromancy.astromancy("aspecti_compound_type_group");
+        return Astromancy.astromancy("glyph_compound_type_group");
     }
 
     @Override
     public String getDirectoryName() {
-        return "astromancy/aspecti";
+        return "astromancy/glyph";
     }
 
     /**
@@ -106,13 +105,13 @@ public class AspectiCompoundTypeGroup implements ICompoundTypeGroup {
 
     @Override
     public Optional<?> convertToCacheEntry(ICompoundContainer<?> container, Set<CompoundInstance> instances) {
-        if(!isValidForAspectiRecipe(container)){
+        if(!isValidForGlyphRecipe(container)){
             return Optional.empty();
         }
-        return Optional.of(new AspectiInstance((AspectiCompoundType) instances, instances.stream().mapToDouble(CompoundInstance::getAmount).sum()));
+        return Optional.of(new GlyphInstance((GlyphCompoundType) instances, instances.stream().mapToDouble(CompoundInstance::getAmount).sum()));
     }
 
-    private boolean isValidForAspectiRecipe(ICompoundContainer<?> wrapper) {
+    private boolean isValidForGlyphRecipe(ICompoundContainer<?> wrapper) {
         return wrapper.getContents() instanceof ItemStack;
     }
 }

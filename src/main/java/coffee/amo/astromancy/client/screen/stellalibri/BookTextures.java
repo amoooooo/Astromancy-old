@@ -18,6 +18,7 @@ public class BookTextures {
     public static final ResourceLocation LOCKED_ICONS = Astromancy.astromancy("textures/gui/book/locked_entries.png");
     public static final ResourceLocation LOCKED_CHAINS = Astromancy.astromancy("textures/gui/book/locked_chains.png");
     public static final ResourceLocation ENTRIES = Astromancy.astromancy("textures/gui/book/entries_icons.png");
+    public static final ResourceLocation EXCLAMATION_MARK = Astromancy.astromancy("textures/gui/book/exclamation_mark.png");
 
     public static final List<ResourceLocation> TAB1_PARALLAX = List.of(
             Astromancy.astromancy("textures/gui/book/test/parallax-space-background.png"),

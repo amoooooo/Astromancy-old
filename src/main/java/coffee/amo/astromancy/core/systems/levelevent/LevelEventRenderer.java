@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.worldevent;
+package coffee.amo.astromancy.core.systems.levelevent;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

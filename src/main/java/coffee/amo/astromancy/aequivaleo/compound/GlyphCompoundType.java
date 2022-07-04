@@ -1,29 +1,24 @@
 package coffee.amo.astromancy.aequivaleo.compound;
 
-import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.core.registration.AspectiRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
-import com.ldtteam.aequivaleo.api.util.ModRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Locale;
 import java.util.function.Supplier;
 
-public class AspectiCompoundType implements ICompoundType {
-    public final Aspecti aspecti;
+public class GlyphCompoundType implements ICompoundType {
+    public final Glyph glyph;
+    public final Supplier<GlyphCompoundTypeGroup> group;
     public ResourceLocation registryName;
-    public final Supplier<AspectiCompoundTypeGroup> group;
 
-    public AspectiCompoundType(Aspecti aspecti, Supplier<AspectiCompoundTypeGroup> group) {
-        this.aspecti = aspecti;
+    public GlyphCompoundType(Glyph glyph, Supplier<GlyphCompoundTypeGroup> group) {
+        this.glyph = glyph;
         this.group = group;
     }
 
-    public Aspecti getAspecti() {
-        return aspecti;
+    public Glyph getGlyph() {
+        return glyph;
     }
 
     /**

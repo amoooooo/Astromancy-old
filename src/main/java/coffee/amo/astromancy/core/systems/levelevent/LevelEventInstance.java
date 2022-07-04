@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.worldevent;
+package coffee.amo.astromancy.core.systems.levelevent;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.SyncLevelEventPacket;

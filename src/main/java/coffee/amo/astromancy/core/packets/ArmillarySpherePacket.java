@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.client.packets.ClientPacketUtils;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -13,20 +13,20 @@ import java.util.function.Supplier;
 public class ArmillarySpherePacket{
 
     public final BlockPos pos;
-    public final Map<Aspecti, Integer> aspecti;
+    public final Map<Glyph, Integer> glyph;
     public final int size;
 
-    public ArmillarySpherePacket(BlockPos pos, Map<Aspecti, Integer> aspecti) {
+    public ArmillarySpherePacket(BlockPos pos, Map<Glyph, Integer> glyph) {
         this.pos = pos;
-        this.aspecti = aspecti;
-        this.size = aspecti.size();
+        this.glyph = glyph;
+        this.size = glyph.size();
     }
 
     public static void encode(ArmillarySpherePacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeVarInt(packet.size);
-        packet.aspecti.forEach((aspecti, amount) -> {
-            buffer.writeVarInt(aspecti.ordinal());
+        packet.glyph.forEach((glyph, amount) -> {
+            buffer.writeVarInt(glyph.ordinal());
             buffer.writeVarInt(amount);
         });
     }
@@ -34,9 +34,9 @@ public class ArmillarySpherePacket{
     public static ArmillarySpherePacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         int size = buffer.readVarInt();
-        Map<Aspecti, Integer> map = new HashMap<>();
+        Map<Glyph, Integer> map = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            map.put(Aspecti.values()[buffer.readVarInt()], buffer.readVarInt());
+            map.put(Glyph.values()[buffer.readVarInt()], buffer.readVarInt());
         }
         return new ArmillarySpherePacket(pos, map);
     }

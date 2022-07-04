@@ -34,6 +34,8 @@ public class EntryScreen extends Screen {
     private long delayTime;
     private static Component cannotResearchMessage1 = Component.translatable("astromancy.research.ongoing1");
     private static Component cannotResearchMessage2 = Component.translatable("astromancy.research.ongoing2");
+    private static Component noSuppliesMessage1 = Component.translatable("astromancy.research.nosupplies1");
+    private static Component noSuppliesMessage2 = Component.translatable("astromancy.research.nosupplies2");
 
     public final int bookWidth = 256;
     public final int bookHeight = 181;
@@ -88,15 +90,27 @@ public class EntryScreen extends Screen {
         }
         cannotResearch = Minecraft.getInstance().player.level.getGameTime() < delayTime;
         if(cannotResearch){
-            ps.pushPose();
-            ps.scale(0.65f, 0.65f, 0.65f);
-            font.draw(ps,cannotResearchMessage1, guiLeft + 84, guiTop + 310, 0xFFFF0000);
-            font.drawShadow(ps,cannotResearchMessage1, guiLeft + 84, guiTop + 311, 0x22FF0000);
-            font.drawShadow(ps,cannotResearchMessage1, guiLeft + 85, guiTop + 310, 0x22FF0000);
-            font.draw(ps,cannotResearchMessage2, guiLeft + 84, guiTop + 310 + 10, 0xFFFF0000);
-            font.drawShadow(ps,cannotResearchMessage2, guiLeft + 85, guiTop + 310 + 10, 0x22FF0000);
-            font.drawShadow(ps,cannotResearchMessage2, guiLeft + 84, guiTop + 311 + 10, 0x22FF0000);
-            ps.popPose();
+            if(Minecraft.getInstance().player.getInventory().contains(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance())){
+                ps.pushPose();
+                ps.scale(0.65f, 0.65f, 0.65f);
+                font.draw(ps,cannotResearchMessage1, guiLeft + 84, guiTop + 310, 0xFFFF0000);
+                font.drawShadow(ps,cannotResearchMessage1, guiLeft + 84, guiTop + 311, 0x22FF0000);
+                font.drawShadow(ps,cannotResearchMessage1, guiLeft + 85, guiTop + 310, 0x22FF0000);
+                font.draw(ps,cannotResearchMessage2, guiLeft + 84, guiTop + 310 + 10, 0xFFFF0000);
+                font.drawShadow(ps,cannotResearchMessage2, guiLeft + 85, guiTop + 310 + 10, 0x22FF0000);
+                font.drawShadow(ps,cannotResearchMessage2, guiLeft + 84, guiTop + 311 + 10, 0x22FF0000);
+                ps.popPose();
+            } else {
+                ps.pushPose();
+                ps.scale(0.65f, 0.65f, 0.65f);
+                font.draw(ps,noSuppliesMessage1, guiLeft + 84, guiTop + 310, 0xFFFF0000);
+                font.drawShadow(ps,noSuppliesMessage1, guiLeft + 84, guiTop + 311, 0x22FF0000);
+                font.drawShadow(ps,noSuppliesMessage1, guiLeft + 85, guiTop + 310, 0x22FF0000);
+                font.draw(ps,noSuppliesMessage2, guiLeft + 84, guiTop + 310 + 10, 0xFFFF0000);
+                font.drawShadow(ps,noSuppliesMessage2, guiLeft + 85, guiTop + 310 + 10, 0x22FF0000);
+                font.drawShadow(ps,noSuppliesMessage2, guiLeft + 84, guiTop + 311 + 10, 0x22FF0000);
+                ps.popPose();
+            }
         }
         if (!openEntry.pages.isEmpty()) {
             int openPages = grouping * 2;
@@ -122,7 +136,12 @@ public class EntryScreen extends Screen {
             return true;
         }
         if(isHovering(mouseX, mouseY, guiLeft + 58, guiTop + 158, 16, 16)){
-            if(openObject.research.locked.equals(ResearchProgress.IN_PROGRESS) && !Minecraft.getInstance().player.getInventory().contains(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) && Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
+            if(openObject.research.locked.equals(ResearchProgress.IN_PROGRESS) && !Minecraft.getInstance().player.getInventory().contains(ItemRegistry.RESEARCH_NOTE.get().getDefaultInstance())){
+                if(!Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) || !Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
+                    delayTime = Minecraft.getInstance().player.level.getGameTime() + 40;
+                    Minecraft.getInstance().player.playNotifySound(SoundEvents.VILLAGER_NO, SoundSource.MASTER, 1.0f, 1.0f);
+                    return true;
+                }
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ResearchNotePacket(openObject.identifier));
                 Minecraft.getInstance().player.playNotifySound(SoundRegistry.RESEARCH_WRITE.get(), SoundSource.MASTER, 1.0f, 1.0f);
             } else if (!openObject.research.locked.equals(ResearchProgress.COMPLETED)){

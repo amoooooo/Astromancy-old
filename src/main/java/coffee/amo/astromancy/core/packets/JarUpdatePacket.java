@@ -10,14 +10,14 @@ import java.util.function.Supplier;
 public class JarUpdatePacket {
     public final BlockPos pos;
     public final int count;
-    public final int aspecti;
+    public final int glyph;
     public final boolean label;
     public final int labelDirection;
 
-    public JarUpdatePacket(BlockPos pos, int count, int aspecti, boolean label, int labelDirection) {
+    public JarUpdatePacket(BlockPos pos, int count, int glyph, boolean label, int labelDirection) {
         this.pos = pos;
         this.count = count;
-        this.aspecti = aspecti;
+        this.glyph = glyph;
         this.label = label;
         this.labelDirection = labelDirection;
     }
@@ -25,7 +25,7 @@ public class JarUpdatePacket {
     public static void encode(JarUpdatePacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeVarInt(packet.count);
-        buffer.writeVarInt(packet.aspecti);
+        buffer.writeVarInt(packet.glyph);
         buffer.writeBoolean(packet.label);
         buffer.writeVarInt(packet.labelDirection);
     }
@@ -33,10 +33,10 @@ public class JarUpdatePacket {
     public static JarUpdatePacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         int count = buffer.readVarInt();
-        int aspecti = buffer.readVarInt();
+        int glyph = buffer.readVarInt();
         boolean label = buffer.readBoolean();
         int labelDirection = buffer.readVarInt();
-        return new JarUpdatePacket(pos, count, aspecti, label, labelDirection);
+        return new JarUpdatePacket(pos, count, glyph, label, labelDirection);
     }
 
     public static void handle(JarUpdatePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {

@@ -14,28 +14,28 @@
               "source": "block_entity",
               "ops": [
                 {
-                  "source": "Aspecti",
-                  "target": "BlockEntityTag.Aspecti",
+                  "source": "Glyph",
+                  "target": "BlockEntityTag.Glyph",
                   "op": "replace"
                 },
                 {
-                  "source": "Aspecti.AspectiStack",
-                  "target": "BlockEntityTag.Aspecti.AspectiStack",
+                  "source": "Glyph.GlyphStack",
+                  "target": "BlockEntityTag.Glyph.GlyphStack",
                     "op": "replace"
                 },
                 {
-                  "source": "Aspecti.AspectiStack.Amount",
-                    "target": "BlockEntityTag.Aspecti.AspectiStack.Amount",
+                  "source": "Glyph.GlyphStack.Amount",
+                    "target": "BlockEntityTag.Glyph.GlyphStack.Amount",
                     "op": "replace"
                 },
                 {
-                  "source": "Aspecti.AspectiStack.Type",
-                    "target": "BlockEntityTag.Aspecti.AspectiStack.Type",
+                  "source": "Glyph.GlyphStack.Type",
+                    "target": "BlockEntityTag.Glyph.GlyphStack.Type",
                     "op": "replace"
                 },
                 {
-                  "source": "Aspecti.Capacity",
-                    "target": "BlockEntityTag.Aspecti.Capacity",
+                  "source": "Glyph.Capacity",
+                    "target": "BlockEntityTag.Glyph.Capacity",
                     "op": "replace"
                 }
               ]

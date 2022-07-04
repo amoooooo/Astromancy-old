@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -110,7 +111,7 @@ public class BookScreen extends Screen {
 //                .addPage(new HeadlineTextPage("crucible", "crucible.a")));
 //
 //        // Alchemy
-//        ENTRIES.add(new BookEntry("aspecti_phial", 0, 0, ResearchRegistry.ASPECTI_PHIAL.get()).setObjectSupplier(ImportantEntryObject::new)
+//        ENTRIES.add(new BookEntry("aspecti_phial", 0, 0, ResearchRegistry.GLYPH_PHIAL.get()).setObjectSupplier(ImportantEntryObject::new)
 //                .addPage(new HeadlineTextPage("aspecti_phial", "aspecti_phial.a")));
 //        ENTRIES.add(new BookEntry("jars",-1, -1, ResearchRegistry.JAR.get()).setObjectSupplier(EntryObject::new)
 //                .addPage(new HeadlineTextPage("jars", "jars.a")));
@@ -157,7 +158,7 @@ public class BookScreen extends Screen {
 //                        || s.identifier.equals("alchemical_brass") || s.identifier.equals("stellarite")
 //                        || s.identifier.equals("arcana_sequence") || s.identifier.equals("crucible")
 //                ).collect(Collectors.toCollection(ArrayList::new))));
-//        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , ASPECTI_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
+//        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , GLYPH_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
 //                OBJECTS.stream().filter(s ->
 //                        s.identifier.equals("aspecti_phial") || s.identifier.equals("jars")
 //                ).collect(Collectors.toCollection(ArrayList::new))));
@@ -248,8 +249,9 @@ public class BookScreen extends Screen {
         poseStack.mulPose(Vector3f.YP.rotationDegrees(45));
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         poseStack.popPose();
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
-        if (isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
+        //Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(state.getBlock().asItem().getDefaultInstance(), posX, posY);
+        //Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        if (isHovering(mouseX, mouseY, posX,posY, 16, 16)) {
             screen.renderTooltip(poseStack, Component.translatable(state.getBlock().asItem().getDescriptionId()), mouseX, mouseY);
         }
     }

@@ -1,9 +1,8 @@
 package coffee.amo.astromancy;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.registration.*;
-import coffee.amo.astromancy.core.systems.research.ResearchTabType;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,9 +17,13 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.curios.api.SlotTypeMessage;
+import top.theillusivec4.curios.api.SlotTypePreset;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static coffee.amo.astromancy.core.registration.AttributeRegistry.ATTRIBUTES;
 import static coffee.amo.astromancy.core.registration.BlockEntityRegistration.BLOCK_ENTITY_TYPES;
 import static coffee.amo.astromancy.core.registration.BlockRegistration.BLOCKS;
 import static coffee.amo.astromancy.core.registration.ItemRegistry.ITEMS;
@@ -41,13 +44,13 @@ public class Astromancy {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         modBus.addListener(this::registerCapabilities);
         BlockRegistration.register();
-        AspectiRegistry.register();
+        GlyphRegistry.register();
         ResearchRegistry.register();
         TabRegistry.register();
-        ItemRegistry.register();
         AstromancyPacketHandler.init();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
+        ATTRIBUTES.register(modBus);
         SOUNDS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
@@ -63,7 +66,7 @@ public class Astromancy {
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event){
-        CapabilityAspectiHandler.register(event);
+        CapabilityGlyphHandler.register(event);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -78,6 +81,8 @@ public class Astromancy {
             LOGGER.info("Hello world from the MDK");
             return "Hello world";
         });
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
+                () -> Arrays.stream(SlotTypePreset.values()).map(preset -> preset.getMessageBuilder().build()).collect(Collectors.toList()));
     }
 
     private void processIMC(final InterModProcessEvent event) {

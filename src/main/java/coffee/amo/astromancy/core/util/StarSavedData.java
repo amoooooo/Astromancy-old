@@ -2,7 +2,7 @@ package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
@@ -25,15 +25,15 @@ public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
 
     public StarSavedData() {
-        List<Aspecti> shuffledAspecti = Lists.newArrayList(Aspecti.values());
-        shuffledAspecti.remove(Aspecti.EMPTY);
-        Collections.shuffle(shuffledAspecti);
+        List<Glyph> shuffledGlyph = Lists.newArrayList(Glyph.values());
+        shuffledGlyph.remove(Glyph.EMPTY);
+        Collections.shuffle(shuffledGlyph);
         for(Constellations c : Constellations.values()){
             constellationInstanceList.add(new ConstellationInstance(c));
         }
         AtomicInteger i = new AtomicInteger();
-        shuffledAspecti.subList(0, constellationInstanceList.size()).forEach(aspecti -> {
-            constellationInstanceList.get(i.get()).setAttunedAspecti(aspecti);
+        shuffledGlyph.subList(0, constellationInstanceList.size()).forEach(glyph -> {
+            constellationInstanceList.get(i.get()).setAttunedGlyph(glyph);
             i.getAndIncrement();
         });
         Star sun = new Star(5200);
@@ -41,7 +41,7 @@ public class StarSavedData extends SavedData {
         constellationInstanceList.get(8).addStar(sun, 10, 10);
         System.out.println(Arrays.toString(constellationInstanceList.toArray()));
         constellationInstanceList.forEach(c -> {
-            System.out.println(c.getConstellation().getName() + ": " + c.getAttunedAspecti().name());
+            System.out.println(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
         });
     }
 

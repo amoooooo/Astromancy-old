@@ -13,8 +13,7 @@ public enum StarColors {
     M(new Color(242, 142, 102, 255)),
     CRIMSON(new Color(242, 53, 85, 255)),
     PURE(new Color(197, 242, 172, 255)),
-    DARK(new Color(41, 25, 79, 255)),
-    EMPTY(new Color(1,1,115, 255)),
+    EMPTY(new Color(102,3,252, 255)),
     HELL(new Color(227, 38, 0, 255)),
     NORMAL(new Color(255,255,255, 255));
     ;

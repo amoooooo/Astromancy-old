@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.core.registration.LevelEventTypeRegistry;
-import coffee.amo.astromancy.core.systems.worldevent.LevelEventType;
+import coffee.amo.astromancy.core.systems.levelevent.LevelEventType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;

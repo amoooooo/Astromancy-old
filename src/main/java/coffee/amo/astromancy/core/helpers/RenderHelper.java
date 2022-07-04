@@ -120,9 +120,9 @@ public class RenderHelper {
         ps.pushPose();
         if (offsets) {
             Vec3 offset = StarUtils.generatePosition(star, blockEntity.getLevel());
-            ps.translate(offset.x / 2, (offset.y + (star.getRandomOffset() * 150)) / 1.5 + 0.25f, offset.z / 2);
+            ps.translate(offset.x / 2, (offset.y + (star.getRandomOffset() * 200)) / 1.75f + 0.05f, offset.z / 2);
         }
-        ps.translate((size / 2) * multiplier, (size / 2) * multiplier, (size / 2) * multiplier);
+        ps.translate((size) * multiplier, (size) * multiplier, (size) * multiplier);
         //renderText(ps, star.getName(), buff, font);
         //ps.mulPose(Vector3f.XP.rotationDegrees(fac));
         ps.mulPose(Vector3f.YP.rotationDegrees(fac));
@@ -218,7 +218,6 @@ public class RenderHelper {
             case CRIMSON -> StarColors.CRIMSON.getColor();
             case EMPTY -> StarColors.EMPTY.getColor();
             case PURE -> StarColors.PURE.getColor();
-            case DARK -> StarColors.DARK.getColor();
             case HELL -> StarColors.HELL.getColor();
             default -> color;
         };

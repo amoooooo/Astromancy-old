@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.datagen;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.core.registration.AspectiRegistry;
+import coffee.amo.astromancy.core.registration.GlyphRegistry;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
 import net.minecraft.data.DataGenerator;
@@ -361,27 +361,27 @@ public class AequivaleoInformationProvider extends ForcedInformationProvider {
         save(specFor(items).withCompounds(instances));
     }
 
-    private static CompoundInstance conjunction(double d) { return new CompoundInstance(AspectiRegistry.CONJUNCTION.get(), d); }
-    private static CompoundInstance opposition(double d) { return new CompoundInstance(AspectiRegistry.OPPOSITION.get(), d); }
-    private static CompoundInstance square(double d) { return new CompoundInstance(AspectiRegistry.SQUARE.get(), d); }
-    private static CompoundInstance trine(double d) { return new CompoundInstance(AspectiRegistry.TRINE.get(), d); }
-    private static CompoundInstance sextile(double d) { return new CompoundInstance(AspectiRegistry.SEXTILE.get(), d); }
-    private static CompoundInstance semisextile(double d) { return new CompoundInstance(AspectiRegistry.SEMISEXTILE.get(), d); }
-    private static CompoundInstance quintile(double d) { return new CompoundInstance(AspectiRegistry.QUINTILE.get(), d); }
-    private static CompoundInstance quincunx(double d) { return new CompoundInstance(AspectiRegistry.QUINCUNX.get(), d); }
-    private static CompoundInstance octile(double d) { return new CompoundInstance(AspectiRegistry.OCTILE.get(), d); }
-    private static CompoundInstance trioctile(double d) { return new CompoundInstance(AspectiRegistry.TRIOCTILE.get(), d); }
-    private static CompoundInstance decile(double d) { return new CompoundInstance(AspectiRegistry.DECILE.get(), d); }
-    private static CompoundInstance sol(double d){ return new CompoundInstance(AspectiRegistry.SOL.get(), d); }
-    private static CompoundInstance luna(double d){ return new CompoundInstance(AspectiRegistry.LUNA.get(), d); }
-    private static CompoundInstance mercuria(double d){ return new CompoundInstance(AspectiRegistry.MERCURIA.get(), d); }
-    private static CompoundInstance venutio(double d){ return new CompoundInstance(AspectiRegistry.VENUTIO.get(), d); }
-    private static CompoundInstance martus(double d){ return new CompoundInstance(AspectiRegistry.MARTUS.get(), d); }
-    private static CompoundInstance jupilus(double d){ return new CompoundInstance(AspectiRegistry.JUPILUS.get(), d); }
-    private static CompoundInstance saturis(double d){ return new CompoundInstance(AspectiRegistry.SATURIS.get(), d); }
-    private static CompoundInstance urania(double d){ return new CompoundInstance(AspectiRegistry.URANIA.get(), d); }
-    private static CompoundInstance neptura(double d){ return new CompoundInstance(AspectiRegistry.NEPTURA.get(), d); }
-    private static CompoundInstance plutus(double d){ return new CompoundInstance(AspectiRegistry.PLUTUS.get(), d); }
-    private static CompoundInstance chiros(double d){ return new CompoundInstance(AspectiRegistry.CHIROS.get(), d); }
-    private static CompoundInstance lilithia(double d){ return new CompoundInstance(AspectiRegistry.LILITHIA.get(), d); }
+    private static CompoundInstance conjunction(double d) { return new CompoundInstance(GlyphRegistry.CONJUNCTION.get(), d); }
+    private static CompoundInstance opposition(double d) { return new CompoundInstance(GlyphRegistry.OPPOSITION.get(), d); }
+    private static CompoundInstance square(double d) { return new CompoundInstance(GlyphRegistry.SQUARE.get(), d); }
+    private static CompoundInstance trine(double d) { return new CompoundInstance(GlyphRegistry.TRINE.get(), d); }
+    private static CompoundInstance sextile(double d) { return new CompoundInstance(GlyphRegistry.SEXTILE.get(), d); }
+    private static CompoundInstance semisextile(double d) { return new CompoundInstance(GlyphRegistry.SEMISEXTILE.get(), d); }
+    private static CompoundInstance quintile(double d) { return new CompoundInstance(GlyphRegistry.QUINTILE.get(), d); }
+    private static CompoundInstance quincunx(double d) { return new CompoundInstance(GlyphRegistry.QUINCUNX.get(), d); }
+    private static CompoundInstance octile(double d) { return new CompoundInstance(GlyphRegistry.OCTILE.get(), d); }
+    private static CompoundInstance trioctile(double d) { return new CompoundInstance(GlyphRegistry.TRIOCTILE.get(), d); }
+    private static CompoundInstance decile(double d) { return new CompoundInstance(GlyphRegistry.DECILE.get(), d); }
+    private static CompoundInstance sol(double d){ return new CompoundInstance(GlyphRegistry.SOL.get(), d); }
+    private static CompoundInstance luna(double d){ return new CompoundInstance(GlyphRegistry.LUNA.get(), d); }
+    private static CompoundInstance mercuria(double d){ return new CompoundInstance(GlyphRegistry.MERCURIA.get(), d); }
+    private static CompoundInstance venutio(double d){ return new CompoundInstance(GlyphRegistry.VENUTIO.get(), d); }
+    private static CompoundInstance martus(double d){ return new CompoundInstance(GlyphRegistry.MARTUS.get(), d); }
+    private static CompoundInstance jupilus(double d){ return new CompoundInstance(GlyphRegistry.JUPILUS.get(), d); }
+    private static CompoundInstance saturis(double d){ return new CompoundInstance(GlyphRegistry.SATURIS.get(), d); }
+    private static CompoundInstance urania(double d){ return new CompoundInstance(GlyphRegistry.URANIA.get(), d); }
+    private static CompoundInstance neptura(double d){ return new CompoundInstance(GlyphRegistry.NEPTURA.get(), d); }
+    private static CompoundInstance plutus(double d){ return new CompoundInstance(GlyphRegistry.PLUTUS.get(), d); }
+    private static CompoundInstance chiros(double d){ return new CompoundInstance(GlyphRegistry.CHIROS.get(), d); }
+    private static CompoundInstance lilithia(double d){ return new CompoundInstance(GlyphRegistry.LILITHIA.get(), d); }
 }

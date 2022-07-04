@@ -51,12 +51,6 @@ public class ArmillarySphereComponentBlock extends MultiblockComponentBlock {
         return getVoxelShape();
     }
 
-    @Override
-    public void onBlockBroken(BlockState state, BlockGetter getter, BlockPos pos, @Nullable Player player) {
-        super.onBlockBroken(state, getter, pos, player);
-        //getter.getBlockState(pos.offset(0,1,0)).getBlock().playerDestroy((Level) getter, player, pos.offset(0,1,0), state, getter.getBlockEntity(pos.offset(0,1,0)), player.getItemInHand(InteractionHand.MAIN_HAND));
-    }
-
     private static VoxelShape getVoxelShape() {
         return Stream.of(
                 Block.box(0, 7, 0, 16, 8, 16),

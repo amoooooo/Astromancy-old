@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.worldevent;
+package coffee.amo.astromancy.core.systems.levelevent;
 
 import net.minecraft.nbt.CompoundTag;
 

@@ -11,7 +11,7 @@ public class ClientPacketUtils {
     public static void armSphereHandle(ArmillarySpherePacket packet){
         Level level = Minecraft.getInstance().level;
         if (level.getBlockEntity(packet.pos) instanceof ArmillarySphereCoreBlockEntity blockEntity) {
-            blockEntity.requirements = packet.aspecti;
+            blockEntity.requirements = packet.glyph;
         }
     }
 
@@ -25,7 +25,7 @@ public class ClientPacketUtils {
 //    public static void jarUpdateHandle(JarUpdatePacket packet) {
 //        Level level = Minecraft.getInstance().level;
 //        if (level.getBlockEntity(packet.pos) instanceof JarBlockEntity blockEntity) {
-//            blockEntity.setAspecti(Aspecti.values()[packet.aspecti]);
+//            blockEntity.setAspecti(Aspecti.values()[packet.glyph]);
 //            blockEntity.setCount(packet.count);
 //            blockEntity.label = packet.label;
 //            blockEntity.labelDirection = Direction.values()[packet.labelDirection];

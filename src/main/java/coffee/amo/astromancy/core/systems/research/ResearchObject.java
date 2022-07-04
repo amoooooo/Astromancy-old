@@ -16,12 +16,12 @@ public class ResearchObject extends ResearchType {
     public List<ResearchObject> children = new ArrayList<>();
     public ResearchProgress locked = ResearchProgress.UNAVAILABLE;
     public ItemStack icon = ItemStack.EMPTY;
-    public int x;
-    public int y;
+    public float x;
+    public float y;
     public String type;
 
 
-    public ResearchObject(String identifier, int x, int y, String type) {
+    public ResearchObject(String identifier, float x, float y, String type) {
         super(Astromancy.astromancy(identifier));
         this.identifier = identifier;
         this.x = x;
@@ -65,8 +65,8 @@ public class ResearchObject extends ResearchType {
     public CompoundTag toNBT(CompoundTag tag) {
         tag.putString("identifier", identifier);
         tag.putString("type", type);
-        tag.putInt("x", x);
-        tag.putInt("y", y);
+        tag.putFloat("x", x);
+        tag.putFloat("y", y);
         CompoundTag iconTag = new CompoundTag();
         icon.save(iconTag);
         tag.put("icon", iconTag);
@@ -85,7 +85,7 @@ public class ResearchObject extends ResearchType {
 
     //fromNbt
     public static ResearchObject fromNBT(CompoundTag tag) {
-        ResearchObject research = new ResearchObject(tag.getString("identifier"), tag.getInt("x"), tag.getInt("y"), tag.getString("type"));
+        ResearchObject research = new ResearchObject(tag.getString("identifier"), tag.getFloat("x"), tag.getFloat("y"), tag.getString("type"));
         research.icon = ItemStack.of(tag.getCompound("icon"));
         research.locked = ResearchProgress.values()[tag.getInt("progress")];
         ListTag childrenTag = tag.getList("children", Tag.TAG_LIST);

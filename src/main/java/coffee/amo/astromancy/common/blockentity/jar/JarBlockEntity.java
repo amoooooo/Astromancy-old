@@ -1,18 +1,17 @@
 package coffee.amo.astromancy.common.blockentity.jar;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.aequivaleo.AspectiEntry;
+import coffee.amo.astromancy.aequivaleo.GlyphEntry;
 import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
-import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiStack;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiStackHandler;
-import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
+import coffee.amo.astromancy.core.systems.glyph.GlyphStack;
+import coffee.amo.astromancy.core.systems.glyph.GlyphStackHandler;
+import coffee.amo.astromancy.core.systems.glyph.IGlyphHandler;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntity;
-import coffee.amo.astromancy.core.util.AstroKeys;
+import coffee.amo.astromancy.core.util.AstromancyKeys;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,7 +30,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,12 +39,12 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public int clientLookAtTicks;
     public boolean label = false;
     public Direction labelDirection = Direction.UP;
-    private final AspectiStackHandler tank;
-    private final LazyOptional<IAspectiHandler> holder;
+    private final GlyphStackHandler tank;
+    private final LazyOptional<IGlyphHandler> holder;
 
     public JarBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        this.tank = new AspectiStackHandler(256, AspectiStack::updateEmpty);
+        this.tank = new GlyphStackHandler(256, GlyphStack::updateEmpty);
         this.holder = LazyOptional.of(() -> tank);
     }
 
@@ -60,8 +58,8 @@ public class JarBlockEntity extends AstromancyBlockEntity {
         if(level.isClientSide){
             clientLookAtTicks = ClientRenderHelper.tickStuff((ClientLevel) level, this, clientLookAtTicks);
         }
-        if(level.getBlockState(getBlockPos()).getValue(JarBlock.COUNT) != (int) Math.ceil(tank.getAspectiStack().getAmount()/16F)){
-            level.setBlock(getBlockPos(), level.getBlockState(getBlockPos()).setValue(JarBlock.COUNT, (int) Math.ceil(tank.getAspectiStack().getAmount()/16F)), 2);
+        if(level.getBlockState(getBlockPos()).getValue(JarBlock.COUNT) != (int) Math.ceil(tank.getGlyphStack().getAmount()/16F)){
+            level.setBlock(getBlockPos(), level.getBlockState(getBlockPos()).setValue(JarBlock.COUNT, (int) Math.ceil(tank.getGlyphStack().getAmount()/16F)), 2);
         }
     }
 
@@ -95,39 +93,39 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                             this.getBlockPos().getX(),
                             this.getBlockPos().getY(),
                             this.getBlockPos().getZ(),
-                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
                 }
             }
-            if (heldItem.getItem() instanceof AspectiPhial && heldItem.hasTag()) {
+            if (heldItem.getItem() instanceof GlyphPhial && heldItem.hasTag()) {
                 if (count <= 240) {
-                    if (aspecti == Aspecti.fromNbt(heldItem.getTag()).getFirst() || aspecti == Aspecti.EMPTY) {
+                    if (glyph == Glyph.fromNbt(heldItem.getTag()).getFirst() || glyph == Glyph.EMPTY) {
                         heldItem.shrink(1);
-                        player.addItem(new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(),1));
+                        player.addItem(new ItemStack(ItemRegistry.Glyph_PHIAL.get(),1));
                         BlockHelper.updateAndNotifyState(level, worldPosition);
-                        count = count == 0 ? Aspecti.fromNbt(heldItem.getTag()).getSecond() : count + Aspecti.fromNbt(heldItem.getTag()).getSecond();
-                        aspecti = Aspecti.fromNbt(heldItem.getTag()).getFirst();
+                        count = count == 0 ? Glyph.fromNbt(heldItem.getTag()).getSecond() : count + Glyph.fromNbt(heldItem.getTag()).getSecond();
+                        glyph = Glyph.fromNbt(heldItem.getTag()).getFirst();
                         AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
                                 this.getBlockPos().getX(),
                                 this.getBlockPos().getY(),
                                 this.getBlockPos().getZ(),
-                                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
                 }
                 return InteractionResult.PASS;
-            }  else if (heldItem.getItem() instanceof AspectiPhial && !heldItem.hasTag() && this.aspecti != Aspecti.EMPTY && this.count > 0) {
+            }  else if (heldItem.getItem() instanceof GlyphPhial && !heldItem.hasTag() && this.glyph != Glyph.EMPTY && this.count > 0) {
                 CompoundTag tag = new CompoundTag();
                 tag.putInt("count", 16);
-                tag.putInt("aspecti", aspecti.ordinal());
-                ItemStack stack = new ItemStack(ItemRegistry.ASPECTI_PHIAL.get(), 1);
-                stack.getOrCreateTag().put("aspecti", tag);
+                tag.putInt("glyph", glyph.ordinal());
+                ItemStack stack = new ItemStack(ItemRegistry.Glyph_PHIAL.get(), 1);
+                stack.getOrCreateTag().put("glyph", tag);
                 player.addItem(stack);
                 heldItem.shrink(1);
                 if (count - 16 <= 0) {
                     this.count = 0;
                     if(!label){
-                        this.aspecti = Aspecti.EMPTY;
+                        this.glyph = Glyph.EMPTY;
                     }
                 } else {
                     this.count = count - 16;
@@ -136,10 +134,10 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                         this.getBlockPos().getX(),
                         this.getBlockPos().getY(),
                         this.getBlockPos().getZ(),
-                        128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                        128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
                 return InteractionResult.SUCCESS;
             } else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
-                if(count <= 256 && Aspecti.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("aspecti")] == aspecti){
+                if(count <= 256 && Glyph.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("glyph")] == glyph){
                     CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag").copy();
                     int jarCount = tag.getInt("count");
                     int cachedJarCount = jarCount;
@@ -147,7 +145,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                     count = Math.min(cachedJarCount + count, 256);
                     if(jarCount == 0){
                         tag.putInt("count", 0);
-                        tag.putInt("aspecti", 23);
+                        tag.putInt("glyph", 23);
                         heldItem.getTag().put("BlockEntityTag", tag);
                         player.setItemInHand(hand, heldItem);
                     } else {
@@ -158,7 +156,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
                             this.getBlockPos().getX(),
                             this.getBlockPos().getY(),
                             this.getBlockPos().getZ(),
-                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
                     AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(ItemRegistry.JAR.get().getDefaultInstance()));
                     return InteractionResult.SUCCESS;
                 }
@@ -167,16 +165,16 @@ public class JarBlockEntity extends AstromancyBlockEntity {
         return InteractionResult.SUCCESS;*/
     }
 
-    public Aspecti getAspecti() {
-        return tank.getAspectiStack().getAspecti();
+    public Glyph getGlyph() {
+        return tank.getGlyphStack().getGlyph();
     }
 
     public int getAmount() {
-        return tank.getAspectiStack().getAmount();
+        return tank.getGlyphStack().getAmount();
     }
 
     public boolean isEmpty() {
-        return tank.getAspectiStack().isEmpty();
+        return tank.getGlyphStack().isEmpty();
     }
 
     @Override
@@ -187,17 +185,17 @@ public class JarBlockEntity extends AstromancyBlockEntity {
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
-        pTag.put(AstroKeys.KEY_ASPECTI_TAG, tank.serializeNBT());
-        pTag.putBoolean(AstroKeys.KEY_JAR_LABEL, label);
-        pTag.putInt(AstroKeys.KEY_JAR_DIRECTION, labelDirection.ordinal());
+        pTag.put(AstromancyKeys.KEY_GLYPH_TAG, tank.serializeNBT());
+        pTag.putBoolean(AstromancyKeys.KEY_JAR_LABEL, label);
+        pTag.putInt(AstromancyKeys.KEY_JAR_DIRECTION, labelDirection.ordinal());
         super.saveAdditional(pTag);
     }
 
     @Override
     public void load(CompoundTag pTag) {
-        tank.deserializeNBT(pTag.getCompound(AstroKeys.KEY_ASPECTI_TAG));
-        label = pTag.getBoolean(AstroKeys.KEY_JAR_LABEL);
-        labelDirection = Direction.values()[pTag.getInt(AstroKeys.KEY_JAR_DIRECTION)];
+        tank.deserializeNBT(pTag.getCompound(AstromancyKeys.KEY_GLYPH_TAG));
+        label = pTag.getBoolean(AstromancyKeys.KEY_JAR_LABEL);
+        labelDirection = Direction.values()[pTag.getInt(AstromancyKeys.KEY_JAR_DIRECTION)];
         super.load(pTag);
     }
 
@@ -209,22 +207,22 @@ public class JarBlockEntity extends AstromancyBlockEntity {
         super.onBreak(player);
     }
 
-    public MutableComponent getAspectiComponent() {
+    public MutableComponent getGlyphComponent() {
         return ((MutableComponent)Component.literal(""))
-                .append(Component.literal("[").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))))
+                .append(Component.literal("[").withStyle(s -> s.withFont(Astromancy.astromancy("glyph"))))
                 .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
                 .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(Component.literal(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
+                .append(Component.literal(tank.getGlyphStack().getGlyph().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("glyph"))))
                 .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
                 .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                .append(AspectiEntry.intToComponent(tank.getAspectiStack().getAmount()))
-                .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
+                .append(GlyphEntry.intToComponent(tank.getGlyphStack().getAmount()))
+                .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("glyph"))));
     }
 
-    public Component getAspectiSymbolComponent(){
+    public Component getGlyphSymbolComponent(){
         MutableComponent tc = Component.literal("");
         if(tank != null){
-            tc.append(Component.literal(tank.getAspectiStack().getAspecti().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal(tank.getGlyphStack().getGlyph().symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("glyph"))));
         }
         return tc;
     }
@@ -245,13 +243,13 @@ public class JarBlockEntity extends AstromancyBlockEntity {
 //                this.getBlockPos().getX(),
 //                this.getBlockPos().getY(),
 //                this.getBlockPos().getZ(),
-//                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, aspecti.ordinal(), label, labelDirection.ordinal()));
+//                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if(cap == CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY)
+        if(cap == CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY)
             return holder.cast();
         return super.getCapability(cap, side);
     }

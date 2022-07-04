@@ -38,9 +38,9 @@ public class ResearchPageRegistry {
         registerPage(ResearchRegistry.ALCHEMICAL_BRASS.get().getResearchName(), 0, new HeadlineTextPage("alchemical_brass", "alchemical_brass.a", "alchemical_brass").setHidden(false));
         registerPages(ResearchRegistry.CRUCIBLE.get().getResearchName(), new HeadlineTextPage("crucible", "crucible.a", "crucible").setHidden(false), StructurePage.cruciblePage(BlockRegistration.CRUCIBLE.get()));
 
-        registerPages(ResearchRegistry.ASPECTI_PHIAL.get().getResearchName(), new HeadlineTextPage("aspecti_phial", "aspecti_phial.a", "aspecti_phial").setHidden(false),
-                new TextPage("aspecti_phial.b", "aspecti_phial").setHidden(false),
-                CraftingPage.phialPage(ASPECTI_PHIAL.get()).setHidden(false));
+        registerPages(ResearchRegistry.GLYPH_PHIAL.get().getResearchName(), new HeadlineTextPage("glyph_phial", "glyph_phial.a", "glyph_phial").setHidden(false),
+                new TextPage("glyph_phial.b", "glyph_phial").setHidden(false),
+                CraftingPage.phialPage(GLYPH_PHIAL.get()).setHidden(false));
         registerPage(ResearchRegistry.JAR.get().getResearchName(), 0, new HeadlineTextPage("jars", "jars.a", "jars").setHidden(false));
 
         registerPage(ResearchRegistry.STARGAZING.get().getResearchName(), 0, new HeadlineTextPage("stargazing", "stargazing.a", "stargazing").setHidden(false));
@@ -53,5 +53,7 @@ public class ResearchPageRegistry {
         registerPage(ResearchRegistry.STELLAR_OBSERVATORY.get().getResearchName(), 0, new HeadlineTextPage("stellar_observatory", "stellar_observatory.a", "stellar_observatory").setHidden(false));
 
         registerPage(ResearchRegistry.TEST_1.get().getResearchName(), 0, new HeadlineTextPage("test_1", "test_1.a", "test_1").setHidden(false));
+
+        registerPage(ResearchRegistry.GLYPH.get().getResearchName(), 0, new HeadlineTextPage("glyph", "glyph.a", "glyph").setHidden(false));
     }
 }

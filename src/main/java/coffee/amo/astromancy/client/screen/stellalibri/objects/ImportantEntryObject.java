@@ -3,6 +3,7 @@ package coffee.amo.astromancy.client.screen.stellalibri.objects;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import coffee.amo.astromancy.client.screen.stellalibri.BookTextures;
+import coffee.amo.astromancy.client.screen.stellalibri.EntryScreen;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.ServerboundResearchPacket;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
@@ -20,11 +21,11 @@ import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
 
 public class ImportantEntryObject extends EntryObject {
 
-    public ImportantEntryObject(BookEntry entry, int posX, int posY, int localX, int localY, ResearchObject research) {
+    public ImportantEntryObject(BookEntry entry, float posX, float posY, float localX, float localY, ResearchObject research) {
         super(entry, posX, posY, localX, localY, research);
     }
 
-    public ImportantEntryObject(BookEntry bookEntry, int i, int i1, List<BookObject> bookObjects, int i2, int i3, ResearchObject researchObject) {
+    public ImportantEntryObject(BookEntry bookEntry, float i, float i1, List<BookObject> bookObjects, float i2, float i3, ResearchObject researchObject) {
         super(bookEntry, i, i1, bookObjects, i2, i3, researchObject);
     }
 
@@ -34,6 +35,14 @@ public class ImportantEntryObject extends EntryObject {
             Minecraft.getInstance().player.playSound(SoundEvents.CHAIN_BREAK, 0.5f, 1f);
             research.locked = ResearchProgress.IN_PROGRESS;
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ServerboundResearchPacket(identifier, research.locked.ordinal()));
+        }
+    }
+
+    @Override
+    public void click(float xOffset, float yOffset, double mouseX, double mouseY)
+    {
+        if(checkEntries(screen.tab)){
+            EntryScreen.openScreen(this);
         }
     }
 
@@ -92,6 +101,8 @@ public class ImportantEntryObject extends EntryObject {
                 float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
                 RenderSystem.setShaderColor(mult, mult, mult, 1f);
                 renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 1, 1, 24, 24, 51, 105);
+                poseStack.translate(0, Math.cos(mult * 1.5), 0);
+                renderTransparentTexture(BookTextures.EXCLAMATION_MARK, poseStack, posX + 18, posY, 0, 0, 16, 17, 16, 17);
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             }
             poseStack.pushPose();

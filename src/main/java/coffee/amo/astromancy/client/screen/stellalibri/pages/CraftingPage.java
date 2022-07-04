@@ -56,7 +56,7 @@ public class CraftingPage extends BookPage {
         ItemStack empty = ItemStack.EMPTY;
         ItemStack dark_oak_planks = Items.DARK_OAK_PLANKS.getDefaultInstance();
         ItemStack glass = Items.GLASS.getDefaultInstance();
-        return new CraftingPage(phial.getDefaultInstance(), "aspecti_phial", empty, dark_oak_planks, empty, empty, glass, empty, empty, glass, empty);
+        return new CraftingPage(phial.getDefaultInstance(), "glyph_phial", empty, dark_oak_planks, empty, empty, glass, empty, empty, glass, empty);
     }
 
     public static CraftingPage armSpherePage(ItemStack armsphere, ItemStack armCage, ItemStack brass) {

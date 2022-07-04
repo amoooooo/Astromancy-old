@@ -8,7 +8,6 @@ public enum StarType implements WeightedEntry {
     NORMAL("Normal", 100),
     CRIMSON("Crimson",  5),
     PURE("Pure", 5),
-    DARK("Dark", 5),
     EMPTY("Empty",  5),
     HELL("Hell",  5);
 
@@ -33,7 +32,6 @@ public enum StarType implements WeightedEntry {
             NORMAL,
             CRIMSON,
             PURE,
-            DARK,
             EMPTY,
             HELL
     );

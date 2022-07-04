@@ -1,15 +1,15 @@
 package coffee.amo.astromancy.common.item;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.aequivaleo.AspectiEntry;
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
+import coffee.amo.astromancy.aequivaleo.GlyphEntry;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiStack;
-import coffee.amo.astromancy.core.systems.aspecti.AspectiStackHandler;
-import coffee.amo.astromancy.core.systems.aspecti.IAspectiHandler;
-import coffee.amo.astromancy.core.util.AstroKeys;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
+import coffee.amo.astromancy.core.systems.glyph.GlyphStack;
+import coffee.amo.astromancy.core.systems.glyph.GlyphStackHandler;
+import coffee.amo.astromancy.core.systems.glyph.IGlyphHandler;
+import coffee.amo.astromancy.core.util.AstromancyKeys;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -33,9 +33,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-public class AspectiPhial extends Item {
+public class GlyphPhial extends Item {
 
-    public AspectiPhial(Properties pProperties) {
+    public GlyphPhial(Properties pProperties) {
         super(pProperties);
     }
 
@@ -44,8 +44,8 @@ public class AspectiPhial extends Item {
     public Component getName(ItemStack pStack) {
         // TODO: Refactor name
         MutableComponent name = Component.literal("Crude ");
-        pStack.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY).ifPresent(h -> {
-            name.append(Component.literal(StringHelper.capitalize(h.getAspectiInTank(0).getAspecti().name().toLowerCase(Locale.ROOT))+ " "));
+        pStack.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY).ifPresent(h -> {
+            name.append(Component.literal(StringHelper.capitalize(h.getGlyphInTank(0).getGlyph().name().toLowerCase(Locale.ROOT))+ " "));
         });
         name.append(Component.literal("Phial"));
         return name;
@@ -55,18 +55,18 @@ public class AspectiPhial extends Item {
     public void appendHoverText(@Nonnull ItemStack pStack, @Nullable Level pLevel, @Nonnull List<Component> pTooltipComponents, @Nonnull TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         // maybe refactor?
-        pStack.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY).ifPresent(handler -> {
-            Aspecti aspecti = handler.getAspectiInTank(0).getAspecti();
-            int amount = handler.getAspectiInTank(0).getAmount();
+        pStack.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY).ifPresent(handler -> {
+            Glyph glyph = handler.getGlyphInTank(0).getGlyph();
+            int amount = handler.getGlyphInTank(0).getAmount();
             MutableComponent component = Component.literal("")
-                    .append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))))
+                    .append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("glyph"))))
                     .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
                     .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(Component.literal(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))))
+                    .append(Component.literal(glyph.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("glyph"))))
                     .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
                     .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
-                    .append(AspectiEntry.intToComponent(amount))
-                    .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti"))));
+                    .append(GlyphEntry.intToComponent(amount))
+                    .append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("glyph"))));
             pTooltipComponents.add(component);
         });
     }
@@ -79,33 +79,33 @@ public class AspectiPhial extends Item {
         BlockEntity te = level.getBlockEntity(pos);
         if(te != null) {
             ItemStack ph = pContext.getItemInHand();
-            LazyOptional<IAspectiHandler> phialCap = ph.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY);
-            LazyOptional<IAspectiHandler> targetCap = te.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY);
+            LazyOptional<IGlyphHandler> phialCap = ph.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY);
+            LazyOptional<IGlyphHandler> targetCap = te.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY);
             if(phialCap.isPresent() && targetCap.isPresent()) {
-                IAspectiHandler phial = phialCap.orElseThrow(() -> new IllegalStateException("AspectiHandler is not present"));
-                IAspectiHandler target = targetCap.orElseThrow(() -> new IllegalStateException("AspectiHandler is not present"));
+                IGlyphHandler phial = phialCap.orElseThrow(() -> new IllegalStateException("GlyphHandler is not present"));
+                IGlyphHandler target = targetCap.orElseThrow(() -> new IllegalStateException("GlyphHandler is not present"));
                 Player player = pContext.getPlayer();
-                if(phial.getAspectiInTank(0).isEmpty()) {
-                    AspectiStack aspectiStack = target.drain(phial.getTankCapacity(0), true);
-                    if(!aspectiStack.isEmpty()) {
-                        target.drain(aspectiStack, false);
+                if(phial.getGlyphInTank(0).isEmpty()) {
+                    GlyphStack glyphStack = target.drain(phial.getTankCapacity(0), true);
+                    if(!glyphStack.isEmpty()) {
+                        target.drain(glyphStack, false);
                         if(player != null && !player.isCreative()) {
                             ph.shrink(1);
-                            player.addItem(createForAspecti(aspectiStack));
+                            player.addItem(createForGlyph(glyphStack));
                             player.playSound(SoundEvents.ITEM_PICKUP, 1.0F, 1.0F);
                         }
                         te.setChanged();
                     }
                 } else {
-                    AspectiStack aspectiStack = phial.getAspectiInTank(0).copy();
-                    aspectiStack.setAmount(target.fill(aspectiStack, true));
-                    if(!aspectiStack.isEmpty()) {
-                        target.fill(aspectiStack, false);
+                    GlyphStack glyphStack = phial.getGlyphInTank(0).copy();
+                    glyphStack.setAmount(target.fill(glyphStack, true));
+                    if(!glyphStack.isEmpty()) {
+                        target.fill(glyphStack, false);
                         if(player != null && !player.isCreative()) {
                             ph.shrink(1);
-                            int newAmount = phial.getAspectiInTank(0).getAmount() - aspectiStack.getAmount();
-                            aspectiStack.setAmount(newAmount);
-                            player.addItem(createForAspecti(newAmount > 0 ? aspectiStack : new AspectiStack()));
+                            int newAmount = phial.getGlyphInTank(0).getAmount() - glyphStack.getAmount();
+                            glyphStack.setAmount(newAmount);
+                            player.addItem(createForGlyph(newAmount > 0 ? glyphStack : new GlyphStack()));
                             player.playSound(SoundEvents.ITEM_PICKUP, 1.0F, 1.0F);
                         }
                         te.setChanged();
@@ -119,25 +119,25 @@ public class AspectiPhial extends Item {
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        AspectiStackHandler.Provider provider = new AspectiStackHandler.Provider(16, stack);
+        GlyphStackHandler.Provider provider = new GlyphStackHandler.Provider(16, stack);
         provider.readFromItemStack(stack);
         return provider;
     }
 
     public void fillItemCategory(@Nonnull CreativeModeTab pCategory, @Nonnull NonNullList<ItemStack> pItems) {
         if (allowedIn(pCategory)) {
-            for(Aspecti aspecti : Aspecti.values())
-                pItems.add(createForAspecti(new AspectiStack(aspecti, aspecti == Aspecti.EMPTY ? 0 : 16)));
+            for(Glyph glyph : Glyph.values())
+                pItems.add(createForGlyph(new GlyphStack(glyph, glyph == Glyph.EMPTY ? 0 : 16)));
         }
     }
 
-    public static ItemStack createForAspecti(AspectiStack pInstance) {
-        ItemStack stack = new ItemStack(ItemRegistry.ASPECTI_PHIAL.get());
-        stack.getCapability(CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY).ifPresent(handler -> {
-            if(handler instanceof AspectiStackHandler ash) {
+    public static ItemStack createForGlyph(GlyphStack pInstance) {
+        ItemStack stack = new ItemStack(ItemRegistry.GLYPH_PHIAL.get());
+        stack.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY).ifPresent(handler -> {
+            if(handler instanceof GlyphStackHandler ash) {
                 ash.setCapacity(16);
-                ash.setAspectiStack(pInstance);
-                stack.getOrCreateTag().put(AstroKeys.KEY_ASPECTI_TAG, ash.serializeNBT());
+                ash.setGlyphStack(pInstance);
+                stack.getOrCreateTag().put(AstromancyKeys.KEY_GLYPH_TAG, ash.serializeNBT());
             }
         });
         return stack;

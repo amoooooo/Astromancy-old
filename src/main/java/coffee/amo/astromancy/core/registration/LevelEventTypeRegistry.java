@@ -1,6 +1,6 @@
 package coffee.amo.astromancy.core.registration;
 
-import coffee.amo.astromancy.core.systems.worldevent.LevelEventType;
+import coffee.amo.astromancy.core.systems.levelevent.LevelEventType;
 
 import java.util.HashMap;
 

@@ -12,13 +12,13 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 
 
-public class AspectiHelper {
+public class GlyphHelper {
 
     public static IEquivalencyResults getResults(ResourceKey<Level> levelKey) {
         return IAequivaleoAPI.getInstance().getEquivalencyResults(levelKey);
     }
 
-    public static AspectiEntry getEntry(ResourceKey<Level> levelKey, ItemStack item) {
+    public static GlyphEntry getEntry(ResourceKey<Level> levelKey, ItemStack item) {
         List<CompoundInstance> finalResults = new ArrayList<>(getResults(levelKey).dataFor(item.getItem().getDefaultInstance()));
         if (item.hasContainerItem() && !item.getContainerItem().equals(item)){
             Set<CompoundInstance> containerValues = getResults(levelKey).dataFor(item.getContainerItem());
@@ -33,7 +33,7 @@ public class AspectiHelper {
                 }
             }
         }
-        return new AspectiEntry(Sets.newHashSet(finalResults));
+        return new GlyphEntry(Sets.newHashSet(finalResults));
     }
 
     public static final Map<Integer, String> small = Util.make(() -> {

@@ -20,14 +20,14 @@ public class BookObject {
     public String identifier;
     public boolean isRendered = false;
     public float hover;
-    public int posX;
-    public int posY;
-    public int localX;
-    public int localY;
+    public float posX;
+    public float posY;
+    public float localX;
+    public float localY;
     public int width;
     public int height;
 
-    public BookObject(int posX, int posY, int width, int height, int localX, int localY, ResearchObject research) {
+    public BookObject(float posX, float posY, int width, int height, float localX, float localY, ResearchObject research) {
         this.localX = localX;
         this.localY = localY;
         this.posX = posX;
@@ -37,7 +37,7 @@ public class BookObject {
         this.identifier = research.identifier;
         this.research = research;
     }
-    public BookObject(int posX, int posY, int width, int height, ResearchObject research, BookObject... child)
+    public BookObject(float posX, float posY, int width, int height, ResearchObject research, BookObject... child)
     {
         this.posX = posX;
         this.posY = posY;

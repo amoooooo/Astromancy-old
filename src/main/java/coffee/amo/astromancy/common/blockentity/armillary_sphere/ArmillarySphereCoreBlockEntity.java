@@ -1,18 +1,19 @@
 package coffee.amo.astromancy.common.blockentity.armillary_sphere;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.aequivaleo.AspectiEntry;
-import coffee.amo.astromancy.aequivaleo.AspectiHelper;
-import coffee.amo.astromancy.aequivaleo.AspectiInstance;
+import coffee.amo.astromancy.aequivaleo.GlyphEntry;
+import coffee.amo.astromancy.aequivaleo.GlyphHelper;
+import coffee.amo.astromancy.aequivaleo.GlyphInstance;
 import coffee.amo.astromancy.common.item.ArcanaSequence;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.helpers.BlockHelper;
 import coffee.amo.astromancy.core.packets.ArmillarySpherePacket;
 import coffee.amo.astromancy.core.packets.StarPacket;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.blockentity.AstromancyBlockEntityInventory;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockCoreEntity;
 import coffee.amo.astromancy.core.systems.multiblock.MultiblockStructure;
@@ -26,7 +27,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -53,7 +53,7 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     public boolean toggled = false;
     public int ticksActive = 0;
     public boolean requirementBool = false;
-    public Map<Aspecti, Integer> requirements = new HashMap<>();
+    public Map<Glyph, Integer> requirements = new HashMap<>();
     public UUID playerUUID = null;
     public Star star;
 
@@ -109,39 +109,40 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     }
 
     public void generateRequirements(Level level) {
-        int aspectiCount = level.random.nextInt(5) + 1;
-        List<Aspecti> shuffledAspecti = Lists.newArrayList(Aspecti.values());
-        shuffledAspecti.remove(Aspecti.EMPTY);
-        Collections.shuffle(shuffledAspecti);
-        shuffledAspecti.subList(0, aspectiCount).forEach(aspecti -> {
+        int GlyphCount = level.random.nextInt(5) + 1;
+        List<Glyph> shuffledGlyph = Lists.newArrayList(Glyph.values());
+        shuffledGlyph.remove(Glyph.EMPTY);
+        Collections.shuffle(shuffledGlyph);
+        shuffledGlyph.subList(0, GlyphCount).forEach(Glyph -> {
             int amount = level.random.nextInt(15) + 1;
-            requirements.put(aspecti, amount);
+            requirements.put(Glyph, amount);
         });
         requirementBool = true;
     }
 
-    public Map<Aspecti, Integer> getMatchFromInventory() {
-        Map<Aspecti, Integer> match = new HashMap<>();
+    public Map<Glyph, Integer> getMatchFromInventory() {
+        Map<Glyph, Integer> match = new HashMap<>();
         for (ItemStack itemStack : inventory.getStacks()) {
             if (itemStack.isEmpty()) {
                 continue;
             }
-            if (itemStack.getItem().equals(ItemRegistry.ASPECTI_PHIAL.get()) && itemStack.hasTag()){
-                int count = ((CompoundTag)itemStack.getTag().get("aspecti")).getInt("count");
-                match.compute(Aspecti.values()[((CompoundTag)itemStack.getTag().get("aspecti")).getInt("aspecti")], (aspecti, integer) -> integer == null ? count : integer + count);
+            if (itemStack.getItem().equals(ItemRegistry.GLYPH_PHIAL.get()) && itemStack.hasTag()){
+                itemStack.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY).ifPresent(s -> {
+                    match.compute(s.getGlyphInTank(0).getGlyph(), (k, v) -> v == null ? s.getGlyphInTank(0).getAmount() : s.getGlyphInTank(0).getAmount() + v);
+                });
                 continue;
             }
-            AspectiEntry entry = AspectiHelper.getEntry(level.dimension(), itemStack);
+            GlyphEntry entry = GlyphHelper.getEntry(level.dimension(), itemStack);
 
-            for (AspectiInstance instance : entry.aspecti) {
+            for (GlyphInstance instance : entry.glyph) {
                 int count = (int) Math.ceil(instance.amount);
-                match.compute(instance.type.aspecti, (aspecti, integer) -> integer == null ? count : integer + count);
+                match.compute(instance.type.glyph, (Glyph, integer) -> integer == null ? count : integer + count);
             }
         }
         return match;
     }
 
-    public boolean checkMatch(Map<Aspecti, Integer> match) {
+    public boolean checkMatch(Map<Glyph, Integer> match) {
         return requirements.entrySet().stream().allMatch(entry -> {
             Integer actual = match.get(entry.getKey());
             return actual != null && actual >= entry.getValue();
@@ -151,11 +152,11 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if (player.getItemInHand(hand).isEmpty() && !player.isShiftKeyDown() && inventory.getSlots() == 12 && requirementBool) {
-            for (ItemStack itemStack : inventory.getStacks()) {
-                if (itemStack.isEmpty()) {
-                    itemStack = Items.AIR.getDefaultInstance();
-                }
-            }
+//            for (ItemStack itemStack : inventory.getStacks()) {
+//                if (itemStack.isEmpty()) {
+//                    itemStack = Items.AIR.getDefaultInstance();
+//                }
+//            }
             if (checkMatch(getMatchFromInventory())) {
                 toggled = true;
                 playerUUID = player.getUUID();
@@ -198,9 +199,9 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
     protected void saveAdditional(CompoundTag compound) {
         inventory.save(compound);
         ListTag listTag = new ListTag();
-        requirements.forEach((aspecti, integer) -> {
+        requirements.forEach((Glyph, integer) -> {
             CompoundTag tag = new CompoundTag();
-            tag.putString("aspecti", aspecti.name());
+            tag.putString("glyph", Glyph.name());
             tag.putInt("amount", integer);
             listTag.add(tag);
         });
@@ -220,7 +221,7 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
         ListTag listTag = compound.getList("requirements", Tag.TAG_COMPOUND);
         for (Tag tag : listTag) {
             CompoundTag tag1 = (CompoundTag) tag;
-            requirements.put(Aspecti.valueOf(tag1.getString("aspecti")), tag1.getInt("amount"));
+            requirements.put(Glyph.valueOf(tag1.getString("glyph")), tag1.getInt("amount"));
         }
         requirementBool = compound.getBoolean("requirementBool");
         toggled = compound.getBoolean("toggled");
@@ -233,48 +234,48 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
 
     public List<String> requirementsToStringList() {
         List<String> list = new ArrayList<>();
-        requirements.forEach((aspecti, integer) -> {
-            list.add(aspecti.name() + ": " + integer);
+        requirements.forEach((Glyph, integer) -> {
+            list.add(Glyph.name() + ": " + integer);
         });
         return list;
     }
 
-    public List<Component> getAspectiInstances(){
+    public List<Component> getGlyphInstances(){
         List<Component> list = new ArrayList<>();
-        requirements.forEach((aspecti, integer) -> {
+        requirements.forEach((Glyph, integer) -> {
             MutableComponent tc = Component.literal("");
-            tc.append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("glyph"))));
             tc.append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-            tc.append(Component.literal(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal(Glyph.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("glyph"))));
             tc.append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-            tc.append(AspectiEntry.intToComponent(integer).append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
+            tc.append(GlyphEntry.intToComponent(integer).append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("glyph")))));
             list.add(tc);
         });
         return list;
     }
 
-    public List<Component> pairToComponent(Map<Aspecti, Integer> match){
+    public List<Component> pairToComponent(Map<Glyph, Integer> match){
         List<Component> list = new ArrayList<>();
-        match.forEach((aspecti, integer) -> {
+        match.forEach((Glyph, integer) -> {
             MutableComponent tc = Component.literal("");
-            tc.append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal("[").withStyle(s->s.withFont(Astromancy.astromancy("glyph"))));
             tc.append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-            tc.append(Component.literal(aspecti.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("aspecti"))));
+            tc.append(Component.literal(Glyph.symbol()).withStyle(style -> style.withFont(Astromancy.astromancy("glyph"))));
             tc.append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
             tc.append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))));
-            tc.append(AspectiEntry.intToComponent(integer).append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("aspecti")))));
+            tc.append(GlyphEntry.intToComponent(integer).append(Component.literal("]").withStyle(s -> s.withFont(Astromancy.astromancy("glyph")))));
             list.add(tc);
         });
         return list;
     }
 
-    public List<String> pairToStringList(Map<Aspecti, Integer> match) {
+    public List<String> pairToStringList(Map<Glyph, Integer> match) {
         List<String> list = new ArrayList<>();
-        match.forEach((aspecti, integer) -> {
-            list.add(aspecti.name() + ": " + integer);
+        match.forEach((Glyph, integer) -> {
+            list.add(Glyph.name() + ": " + integer);
         });
         return list;
     }

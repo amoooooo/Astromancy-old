@@ -1,11 +1,9 @@
 package coffee.amo.astromancy.client.renderer.block;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.core.helpers.RenderHelper;
 import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
@@ -14,13 +12,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.phys.Vec3;
-
-import java.awt.*;
 
 public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
     private final Font font;
@@ -67,8 +62,8 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
             float distance = pBlockEntity.clientLookAtTicks == 10 ? 10 : pBlockEntity.clientLookAtTicks + pPartialTick;
             ps.translate(0,0.1f,-0.5 * (distance / 10.0f));
             ps.scale(0.009f, 0.009f, 0.009f);
-            ps.translate(-font.width(pBlockEntity.getAspecti().name() + " " + pBlockEntity.getAmount())/4,0,0);
-            font.draw(ps, pBlockEntity.getAspectiComponent(), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
+            ps.translate(-font.width(pBlockEntity.getGlyph().name() + " " + pBlockEntity.getAmount())/4,0,0);
+            font.draw(ps, pBlockEntity.getGlyphComponent(), 0, 0, FastColor.ARGB32.multiply(0xFFFFFFFF, FastColor.ARGB32.color(Math.max(0x04, Math.round((Math.max(0.8f,pBlockEntity.clientLookAtTicks) / 10.0f) * 255.0f)), 255, 255, 255)));
             ps.popPose();
         }
         ps.popPose();
@@ -106,8 +101,8 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
         ps.translate(0,0,-0.0001f);
         ps.scale(0.05f, 0.05f, 0.05f);
         ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(-font.width(pBlockEntity.getAspectiSymbolComponent()) + 0.5, -font.lineHeight + 0.5,0);
-        font.draw(ps, pBlockEntity.getAspectiSymbolComponent(), 0, 0, 0xFFFFFFFF);
+        ps.translate(-font.width(pBlockEntity.getGlyphSymbolComponent()) + 0.5, -font.lineHeight + 0.5,0);
+        font.draw(ps, pBlockEntity.getGlyphSymbolComponent(), 0, 0, 0xFFFFFFFF);
         ps.popPose();
     }
 }

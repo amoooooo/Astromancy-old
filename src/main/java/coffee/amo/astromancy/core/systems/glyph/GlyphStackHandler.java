@@ -1,7 +1,7 @@
-package coffee.amo.astromancy.core.systems.aspecti;
+package coffee.amo.astromancy.core.systems.glyph;
 
-import coffee.amo.astromancy.core.handlers.CapabilityAspectiHandler;
-import coffee.amo.astromancy.core.util.AstroKeys;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
+import coffee.amo.astromancy.core.util.AstromancyKeys;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -14,25 +14,25 @@ import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<CompoundTag> {
+public class GlyphStackHandler implements IGlyphHandler, INBTSerializable<CompoundTag> {
 
     private int capacity;
-    private Consumer<AspectiStack> updateCallback;
-    private Predicate<AspectiStack> validator;
-    private AspectiStack aspectiStack = new AspectiStack();
+    private Consumer<GlyphStack> updateCallback;
+    private Predicate<GlyphStack> validator;
+    private GlyphStack glyphStack = new GlyphStack();
 
-    public AspectiStackHandler(int capacity, Consumer<AspectiStack> updateCallback, Predicate<AspectiStack> validator) {
+    public GlyphStackHandler(int capacity, Consumer<GlyphStack> updateCallback, Predicate<GlyphStack> validator) {
         this.capacity = capacity;
         this.updateCallback = updateCallback;
         this.validator = validator;
     }
 
-    public AspectiStackHandler(int capacity, Consumer<AspectiStack> updateCallback) {
+    public GlyphStackHandler(int capacity, Consumer<GlyphStack> updateCallback) {
         this(capacity, updateCallback, v -> true);
     }
 
-    public AspectiStackHandler(int capacity) {
-        this(capacity, AspectiStack::updateEmpty);
+    public GlyphStackHandler(int capacity) {
+        this(capacity, GlyphStack::updateEmpty);
     }
 
     // getters
@@ -41,16 +41,16 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
         return capacity;
     }
 
-    public Consumer<AspectiStack> getUpdateCallback() {
+    public Consumer<GlyphStack> getUpdateCallback() {
         return updateCallback;
     }
 
-    public Predicate<AspectiStack> getValidator() {
+    public Predicate<GlyphStack> getValidator() {
         return validator;
     }
 
-    public AspectiStack getAspectiStack() {
-        return aspectiStack;
+    public GlyphStack getGlyphStack() {
+        return glyphStack;
     }
 
     // setters
@@ -59,30 +59,30 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
         this.capacity = capacity;
     }
 
-    public void setUpdateCallback(Consumer<AspectiStack> updateCallback) {
+    public void setUpdateCallback(Consumer<GlyphStack> updateCallback) {
         this.updateCallback = updateCallback;
     }
 
-    public void setValidator(Predicate<AspectiStack> validator) {
+    public void setValidator(Predicate<GlyphStack> validator) {
         this.validator = validator;
     }
 
-    public void setAspectiStack(AspectiStack stack) {
-        this.aspectiStack = stack;
+    public void setGlyphStack(GlyphStack stack) {
+        this.glyphStack = stack;
     }
 
     // other methods
 
-    public boolean isAspectiValid(AspectiStack stack) {
+    public boolean isGlyphValid(GlyphStack stack) {
         return validator.test(stack);
     }
 
     public boolean isEmpty() {
-        return aspectiStack.isEmpty();
+        return glyphStack.isEmpty();
     }
 
     public void setEmpty() {
-        aspectiStack = new AspectiStack();
+        glyphStack = new GlyphStack();
     }
 
     // serialization
@@ -90,16 +90,16 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(AstroKeys.KEY_ASPECTI_CAPACITY, capacity);
-        tag.put(AstroKeys.KEY_ASPECTI_STACK, aspectiStack.serializeNBT());
+        tag.putInt(AstromancyKeys.KEY_GLYPH_CAPACITY, capacity);
+        tag.put(AstromancyKeys.KEY_GLYPH_STACK, glyphStack.serializeNBT());
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if(nbt != null) {
-            capacity = nbt.getInt(AstroKeys.KEY_ASPECTI_CAPACITY);
-            aspectiStack.deserializeNBT(nbt.getCompound(AstroKeys.KEY_ASPECTI_STACK));
+            capacity = nbt.getInt(AstromancyKeys.KEY_GLYPH_CAPACITY);
+            glyphStack.deserializeNBT(nbt.getCompound(AstromancyKeys.KEY_GLYPH_STACK));
         } else {
             capacity = 0;
             setEmpty();
@@ -115,8 +115,8 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
 
     @Nonnull
     @Override
-    public AspectiStack getAspectiInTank(int tank) {
-        return getAspectiStack();
+    public GlyphStack getGlyphInTank(int tank) {
+        return getGlyphStack();
     }
 
     @Override
@@ -125,22 +125,22 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
     }
 
     @Override
-    public boolean isAspectiValid(int tank, @Nonnull AspectiStack stack) {
-        return isAspectiValid(stack);
+    public boolean isGlyphValid(int tank, @Nonnull GlyphStack stack) {
+        return isGlyphValid(stack);
     }
 
     @Override
-    public int fill(AspectiStack stack, boolean simulate) {
-        if(stack.isEmpty() || !isAspectiValid(stack))
+    public int fill(GlyphStack stack, boolean simulate) {
+        if(stack.isEmpty() || !isGlyphValid(stack))
             return 0; // empty or not allowed stack
-        if(!stack.isEmpty() && !aspectiStack.isEmpty() && !aspectiStack.isSameAspecti(stack))
+        if(!stack.isEmpty() && !glyphStack.isEmpty() && !glyphStack.isSameGlyph(stack))
             return 0; // incompatible stacks
 
         int filled = Math.min(getSpace(), stack.getAmount());
         if(!simulate) { // modify only when not simulated
-            if (aspectiStack.isEmpty())
-                aspectiStack.set(stack.getAspecti(), filled);
-            else aspectiStack.grow(filled);
+            if (glyphStack.isEmpty())
+                glyphStack.set(stack.getGlyph(), filled);
+            else glyphStack.grow(filled);
             if (filled > 0) // notify if amount has changed
                 onContentsChanged();
         }
@@ -149,19 +149,19 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
 
     @Nonnull
     @Override
-    public AspectiStack drain(AspectiStack stack, boolean simulate) {
-        if (stack.isEmpty() || !aspectiStack.isSameAspecti(stack))
-            return AspectiStack.EMPTY;
+    public GlyphStack drain(GlyphStack stack, boolean simulate) {
+        if (stack.isEmpty() || !glyphStack.isSameGlyph(stack))
+            return GlyphStack.EMPTY;
         return drain(stack.getAmount(), simulate);
     }
 
     @Nonnull
     @Override
-    public AspectiStack drain(int maxDrain, boolean simulate) {
-        int drained = Math.min(aspectiStack.getAmount(), maxDrain);
-        AspectiStack stack = new AspectiStack(aspectiStack, drained);
+    public GlyphStack drain(int maxDrain, boolean simulate) {
+        int drained = Math.min(glyphStack.getAmount(), maxDrain);
+        GlyphStack stack = new GlyphStack(glyphStack, drained);
         if(!simulate && drained > 0) {
-            aspectiStack.shrink(drained);
+            glyphStack.shrink(drained);
             onContentsChanged();
         }
         return stack;
@@ -170,25 +170,25 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
     // helper methods
 
     protected void onContentsChanged() {
-        updateCallback.accept(aspectiStack);
+        updateCallback.accept(glyphStack);
     }
 
     public int getSpace() {
-        return Math.max(0, capacity - aspectiStack.getAmount());
+        return Math.max(0, capacity - glyphStack.getAmount());
     }
 
     // capability provider
 
     public static class Provider implements ICapabilityProvider {
 
-        private final AspectiStackHandler handler;
-        private final LazyOptional<IAspectiHandler> optional;
+        private final GlyphStackHandler handler;
+        private final LazyOptional<IGlyphHandler> optional;
 
         public Provider(int capacity, ItemStack updateCallbackItemStack) {
-            handler = new AspectiStackHandler(capacity) {
+            handler = new GlyphStackHandler(capacity) {
                 @Override
                 public void onContentsChanged() {
-                    handler.updateCallback.accept(handler.aspectiStack);
+                    handler.updateCallback.accept(handler.glyphStack);
                     writeToItemStack(updateCallbackItemStack);
                 }
             };
@@ -202,13 +202,13 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
 
         // Not using INBTSerializable to avoid the default, ugly serialization.
         public void writeToItemStack(ItemStack stack) {
-            stack.getOrCreateTag().put(AstroKeys.KEY_ASPECTI_TAG, handler.serializeNBT());
+            stack.getOrCreateTag().put(AstromancyKeys.KEY_GLYPH_TAG, handler.serializeNBT());
         }
 
         public void readFromItemStack(ItemStack stack) {
             if(stack.hasTag()) {
                 CompoundTag tag = stack.getOrCreateTag();
-                handler.deserializeNBT(tag.getCompound(AstroKeys.KEY_ASPECTI_TAG));
+                handler.deserializeNBT(tag.getCompound(AstromancyKeys.KEY_GLYPH_TAG));
             } else {
                 handler.setCapacity(0);
                 handler.setEmpty();
@@ -218,7 +218,7 @@ public class AspectiStackHandler implements IAspectiHandler, INBTSerializable<Co
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-            return CapabilityAspectiHandler.ASPECTI_HANDLER_CAPABILITY.orEmpty(cap, optional);
+            return CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY.orEmpty(cap, optional);
         }
     }
 }

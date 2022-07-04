@@ -142,7 +142,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0,0,-0.6);
         ps.scale(0.01f * (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor), 0.01f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
+        ps.translate(0, -font.lineHeight * blockEntity.getGlyphInstances().size() / 2.0f, 0);
         for (Component requirement : blockEntity.pairToComponent(blockEntity.getMatchFromInventory())) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color);
@@ -180,8 +180,8 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0,0,-0.5);
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
-        for (Component requirement : blockEntity.getAspectiInstances()) {
+        ps.translate(0, -font.lineHeight * blockEntity.getGlyphInstances().size() / 2.0f, 0);
+        for (Component requirement : blockEntity.getGlyphInstances()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color);
             ps.translate(font.width(requirement) / 2.0f, 0, 0);
@@ -217,7 +217,7 @@ public class ArmillarySphereRenderer implements BlockEntityRenderer<ArmillarySph
         ps.translate(0,0,-0.6);
         ps.scale(0.015f * (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor), 0.015f *  (float)Math.max(0.7, distanceFactor));
         //ps.mulPose(Vector3f.ZP.rotationDegrees(180));
-        ps.translate(0, -font.lineHeight * blockEntity.getAspectiInstances().size() / 2.0f, 0);
+        ps.translate(0, -font.lineHeight * blockEntity.getGlyphInstances().size() / 2.0f, 0);
         for (String requirement : blockEntity.star.getString()) {
             ps.translate(-font.width(requirement) / 2.0f, 0, 0);
             font.draw(ps, requirement, 0, 0, color);

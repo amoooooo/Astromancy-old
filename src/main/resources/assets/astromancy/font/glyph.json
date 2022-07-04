@@ -2,7 +2,7 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "astromancy:font/ascii_aspecti.png",
+      "file": "astromancy:font/ascii_glyph.png",
       "ascent": 7,
       "chars": [
         "abcedfghijklmnopqrstuvw"

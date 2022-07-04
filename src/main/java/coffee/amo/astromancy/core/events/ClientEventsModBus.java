@@ -4,8 +4,7 @@ import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
-import coffee.amo.astromancy.core.systems.aspecti.Aspecti;
-import net.minecraft.nbt.CompoundTag;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,15 +18,15 @@ public class ClientEventsModBus {
         event.getItemColors().register((stack, tintIndex) -> {
             if(stack.hasTag()){
                 if(tintIndex == 1){
-                    return Aspecti.fromItemStack(stack).color().getRGB();
+                    return Glyph.fromItemStack(stack).color().getRGB();
                 }
             }
             return 0xFFFFFF;
-        }, ItemRegistry.ASPECTI_PHIAL.get());
+        }, ItemRegistry.GLYPH_PHIAL.get());
         event.getItemColors().register((stack, tintIndex) -> {
             if(stack.hasTag()){
                 if(tintIndex == 1){
-                    return Aspecti.fromItemStack(stack).color().getRGB();
+                    return Glyph.fromItemStack(stack).color().getRGB();
                 }
             }
             return 0xFFFFFF;
@@ -40,7 +39,7 @@ public class ClientEventsModBus {
         event.getBlockColors().register((state, world, pos, tintIndex) -> {
             if(tintIndex == 1){
                 if(world.getBlockEntity(pos) instanceof JarBlockEntity jb) {
-                    return jb.getAspecti().color().getRGB();
+                    return jb.getGlyph().color().getRGB();
                 }
             }
             return 0xFFFFFFFF;

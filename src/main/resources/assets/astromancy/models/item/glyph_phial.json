@@ -1,14 +1,14 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "astromancy:item/aspecti_phial"
+        "layer0": "astromancy:item/glyph_phial"
     },
     "overrides": [
         {
             "predicate": {
                 "astromancy:phial_filled": 1
             },
-            "model": "astromancy:item/aspecti_phial_filled"
+            "model": "astromancy:item/glyph_phial_filled"
         }
     ]
 }

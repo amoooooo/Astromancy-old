@@ -38,13 +38,13 @@ import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
 public class EntryObject extends BookObject {
     public final BookEntry entry;
     public String identifier;
-    public EntryObject(BookEntry entry, int posX, int posY, int localX, int localY, ResearchObject research) {
+    public EntryObject(BookEntry entry, float posX, float posY, float localX, float localY, ResearchObject research) {
         super(posX, posY, 32, 32, localX, localY, research);
         this.entry = entry;
         this.identifier = entry.identifier;
     }
 
-    public EntryObject(BookEntry entry, int posX, int posY, List<BookObject> child, int localX, int localY, ResearchObject research) {
+    public EntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research) {
         super(posX, posY, 32, 32, localX, localY, research);
         this.entry = entry;
         this.identifier = research.identifier;
@@ -71,7 +71,7 @@ public class EntryObject extends BookObject {
         }
     }
 
-    private boolean checkEntries(BookTab tab) {
+    public boolean checkEntries(BookTab tab) {
         for (BookObject entry : tab.entries) {
             if (entry.identifier.equals(identifier)) {
                 return true;
@@ -134,6 +134,8 @@ public class EntryObject extends BookObject {
             RenderSystem.setShaderColor(mult, mult, mult, 1f);
             poseStack.pushPose();
             renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 27, 24, 25, 51, 105);
+            poseStack.translate(0, Math.cos(mult * 1.5), 0);
+            renderTransparentTexture(BookTextures.EXCLAMATION_MARK, poseStack, posX + 18, posY, 0, 0, 16, 17, 16, 17);
             poseStack.popPose();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
@@ -159,7 +161,11 @@ public class EntryObject extends BookObject {
     public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
-            screen.renderComponentTooltip(poseStack, List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier),Component.literal("Missing research: "),Component.literal(" - ").append(Component.translatable(Arrays.stream(parents).toList().get(0)))), mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier),Component.literal("Missing research: ").withStyle(s -> s.withColor(ChatFormatting.RED)),Component.literal(" - ").withStyle(s -> s.withColor(ChatFormatting.RED)).append(Component.translatable(Arrays.stream(parents).toList().get(0)).withStyle(s -> s.withColor(ChatFormatting.RED))), (
+                    Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) ? Component.literal("") : Component.literal("Missing paper.").withStyle(ChatFormatting.GRAY)
+                    ),(
+                    Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance()) ? Component.literal("") : Component.literal("Missing ink.").withStyle(ChatFormatting.GRAY)
+            )), mouseX, mouseY, minecraft.font);
         }
     }
 }

@@ -5,6 +5,8 @@ import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.registration.SoundRegistry;
+import coffee.amo.astromancy.core.systems.damage.AstromancyDamageSource;
+import coffee.amo.astromancy.core.systems.damage.AstromancyDamageSources;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
@@ -45,6 +47,8 @@ public class ResearchNote extends Item {
                 });
                 Minecraft.getInstance().player.playSound(SoundRegistry.RESEARCH_WRITE.get(), 0.5f, 1f);
                 pPlayer.setItemInHand(pUsedHand, ItemStack.EMPTY);
+            } else {
+                pPlayer.hurt(AstromancyDamageSources.ASTRAL, 20f);
             }
         }
         return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));

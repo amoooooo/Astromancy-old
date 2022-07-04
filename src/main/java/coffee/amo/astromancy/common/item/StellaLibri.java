@@ -34,4 +34,5 @@ public class StellaLibri extends Item {
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
+
 }

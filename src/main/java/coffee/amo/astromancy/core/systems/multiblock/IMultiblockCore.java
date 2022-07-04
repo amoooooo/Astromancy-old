@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
@@ -24,7 +25,7 @@ public interface IMultiblockCore {
     default void destroyMultiblock(@Nullable Player player, Level level, BlockPos pos) {
         getComponentPositions().forEach(p -> {
             if (level.getBlockEntity(p) instanceof MultiblockComponentEntity) {
-                level.setBlock(p, Blocks.AIR.defaultBlockState(),0);
+                level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
         });
         boolean dropBlock = player == null || !player.isCreative();
@@ -32,7 +33,7 @@ public interface IMultiblockCore {
             if(dropBlock) {
                 level.destroyBlock(pos, dropBlock);
             } else {
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(),0);
+                level.setBlock(pos, Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
             }
         }
     }

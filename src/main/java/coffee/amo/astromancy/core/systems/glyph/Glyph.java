@@ -1,22 +1,20 @@
-package coffee.amo.astromancy.core.systems.aspecti;
+package coffee.amo.astromancy.core.systems.glyph;
 
-import coffee.amo.astromancy.core.util.AstroKeys;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.nbt.CompoundTag;
+import coffee.amo.astromancy.core.util.AstromancyKeys;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 
-public enum Aspecti {
+public enum Glyph {
     EMPTY("", new Color(0,0,0,0)),
     CONJUNCTION("a", new Color(120,120,120,255)), // Basic
     OPPOSITION("b", new Color(127,252,124,255)), // Complete
     SQUARE("c", Color.YELLOW), // Formed, but not complete
-    TRINE("d", Color.CYAN), // Tool
-    SEXTILE("e", Color.MAGENTA), // Versatile
+    SEXTILE("d", Color.MAGENTA), // Versatile
+    TRINE("e", Color.CYAN), // Tool
     SEMISEXTILE("f", Color.BLUE), // Half, split
-    QUINTILE("g", Color.GREEN), // Compress, condense
-    QUINCUNX("h", Color.PINK), // Complex
+    QUINCUNX("g", Color.PINK), // Complex
+    QUINTILE("h", Color.GREEN), // Compress, condense
     OCTILE("i", Color.RED), // Combine
     TRIOCTILE("j", Color.ORANGE), // Power
     DECILE("k", new Color(36,16,35,255)), // Value
@@ -36,7 +34,7 @@ public enum Aspecti {
     private final String symbol;
     private final Color color;
 
-    Aspecti(String symbol, Color color) {
+    Glyph(String symbol, Color color) {
         this.symbol = symbol;
         this.color = color;
     }
@@ -49,16 +47,16 @@ public enum Aspecti {
         return color;
     }
 
-    public static Aspecti get(int type) {
+    public static Glyph get(int type) {
         return values()[type];
     }
 
-    public static Aspecti fromItemStack(ItemStack stack) {
-        if(stack.getOrCreateTag().contains(AstroKeys.KEY_ASPECTI_TAG))
+    public static Glyph fromItemStack(ItemStack stack) {
+        if(stack.getOrCreateTag().contains(AstromancyKeys.KEY_GLYPH_TAG))
             return get(stack.getOrCreateTag()
-                    .getCompound(AstroKeys.KEY_ASPECTI_TAG)
-                    .getCompound(AstroKeys.KEY_ASPECTI_STACK)
-                    .getInt(AstroKeys.KEY_ASPECTI_TYPE));
+                    .getCompound(AstromancyKeys.KEY_GLYPH_TAG)
+                    .getCompound(AstromancyKeys.KEY_GLYPH_STACK)
+                    .getInt(AstromancyKeys.KEY_GLYPH_TYPE));
         return EMPTY;
     }
 }

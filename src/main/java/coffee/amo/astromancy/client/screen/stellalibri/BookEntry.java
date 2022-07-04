@@ -14,13 +14,13 @@ import java.util.List;
 public class BookEntry {
     public final ItemStack iconStack;
     public final String identifier;
-    public final int xOffset;
-    public final int yOffset;
+    public final float xOffset;
+    public final float yOffset;
     public final List<BookObject> children = new ArrayList<>();
     public final ResearchObject research;
     public ArrayList<BookPage> pages = new ArrayList<>();
     public EntryObjectSupplier objectSupplier = EntryObject::new;
-    public BookEntry(String identifier, int xOffset, int yOffset, ResearchObject research) {
+    public BookEntry(String identifier, float xOffset, float yOffset, ResearchObject research) {
         this.identifier = identifier;
         this.iconStack = research.getIcon();
         this.xOffset = xOffset;
@@ -28,7 +28,7 @@ public class BookEntry {
         this.research = research;
     }
 
-    public BookEntry(String identifier, int xOffset, int yOffset, List<BookObject> child, ResearchObject research) {
+    public BookEntry(String identifier, float xOffset, float yOffset, List<BookObject> child, ResearchObject research) {
         this.identifier = identifier;
         this.iconStack = research.getIcon();
         this.xOffset = xOffset;
@@ -70,6 +70,6 @@ public class BookEntry {
     }
 
     public interface EntryObjectSupplier {
-        EntryObject getBookObject(BookEntry entry, int x, int y, List<BookObject> children, int localX, int localY, ResearchObject research);
+        EntryObject getBookObject(BookEntry entry, float x, float y, List<BookObject> children, float localX, float localY, ResearchObject research);
     }
 }
