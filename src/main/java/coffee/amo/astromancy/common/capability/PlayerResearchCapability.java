@@ -1,6 +1,9 @@
 package coffee.amo.astromancy.common.capability;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.core.events.PlayerResearchCompleteEvent;
+import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
+import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
@@ -13,10 +16,12 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PlayerResearchCapability implements IPlayerResearch {
 
@@ -69,6 +74,8 @@ public class PlayerResearchCapability implements IPlayerResearch {
             RESEARCH.add(researchId);
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
         }
+        MinecraftForge.EVENT_BUS.post(new PlayerResearchCompleteEvent(player, researchId));
+        onResearchCompleted(player, researchId);
     }
 
     @Override
@@ -112,5 +119,13 @@ public class PlayerResearchCapability implements IPlayerResearch {
             RESEARCH.add(ResearchObject.fromNBT((CompoundTag) rTag));
             Astromancy.LOGGER.debug("Loaded research: " + ((CompoundTag) rTag).getString("id"));
         });
+    }
+
+    public void onResearchCompleted(Player player, ResearchObject research){
+        if(Objects.equals(research.identifier, "crucible")){
+            player.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(r -> {
+                r.addResearch(player, ResearchRegistry.GLYPH_PHIAL.get());
+            });
+        }
     }
 }

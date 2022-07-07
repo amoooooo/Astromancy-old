@@ -95,14 +95,20 @@ public class ImportantEntryObject extends EntryObject {
                     }
                 }
             }
+            if(isHovering) {
+                float mult = (float) Math.sin(Minecraft.getInstance().level.getGameTime());
+                RenderSystem.setShaderColor(1.5f, 1.5f, 1.5f, 1);
+            }
             if(research.locked.equals(ResearchProgress.COMPLETED)){
                 renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 1, 1, 24, 24, 51, 105);
             } else {
                 float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
                 RenderSystem.setShaderColor(mult, mult, mult, 1f);
+                poseStack.pushPose();
                 renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 7, 1, 1, 24, 24, 51, 105);
                 poseStack.translate(0, Math.cos(mult * 1.5), 0);
                 renderTransparentTexture(BookTextures.EXCLAMATION_MARK, poseStack, posX + 18, posY, 0, 0, 16, 17, 16, 17);
+                poseStack.popPose();
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             }
             poseStack.pushPose();

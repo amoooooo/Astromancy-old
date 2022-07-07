@@ -1,58 +1,45 @@
 package coffee.amo.astromancy.client.screen.stellalibri.objects;
 
-import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.screen.stellalibri.BookEntry;
 import coffee.amo.astromancy.client.screen.stellalibri.BookTextures;
 import coffee.amo.astromancy.client.screen.stellalibri.EntryScreen;
 import coffee.amo.astromancy.client.screen.stellalibri.tab.BookTab;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.helpers.StringHelper;
-import coffee.amo.astromancy.core.packets.ResearchNotePacket;
 import coffee.amo.astromancy.core.packets.ServerboundResearchPacket;
-import coffee.amo.astromancy.core.registration.SoundRegistry;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.*;
+import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.renderTransparentTexture;
+import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.screen;
 
-public class EntryObject extends BookObject {
-    public final BookEntry entry;
-    public String identifier;
-    public EntryObject(BookEntry entry, float posX, float posY, float localX, float localY, ResearchObject research) {
-        super(posX, posY, 32, 32, localX, localY, research);
-        this.entry = entry;
-        this.identifier = entry.identifier;
+public class FleetingEntryObject extends EntryObject {
+    public FleetingEntryObject(BookEntry entry, float posX, float posY, float localX, float localY, ResearchObject research) {
+        super(entry, posX, posY, localX, localY, research);
+
     }
 
-    public EntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research) {
-        super(posX, posY, 32, 32, localX, localY, research);
-        this.entry = entry;
-        this.identifier = research.identifier;
-        this.children = child;
-
+    public FleetingEntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research) {
+        super(entry, posX, posY, child, localX, localY, research);
     }
 
     @Override
     public void click(float xOffset, float yOffset, double mouseX, double mouseY)
     {
-        if(checkEntries(screen.tab)){
+        if(checkEntries(screen.tab) && ClientResearchHolder.contains(research.identifier)){
             EntryScreen.openScreen(this);
         }
     }
@@ -126,29 +113,29 @@ public class EntryObject extends BookObject {
         }
         if(isHovering) {
             float mult = (float) Math.sin(Minecraft.getInstance().level.getGameTime());
-            RenderSystem.setShaderColor(1.5f, 1.5f, 1.5f, 1f);
+            RenderSystem.setShaderColor(1.5f, 1.5f, 1.5f, 1);
         }
         if( ClientResearchHolder.getResearch().stream().filter(s -> s.identifier.equals(research.identifier)).findFirst().get().locked.equals(ResearchProgress.COMPLETED)){
-            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 27, 24, 25, 51, 105);
+            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 53, 24, 25, 51, 105);
         } else {
             float mult = (float)Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 5f) * 0.75f) + 0.25f;
+            int index = (int) ((Minecraft.getInstance().level.getGameTime() + partialTicks)/1.5) % 8;
             RenderSystem.setShaderColor(mult, mult, mult, 1f);
             poseStack.pushPose();
-            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 27, 24, 25, 51, 105);
+            renderTransparentTexture(BookTextures.BLINK_FX, poseStack, posX + 1, posY + 3, 0, (32 * index), 32, 32, 32, 256);
+            renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 1, 53, 24, 25, 51, 105);
             poseStack.translate(0, Math.cos(mult * 1.5), 0);
             renderTransparentTexture(BookTextures.EXCLAMATION_MARK, poseStack, posX + 18, posY, 0, 0, 16, 17, 16, 17);
             poseStack.popPose();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
-        poseStack.pushPose();
         minecraft.getItemRenderer().renderAndDecorateItem(entry.iconStack, posX + 9, posY + 11);
-        poseStack.popPose();
     }
     @Override
     public void lockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 26, 27, 24, 25, 51, 105);
+        renderTransparentTexture(BookTextures.ENTRIES, poseStack, posX + 5, posY + 6, 26, 53, 24, 25, 51, 105);
     }
 
     @Override
@@ -162,14 +149,11 @@ public class EntryObject extends BookObject {
     public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
         if (isHovering)
         {
-            List<Component> ttList = new ArrayList<>(List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier), Component.literal("Missing research: ").withStyle(s -> s.withColor(ChatFormatting.RED)), Component.literal(" - ").withStyle(s -> s.withColor(ChatFormatting.RED)).append(Component.translatable(Arrays.stream(parents).toList().get(0)).withStyle(s -> s.withColor(ChatFormatting.RED)))));
-            if(!Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance())){
-                ttList.add(Component.literal("Missing paper.").withStyle(s -> s.withColor(ChatFormatting.RED)));
-            }
-            if(!Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance())){
-                ttList.add(Component.literal("Missing ink.").withStyle(s -> s.withColor(ChatFormatting.RED)));
-            }
-            screen.renderComponentTooltip(poseStack, ttList, mouseX, mouseY, minecraft.font);
+            screen.renderComponentTooltip(poseStack, List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier),Component.literal("Missing research: ").withStyle(s -> s.withColor(ChatFormatting.RED)),Component.literal(" - ").withStyle(s -> s.withColor(ChatFormatting.RED)).append(Component.translatable(Arrays.stream(parents).toList().get(0)).withStyle(s -> s.withColor(ChatFormatting.RED))), (
+                    Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) ? Component.EMPTY : Component.literal("Missing paper.").withStyle(ChatFormatting.GRAY)
+                    ),(
+                    Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance()) ? Component.EMPTY : Component.literal("Missing ink.").withStyle(ChatFormatting.GRAY)
+            )), mouseX, mouseY, minecraft.font);
         }
     }
 }

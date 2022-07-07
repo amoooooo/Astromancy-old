@@ -1,7 +1,6 @@
 package coffee.amo.astromancy.client.screen.stellalibri.pages;
 
 import coffee.amo.astromancy.core.registration.BlockRegistration;
-import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import net.minecraft.resources.ResourceLocation;
 
@@ -35,7 +34,7 @@ public class ResearchPageRegistry {
         registerPage(ResearchRegistry.INTRODUCTION.get().getResearchName(), 1, new TextPage("introduction.b", "introduction").setHidden(false));
         registerPage(ResearchRegistry.STELLARITE.get().getResearchName(), 0, new HeadlineTextPage("stellarite", "stellarite.a", "stellarite").setHidden(false));
         registerPage(ResearchRegistry.ARCANA_SEQUENCE.get().getResearchName(), 0, new HeadlineTextPage("arcana_sequence", "arcana_sequence.a", "arcana_sequence").setHidden(false));
-        registerPage(ResearchRegistry.ALCHEMICAL_BRASS.get().getResearchName(), 0, new HeadlineTextPage("alchemical_brass", "alchemical_brass.a", "alchemical_brass").setHidden(false));
+        registerPage(ResearchRegistry.AURUMIC_BRASS.get().getResearchName(), 0, new HeadlineTextPage("aurumic_brass", "aurumic_brass.a", "aurumic_brass").setHidden(false));
         registerPages(ResearchRegistry.CRUCIBLE.get().getResearchName(), new HeadlineTextPage("crucible", "crucible.a", "crucible").setHidden(false), StructurePage.cruciblePage(BlockRegistration.CRUCIBLE.get()));
 
         registerPages(ResearchRegistry.GLYPH_PHIAL.get().getResearchName(), new HeadlineTextPage("glyph_phial", "glyph_phial.a", "glyph_phial").setHidden(false),
@@ -47,12 +46,14 @@ public class ResearchPageRegistry {
         registerPage(ResearchRegistry.SOLAR_ECLIPSE.get().getResearchName(), 0, new HeadlineTextPage("solar_eclipse", "solar_eclipse.a", "solar_eclipse").setHidden(false));
         registerPages(ResearchRegistry.ARMILLARY_SPHERE.get().getResearchName(),
                 new HeadlineTextPage("armillary_sphere", "armillary_sphere.a", "armillary_sphere").setHidden(false),
-                CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()).setHidden(true),
-                CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()).setHidden(true));
+                CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), AURUMIC_BRASS_INGOT.get()).setHidden(true),
+                CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), AURUMIC_BRASS_INGOT.get()).setHidden(true));
 
         registerPage(ResearchRegistry.STELLAR_OBSERVATORY.get().getResearchName(), 0, new HeadlineTextPage("stellar_observatory", "stellar_observatory.a", "stellar_observatory").setHidden(false));
 
         registerPage(ResearchRegistry.TEST_1.get().getResearchName(), 0, new HeadlineTextPage("test_1", "test_1.a", "test_1").setHidden(false));
+
+        registerPage(ResearchRegistry.FLEETING_TEST.get().getResearchName(), 0, new HeadlineTextPage("fleeting_test", "fleeting_test.a", "fleeting_test").setHidden(false));
 
         registerPage(ResearchRegistry.GLYPH.get().getResearchName(), 0, new HeadlineTextPage("glyph", "glyph.a", "glyph").setHidden(false));
     }

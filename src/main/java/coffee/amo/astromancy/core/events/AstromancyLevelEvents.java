@@ -5,20 +5,26 @@ import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchClearPacket;
 import coffee.amo.astromancy.core.packets.ResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.registration.AttributeRegistry;
+import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.systems.damage.AstromancyDamageSource;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import coffee.amo.astromancy.core.util.StarSavedData;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -35,9 +41,13 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Objects;
 
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
@@ -141,12 +151,21 @@ public class AstromancyLevelEvents {
                 }
             }
         }
+        if(!player.level.isClientSide){
+            if(player.getPersistentData().contains("fleeting_test_start")){
+                if(player.getPersistentData().getLong("fleeting_test_start") + 120 == event.player.level.getGameTime()){
+                    player.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
+                        if(research.contains(player, "fleeting_test")){
+                            research.removeResearch(player, ResearchRegistry.FLEETING_TEST.get());
+                            player.getPersistentData().remove("fleeting_test_start");
+                        }
+                    });
+                }
+            }
+        }
     }
 
-    @SubscribeEvent
-    public static void registerAttributes(EntityAttributeModificationEvent evt) {
-        evt.add(EntityType.PLAYER, AttributeRegistry.ASTRAL_RESIST.get());
-    }
+
 
     @SubscribeEvent
     public static void damageEvents(LivingDamageEvent event) {
@@ -156,6 +175,21 @@ public class AstromancyLevelEvents {
                     event.setAmount((float) (event.getAmount() * (1 - p.getAttributeValue(AttributeRegistry.ASTRAL_RESIST.get()))));
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void wakeUp(PlayerWakeUpEvent event){
+        if(!event.getPlayer().level.isClientSide){
+            ServerPlayer player = (ServerPlayer) event.getPlayer();
+            player.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
+                Advancement adv = player.getLevel().getServer().getServerResources().managers().getAdvancements().getAdvancement(Astromancy.astromancy("stellarite"));
+                if(research.contains(player, "introduction") && player.getAdvancements().getOrStartProgress(adv).isDone()){
+                    research.addResearch(player, ResearchRegistry.FLEETING_TEST.get());
+                    long startTime = player.getLevel().getGameTime();
+                    player.getPersistentData().putLong("fleeting_test_start", startTime);
+                }
+            });
         }
     }
 }

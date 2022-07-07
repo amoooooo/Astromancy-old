@@ -6,7 +6,7 @@ import net.minecraft.util.random.WeightedRandomList;
 
 public enum StarType implements WeightedEntry {
     NORMAL("Normal", 100),
-    CRIMSON("Crimson",  5),
+    EXOTIC("Crimson",  5),
     PURE("Pure", 5),
     EMPTY("Empty",  5),
     HELL("Hell",  5);
@@ -30,7 +30,7 @@ public enum StarType implements WeightedEntry {
 
     public static WeightedRandomList<StarType> list = WeightedRandomList.create(
             NORMAL,
-            CRIMSON,
+            EXOTIC,
             PURE,
             EMPTY,
             HELL

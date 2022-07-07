@@ -50,8 +50,8 @@ public class Astromancy {
         AstromancyPacketHandler.init();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
-        ATTRIBUTES.register(modBus);
         SOUNDS.register(modBus);
+        ATTRIBUTES.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         // Register the enqueueIMC method for modloading

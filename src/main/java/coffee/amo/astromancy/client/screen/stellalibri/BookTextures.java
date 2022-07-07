@@ -19,6 +19,7 @@ public class BookTextures {
     public static final ResourceLocation LOCKED_CHAINS = Astromancy.astromancy("textures/gui/book/locked_chains.png");
     public static final ResourceLocation ENTRIES = Astromancy.astromancy("textures/gui/book/entries_icons.png");
     public static final ResourceLocation EXCLAMATION_MARK = Astromancy.astromancy("textures/gui/book/exclamation_mark.png");
+    public static final ResourceLocation BLINK_FX = Astromancy.astromancy("textures/gui/book/fx/blink.png");
 
     public static final List<ResourceLocation> TAB1_PARALLAX = List.of(
             Astromancy.astromancy("textures/gui/book/test/parallax-space-background.png"),
@@ -26,5 +27,12 @@ public class BookTextures {
             Astromancy.astromancy("textures/gui/book/test/parallax-space-far-planets.png"),
             Astromancy.astromancy("textures/gui/book/test/parallax-space-ring-planet.png"),
             Astromancy.astromancy("textures/gui/book/test/parallax-space-big-planet.png")
+    );
+
+    public static final List<ResourceLocation> INTRO_BACKGROUND = List.of(
+            Astromancy.astromancy("textures/gui/book/backgrounds/introduction/intro_bg.png"),
+            Astromancy.astromancy("textures/gui/book/backgrounds/introduction/intro_nebula.png"),
+            Astromancy.astromancy("textures/gui/book/backgrounds/introduction/intro_stars_top.png"),
+            Astromancy.astromancy("textures/gui/book/backgrounds/introduction/intro_stars_btm.png")
     );
 }

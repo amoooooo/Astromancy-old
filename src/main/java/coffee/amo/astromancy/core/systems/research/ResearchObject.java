@@ -4,18 +4,18 @@ import coffee.amo.astromancy.Astromancy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ResearchObject extends ResearchType {
     public final String identifier;
     public List<ResearchObject> children = new ArrayList<>();
     public ResearchProgress locked = ResearchProgress.UNAVAILABLE;
     public ItemStack icon = ItemStack.EMPTY;
+    public List<ItemStack> itemRequirements = new ArrayList<>();
     public float x;
     public float y;
     public String type;
@@ -36,6 +36,11 @@ public class ResearchObject extends ResearchType {
 
     public ResearchObject addChildren(ResearchObject... children){
         this.children.addAll(Arrays.asList(children));
+        return this;
+    }
+
+    public ResearchObject addItemRequirement(ItemStack item){
+        itemRequirements.add(item);
         return this;
     }
 
@@ -80,6 +85,15 @@ public class ResearchObject extends ResearchType {
         tag.put("children", childrenTag);
         ListTag parentsTag = new ListTag();
         tag.put("parents", parentsTag);
+        ListTag requirementsTag = new ListTag();
+        if(itemRequirements.size() > 0){
+            for(ItemStack item : itemRequirements){
+                CompoundTag itemTag = new CompoundTag();
+                item.save(itemTag);
+                requirementsTag.add(itemTag);
+            }
+        }
+        tag.put("requirements", requirementsTag);
         return tag;
     }
 
@@ -92,6 +106,11 @@ public class ResearchObject extends ResearchType {
         for (int i = 0; i < childrenTag.size(); i++) {
             CompoundTag childTag = childrenTag.getCompound(i);
             research.children.add(fromNBT(childTag));
+        }
+        ListTag requirementsTag = tag.getList("requirements", Tag.TAG_LIST);
+        for (int i = 0; i < requirementsTag.size(); i++) {
+            CompoundTag requirementTag = requirementsTag.getCompound(i);
+            research.itemRequirements.add(ItemStack.of(requirementTag));
         }
         return research;
     }

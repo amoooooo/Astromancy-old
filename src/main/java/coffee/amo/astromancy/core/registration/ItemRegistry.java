@@ -19,7 +19,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ARMILLARY_SPHERE = ITEMS.register("armillary_sphere", () -> new MultiblockItem(BlockRegistration.ARMILLARY_SPHERE.get(), DEFAULT_PROPERTIES(), ArmillarySphereCoreBlockEntity.STRUCTURE));
 //    public static final RegistryObject<Item> EMPTY_ASPECTI_PHIAL = ITEMS.register("empty_aspecti_phial", () -> new EmptyAspectiPhial(PHIAL_PROPERTIES().stacksTo(16)));
     public static final RegistryObject<Item> GLYPH_PHIAL = ITEMS.register("glyph_phial", () -> new GlyphPhial(PHIAL_PROPERTIES().stacksTo(16)));
-    public static final RegistryObject<Item> ALCHEMICAL_BRASS_INGOT = ITEMS.register("alchemical_brass_ingot", () -> new AlchemicalBrassIngot(DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> AURUMIC_BRASS_INGOT = ITEMS.register("aurumic_brass_ingot", () -> new AurumicBrassIngot(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> ARMILLARY_SPHERE_CAGE = ITEMS.register("armillary_sphere_cage", () -> new ArmillarySphereCage(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> ARCANA_SEQUENCE = ITEMS.register("arcana_sequence", () -> new ArcanaSequence(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> STELLA_LIBRI = ITEMS.register("stella_libri", () -> new StellaLibri(DEFAULT_PROPERTIES().stacksTo(1)));

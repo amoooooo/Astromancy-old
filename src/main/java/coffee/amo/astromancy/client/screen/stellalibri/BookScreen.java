@@ -1,9 +1,11 @@
 package coffee.amo.astromancy.client.screen.stellalibri;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.BookObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.EntryObject;
+import coffee.amo.astromancy.client.screen.stellalibri.objects.FleetingEntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.objects.ImportantEntryObject;
 import coffee.amo.astromancy.client.screen.stellalibri.pages.ResearchPageRegistry;
 import coffee.amo.astromancy.client.screen.stellalibri.tab.BookTab;
@@ -11,6 +13,7 @@ import coffee.amo.astromancy.common.item.StellaLibri;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookEntriesEvent;
 import coffee.amo.astromancy.core.events.SetupAstromancyBookTabsEvent;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.helpers.MathHelper;
 import coffee.amo.astromancy.core.packets.BookStatePacket;
 import coffee.amo.astromancy.core.systems.recipe.IRecipeComponent;
 import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
@@ -43,6 +46,7 @@ import net.minecraftforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,8 +63,8 @@ public class BookScreen extends Screen {
     public static ArrayList<BookEntry> ENTRIES = new ArrayList<>();
     public static ArrayList<BookObject> OBJECTS = new ArrayList<>();
     public static ArrayList<BookTab> TABS = new ArrayList<>();
-    public final int parallax_width = 800;
-    public final int parallax_height = 800;
+    public final int parallax_width = 1024;
+    public final int parallax_height = 1024;
     private final MutableComponent lockedComponent = Component.translatable("astromancy.gui.book.entry.");
     private final MutableComponent unlockedComponent = Component.translatable("astromancy.gui.book.entry.none");
     public int bookWidth = 448;
@@ -90,31 +94,6 @@ public class BookScreen extends Screen {
         ENTRIES.clear();
         Item EMPTY = ItemStack.EMPTY.getItem();
 
-        // Introduction
-//        ENTRIES.add(new BookEntry("introduction", 0, 0, ResearchRegistry.INTRODUCTION.get())
-//                .setObjectSupplier(ImportantEntryObject::new)
-//                .addPage(new HeadlineTextPage("introduction", "introduction.a"))
-//                .addPage(new TextPage("introduction.b")));
-//        ENTRIES.add(new BookEntry("stellarite", 0, -1, ResearchRegistry.STELLARITE.get())
-//                .setObjectSupplier(EntryObject::new)
-//                .addPage(new HeadlineTextPage("stellarite", "stellarite.a")));
-//        ENTRIES.add(new BookEntry("arcana_sequence", -1, 1, ResearchRegistry.ARCANA_SEQUENCE.get())
-//                .setObjectSupplier(EntryObject::new)
-//                .addPage(new HeadlineTextPage("arcana_sequence", "arcana_sequence.a")));
-//        ENTRIES.add(new BookEntry("alchemical_brass",1, -1, ResearchRegistry.ALCHEMICAL_BRASS.get()).setObjectSupplier(EntryObject::new)
-//                        .addPage(new TextPage("alchemical_brass.a")));
-//        ENTRIES.add(new BookEntry("armillary_sphere",2, 0, ResearchRegistry.ARMILLARY_SPHERE.get()).setObjectSupplier(EntryObject::new)
-//                .addPage(new HeadlineTextPage("armillary_sphere", "armillary_sphere.a"))
-//                .addPage(CraftingPage.armSpherePage(ARMILLARY_SPHERE.get(), ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get()))
-//                .addPage(CraftingPage.armCagePage(ARMILLARY_SPHERE_CAGE.get(), ALCHEMICAL_BRASS_INGOT.get())));
-//        ENTRIES.add(new BookEntry("crucible", -1, -1, ResearchRegistry.CRUCIBLE.get()).setObjectSupplier(EntryObject::new)
-//                .addPage(new HeadlineTextPage("crucible", "crucible.a")));
-//
-//        // Alchemy
-//        ENTRIES.add(new BookEntry("aspecti_phial", 0, 0, ResearchRegistry.GLYPH_PHIAL.get()).setObjectSupplier(ImportantEntryObject::new)
-//                .addPage(new HeadlineTextPage("aspecti_phial", "aspecti_phial.a")));
-//        ENTRIES.add(new BookEntry("jars",-1, -1, ResearchRegistry.JAR.get()).setObjectSupplier(EntryObject::new)
-//                .addPage(new HeadlineTextPage("jars", "jars.a")));
         List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();
         for (ResearchType type : researchObjects) {
             ResearchObject object = (ResearchObject) type;
@@ -122,6 +101,8 @@ public class BookScreen extends Screen {
             ResearchPageRegistry.pages.forEach((rl, page) -> {
                 if ("important".equals(object.type)) {
                     be.setObjectSupplier(ImportantEntryObject::new);
+                } else if("fleeting".equals(object.type)) {
+                    be.setObjectSupplier(FleetingEntryObject::new);
                 } else {
                     be.setObjectSupplier(EntryObject::new);
                 }
@@ -143,8 +124,10 @@ public class BookScreen extends Screen {
             BookTab tab;
             if(object.backgroundLocation == null){
                 tab = new BookTab(object.x, object.y, object.identifier, 0, 0, object.icon, object.backgroundLocations);
+                tab.tabColor = object.tabColor;
             } else {
                 tab = new BookTab(object.x, object.y, object.identifier, 0, 0, object.icon, object.backgroundLocation);
+                tab.tabColor = object.tabColor;
             }
             tab.iconStack = object.icon;
             object.children.forEach(child -> {
@@ -155,7 +138,7 @@ public class BookScreen extends Screen {
 //        TABS.add(new BookTab(-22,24, "introduction", 0, 0 , STELLA_LIBRI.get().getDefaultInstance(), BookTextures.TAB1_PARALLAX).addEntries(
 //                OBJECTS.stream().filter(s ->
 //                        s.identifier.equals("introduction") || s.identifier.equals("armillary_sphere")
-//                        || s.identifier.equals("alchemical_brass") || s.identifier.equals("stellarite")
+//                        || s.identifier.equals("aurumic_brass") || s.identifier.equals("stellarite")
 //                        || s.identifier.equals("arcana_sequence") || s.identifier.equals("crucible")
 //                ).collect(Collectors.toCollection(ArrayList::new))));
 //        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , GLYPH_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
@@ -182,14 +165,14 @@ public class BookScreen extends Screen {
         return !(mouseX < guiLeft + 17) && !(mouseY < guiTop + 14) && !(mouseX > guiLeft + (screen.bookWidth - 17)) && !(mouseY > (guiTop + screen.bookHeight - 14));
     }
 
-    public static void renderTexture(ResourceLocation texture, PoseStack poseStack, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight) {
+    public static void renderTexture(ResourceLocation texture, PoseStack poseStack, float x, float y, float u, float v, int width, int height, int textureWidth, int textureHeight) {
         BUILDER.setPositionWithWidth(x, y, width, height)
                 .setShaderTexture(texture)
                 .setUVWithWidth(u, v, width, height, textureWidth, textureHeight)
                 .draw(poseStack);
     }
 
-    public static void renderTransparentTexture(ResourceLocation texture, PoseStack poseStack, int x, int y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight) {
+    public static void renderTransparentTexture(ResourceLocation texture, PoseStack poseStack, float x, float y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight) {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         renderTexture(texture, poseStack, x, y, uOffset, vOffset, width, height, textureWidth, textureHeight);
@@ -407,18 +390,6 @@ public class BookScreen extends Screen {
                     object.children.add(OBJECTS.stream().filter(s -> s.research == child).findFirst().orElse(null));
                 }
             }
-//            if (object.identifier == "introduction") {
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "alchemical_brass").findFirst().orElse(null));
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "stellarite").findFirst().orElse(null));
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "arcana_sequence").findFirst().orElse(null));
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
-//            } else if (object.identifier == "alchemical_brass") {
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "armillary_sphere").findFirst().orElse(null));
-//            } else if (object.identifier == "aspecti_phial") {
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "jars").findFirst().orElse(null));
-//            } else if (object.identifier == "stellarite"){
-//                object.children.add(OBJECTS.stream().filter(o -> o.identifier == "crucible").findFirst().orElse(null));
-//            }
         }
         faceObject(OBJECTS.get(0));
     }
@@ -436,24 +407,22 @@ public class BookScreen extends Screen {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTicks);
+        renderBackground(poseStack);
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
+        renderTabs(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
         if(tab.BACKGROUND != null){
-            renderBackground(tab.BACKGROUND, poseStack, 0.075f, 0.075f);
+            renderBackground(tab.BACKGROUND, poseStack, 0.05f, 0.05f);
         } else {
-            renderBackground(tab.backgroundParallax, poseStack, 0.075f, 0.075f);
+            renderBackground(tab.backgroundParallax, poseStack, 0.095f, 0.095f);
 
         }
         GL11.glEnable(GL_SCISSOR_TEST);
         cut();
         renderEntries(poseStack, mouseX, mouseY, partialTicks);
         GL11.glDisable(GL_SCISSOR_TEST);
-
-        //renderTransparentTexture(FADE_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
         renderTransparentTexture(BookTextures.OUTSIDE_LOC, poseStack, guiLeft, guiTop, 0, 0, bookWidth, bookHeight, 448, 260);
-        renderTabs(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
         lateTabRender(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
         lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
     }
@@ -492,6 +461,7 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
+            if(object.research.type.equals("fleeting") && !(object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) break;
             if(tab.entries.contains(object) && (object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.click(xOffset, yOffset, mouseX, mouseY);
@@ -579,13 +549,14 @@ public class BookScreen extends Screen {
     public void renderTabs(PoseStack stack, int mouseX, int mouseY, float partialTicks, int guiLeft, int guiTop) {
         for (int i = TABS.size() - 1; i >= 0; i--){
             int finalI = i;
+            int finalI1 = i;
             ResearchTypeRegistry.RESEARCH_TABS.get().getValues().forEach(s -> {
                 ResearchTabObject t = (ResearchTabObject) s;
                 if(anyMatch(ClientResearchHolder.getResearch().stream().map(r -> r.identifier).toList(), TABS.get(finalI).entries)){
                     BookTab tab = TABS.get(finalI);
                     boolean isHovering = tab.isHovering(guiLeft, guiTop, mouseX, mouseY);
                     tab.isHovering = isHovering;
-                    tab.hover = isHovering ? Math.min(tab.hover++, tab.hoverCap()) : Math.max(tab.hover--, 0);
+                    tab.hover = isHovering ? Math.min(tab.hover++, tab.hoverCap()/20f) : Math.max(tab.hover--, 0);
                     tab.render(minecraft, stack, guiLeft, guiTop, mouseX, mouseY, partialTicks, this.tab == tab);
                 }
             });
@@ -652,7 +623,7 @@ public class BookScreen extends Screen {
         if (uOffset > (bookInsideWidth - 8) / 2f) {
             uOffset = (bookInsideWidth - 8) / 2f;
         }
-        renderTexture(texture, poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / 1.75f), Math.round(parallax_height / 1.75f));
+        renderTexture(texture, poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / 2.1f), Math.round(parallax_height / 2.1f));
     }
 
     public void renderBackground(List<ResourceLocation> textures, PoseStack poseStack, float xModifier, float yModifier) {
@@ -660,8 +631,8 @@ public class BookScreen extends Screen {
         int guiTop = (height - bookHeight) / 2;
         int insideLeft = guiLeft + 16;
         int insideTop = guiTop + 17;
-        float uOffset = (parallax_width - staticxOffset) * xModifier;
-        float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - staticyOffset * yModifier));
+        float uOffset = (parallax_width - xOffset) * xModifier;
+        float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
             vOffset = parallax_height / 2f;
         }
@@ -671,12 +642,14 @@ public class BookScreen extends Screen {
         if (uOffset > (bookInsideWidth - 8) / 2f) {
             uOffset = (bookInsideWidth - 8) / 2f;
         }
+        long dayTime = Minecraft.getInstance().level.getGameTime();
         for(int i = 0; i < textures.size(); i++){
-            uOffset *= 1+(i/10f);
-            uOffset *= (Minecraft.getInstance().level.getDayTime() / 24000.0f);
-            vOffset *= 1+(i/10f);
-            int scale = i == textures.size() - 1 ? Math.round(0.1f) : i;
-            renderTexture(textures.get(i), poseStack, insideLeft, insideTop, uOffset, vOffset, bookInsideWidth, bookInsideHeight, Math.round(parallax_width / (2-(i/3.5f))), Math.round(parallax_height / (2-(i/3.5f))));
+            if(i > 1){
+                uOffset *= -Math.sin(dayTime / 9500f) >= 0 ? -Math.sin(dayTime / 9500f) * (dayTime / 5000f) : Math.sin(dayTime / 9500f) * (dayTime / 5000f);
+                vOffset *= -Math.sin(dayTime / 9500f) >= 0 ? -Math.sin(dayTime / 9500f) * (dayTime / 6000f) : Math.sin(dayTime / 9500f) * (dayTime / 6000f);
+            }
+           float mult = Math.abs((float) Math.cos(dayTime / 6000f) * (dayTime / 2000f)) - (int)Math.abs((float) Math.cos(dayTime / 6000f) * (dayTime / 2000f));
+            renderTransparentTexture(textures.get(i), poseStack, insideLeft, insideTop, uOffset * (i /150f), vOffset * (i/150f), bookInsideWidth, bookInsideHeight, Math.round(parallax_width / 2f), Math.round(parallax_height / 2f));
         }
     }
 

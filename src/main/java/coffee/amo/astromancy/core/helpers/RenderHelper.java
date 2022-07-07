@@ -215,7 +215,7 @@ public class RenderHelper {
             default -> new Color(0, 0, 0, 255);
         };
         color = switch (star.getType()) {
-            case CRIMSON -> StarColors.CRIMSON.getColor();
+            case EXOTIC -> StarColors.EXOTIC.getColor();
             case EMPTY -> StarColors.EMPTY.getColor();
             case PURE -> StarColors.PURE.getColor();
             case HELL -> StarColors.HELL.getColor();

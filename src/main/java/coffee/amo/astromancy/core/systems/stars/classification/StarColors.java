@@ -1,6 +1,9 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
 
+import coffee.amo.astromancy.Astromancy;
+import net.minecraft.util.FastColor;
+
 import java.awt.*;
 
 public enum StarColors {
@@ -11,12 +14,11 @@ public enum StarColors {
     G(new Color(245, 210, 122, 255)),
     K(new Color(245, 175, 122, 255)),
     M(new Color(242, 142, 102, 255)),
-    CRIMSON(new Color(242, 53, 85, 255)),
+    EXOTIC(new Color(85, 232, 85, 255)),
     PURE(new Color(197, 242, 172, 255)),
     EMPTY(new Color(102,3,252, 255)),
     HELL(new Color(227, 38, 0, 255)),
     NORMAL(new Color(255,255,255, 255));
-    ;
 
     private Color color;
     StarColors(Color color) {

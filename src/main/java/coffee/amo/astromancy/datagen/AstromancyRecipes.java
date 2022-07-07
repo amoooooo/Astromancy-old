@@ -24,13 +24,13 @@ public class AstromancyRecipes extends RecipeProvider {
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
         shaped(ItemRegistry.ARMILLARY_SPHERE_CAGE.get())
-                .define('#', ItemRegistry.ALCHEMICAL_BRASS_INGOT.get())
+                .define('#', ItemRegistry.AURUMIC_BRASS_INGOT.get())
                 .pattern(" # ")
                 .pattern("# #")
                 .pattern(" # ")
-                .unlockedBy("has_armillary_sphere", has(ItemRegistry.ALCHEMICAL_BRASS_INGOT.get())).save(pFinishedRecipeConsumer);
+                .unlockedBy("has_armillary_sphere", has(ItemRegistry.AURUMIC_BRASS_INGOT.get())).save(pFinishedRecipeConsumer);
         shaped(ItemRegistry.ARMILLARY_SPHERE.get())
-                .define('#', ItemRegistry.ALCHEMICAL_BRASS_INGOT.get())
+                .define('#', ItemRegistry.AURUMIC_BRASS_INGOT.get())
                 .define('$', ItemRegistry.ARMILLARY_SPHERE_CAGE.get())
                 .define('%', Items.DARK_OAK_PLANKS.asItem())
                 .pattern(" $ ")
