@@ -2,6 +2,7 @@ package coffee.amo.astromancy;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
+import coffee.amo.astromancy.core.handlers.CapabilityLumenHandler;
 import coffee.amo.astromancy.core.registration.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.resources.ResourceLocation;
@@ -67,6 +68,7 @@ public class Astromancy {
 
     public void registerCapabilities(RegisterCapabilitiesEvent event){
         CapabilityGlyphHandler.register(event);
+        CapabilityLumenHandler.register(event);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

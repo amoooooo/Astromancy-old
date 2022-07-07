@@ -1,14 +1,12 @@
 package coffee.amo.astromancy.core.systems.stars;
 
-import coffee.amo.astromancy.core.systems.lumen.LumenType;
+import coffee.amo.astromancy.core.systems.lumen.Lumen;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.systems.stars.types.StarType;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.WeightedRandomList;
 
 import java.util.*;
 
@@ -22,7 +20,7 @@ public class Star {
     private int spectralIntensity;
     private Character spectralClass;
     private StarType type;
-    private Map<LumenType, Float> lumen = new HashMap<>();
+    private Map<Lumen, Float> lumen = new HashMap<>();
 //    private Color color;
 //    private Constellation constellation;
 //    private Pair<Quadrant, Quadrant> quadrants;
@@ -44,10 +42,10 @@ public class Star {
         float lumenStrength = 1;
         for (int i = 0; i < lumenCount - 1; i++) {
             float lumenStrengthRandom = random.nextFloat(Math.abs(lumenStrength)) + 0.1f;
-            this.lumen.put(LumenType.LIST.getRandom(RandomSource.create()).get(), lumenStrengthRandom);
+            this.lumen.put(Lumen.LIST.getRandom(RandomSource.create()).get(), lumenStrengthRandom);
             lumenStrength -= lumenStrengthRandom;
         }
-        this.lumen.put(LumenType.LIST.getRandom(RandomSource.create()).get(), lumenStrength);
+        this.lumen.put(Lumen.LIST.getRandom(RandomSource.create()).get(), lumenStrength);
         System.out.println("Created star with spectral intensity " + spectralIntensity);
     }
 
@@ -95,7 +93,7 @@ public class Star {
         return spectralClass;
     }
 
-    public Map<LumenType, Float> getLumen() {
+    public Map<Lumen, Float> getLumen() {
         return lumen;
     }
 
@@ -115,7 +113,7 @@ public class Star {
         this.spectralIntensity = spectralIntensity;
     }
 
-    public void setLumen(Map<LumenType, Float> lumen) {
+    public void setLumen(Map<Lumen, Float> lumen) {
         this.lumen = lumen;
     }
 
@@ -170,7 +168,7 @@ public class Star {
         // read lumen type from nbt
         for (int i = 0; i < listTag.size(); i++) {
             CompoundTag tag1 = listTag.getCompound(i);
-            star.getLumen().put(LumenType.values()[tag1.getInt("type")], tag1.getFloat("strength"));
+            star.getLumen().put(Lumen.values()[tag1.getInt("type")], tag1.getFloat("strength"));
         }
         return star;
     }

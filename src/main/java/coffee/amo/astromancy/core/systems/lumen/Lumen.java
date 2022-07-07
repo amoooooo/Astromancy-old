@@ -4,7 +4,8 @@ import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandomList;
 
-public enum LumenType implements WeightedEntry {
+public enum Lumen implements WeightedEntry {
+    NONE("None", 0, 1),
     DECONSTRUCTIVE("Deconstructive", 45, 1),
     CONSTRUCTIVE("Constructive", 35, 1),
     PURE("Pure", 10, 1.3f),
@@ -15,14 +16,14 @@ public enum LumenType implements WeightedEntry {
     private final int chance;
     private final float powerMultiplier;
 
-    LumenType(String type, int chance, float powerMultiplier) {
+    Lumen(String type, int chance, float powerMultiplier) {
         this.type = type;
         this.chance = chance;
         this.powerMultiplier = powerMultiplier;
     }
 
-    public static LumenType getLumenTypeFromString(String type) {
-        for (LumenType lumenType : values()) {
+    public static Lumen getLumenTypeFromString(String type) {
+        for (Lumen lumenType : values()) {
             if (lumenType.type.equals(type)) {
                 return lumenType;
             }
@@ -42,10 +43,14 @@ public enum LumenType implements WeightedEntry {
         return powerMultiplier;
     }
 
+    public static Lumen get(int i) {
+        return values()[i];
+    }
+
     @Override
     public Weight getWeight() {
         return Weight.of(chance);
     }
 
-    public static final WeightedRandomList<LumenType> LIST = WeightedRandomList.create(LumenType.values());
+    public static final WeightedRandomList<Lumen> LIST = WeightedRandomList.create(Lumen.values());
 }

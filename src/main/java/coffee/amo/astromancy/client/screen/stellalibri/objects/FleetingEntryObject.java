@@ -145,15 +145,4 @@ public class FleetingEntryObject extends EntryObject {
             screen.renderComponentTooltip(poseStack, Arrays.asList(Component.translatable(entry.translationKey()), Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)), mouseX, mouseY, minecraft.font);
         }
     }
-    @Override
-    public void lateLockedRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, String... parents) {
-        if (isHovering)
-        {
-            screen.renderComponentTooltip(poseStack, List.of(Component.translatable("astromancy.gui.book.entry." + research.identifier),Component.literal("Missing research: ").withStyle(s -> s.withColor(ChatFormatting.RED)),Component.literal(" - ").withStyle(s -> s.withColor(ChatFormatting.RED)).append(Component.translatable(Arrays.stream(parents).toList().get(0)).withStyle(s -> s.withColor(ChatFormatting.RED))), (
-                    Minecraft.getInstance().player.getInventory().contains(Items.PAPER.getDefaultInstance()) ? Component.EMPTY : Component.literal("Missing paper.").withStyle(ChatFormatting.GRAY)
-                    ),(
-                    Minecraft.getInstance().player.getInventory().contains(Items.INK_SAC.getDefaultInstance()) ? Component.EMPTY : Component.literal("Missing ink.").withStyle(ChatFormatting.GRAY)
-            )), mouseX, mouseY, minecraft.font);
-        }
-    }
 }

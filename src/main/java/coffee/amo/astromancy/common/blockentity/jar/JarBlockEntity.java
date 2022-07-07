@@ -63,9 +63,6 @@ public class JarBlockEntity extends AstromancyBlockEntity {
         }
     }
 
-    // TODO: cap this at 256, or maybe make it a config option.
-    // TODO: make it so the first stack added starts the count at 16
-    // TODO: fix the renderer
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand, BlockHitResult ray) {
         if(!level.isClientSide){
