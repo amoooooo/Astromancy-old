@@ -47,7 +47,8 @@ public class LevelRendererMixin {
                     p_202424_.mulPose(Vector3f.ZN.rotationDegrees(rotFactorZ));
                     p_202424_.mulPose(Vector3f.XP.rotationDegrees(rotFactorX));
                     p_202424_.mulPose(Vector3f.YN.rotationDegrees(rotFactorY));
-                    RenderSystem.setShaderColor(starBrightness * ((rotFactorX) / 360f), starBrightness * (rotFactorX / 360f), starBrightness* (rotFactorX / 360f), 1.0F);
+                    float rotMult = Math.min(1, (rotFactorX / 360f) * (rotFactorY / 360f) * (rotFactorZ / 360f));
+                    RenderSystem.setShaderColor(starBrightness * rotMult, starBrightness * rotMult, starBrightness* rotMult, 1.0F);
                     Matrix4f matrix4f = p_202424_.last().pose();
                     float k = 20f;
                     float offset = 100;
