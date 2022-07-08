@@ -32,7 +32,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> RESEARCH_NOTE = ITEMS.register("research_note", () -> new ResearchNote(DEFAULT_PROPERTIES().stacksTo(1)));
     public static final RegistryObject<BlockItem> MORTAR = ITEMS.register("mortar", () -> new BlockItem(BlockRegistration.MORTAR.get(), DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> GLYPH_RESEARCH_ICON = ITEMS.register("glyph_research_icon", () -> new GlyphEntryItem(ICON_PROPERTIES().stacksTo(1)));
-    public static final RegistryObject<Item> TEST_RING = ITEMS.register("test_ring", () -> new TestRing(DEFAULT_PROPERTIES().stacksTo(1)));
+//    public static final RegistryObject<Item> TEST_RING = ITEMS.register("test_ring", () -> new TestRing(DEFAULT_PROPERTIES().stacksTo(1)));
 //    public static final RegistryObject<BlockItem> RESEARCH_TABLE = ITEMS.register("research_table", () -> new BlockItem(BlockRegistration.RESEARCH_TABLE.get(), DEFAULT_PROPERTIES()));
 
 

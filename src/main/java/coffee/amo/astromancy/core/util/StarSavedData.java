@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.util;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
@@ -15,14 +16,12 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
+    protected Random random = new Random();
 
     public StarSavedData() {
         List<Glyph> shuffledGlyph = Lists.newArrayList(Glyph.values());
@@ -34,14 +33,16 @@ public class StarSavedData extends SavedData {
         AtomicInteger i = new AtomicInteger();
         shuffledGlyph.subList(0, constellationInstanceList.size()).forEach(glyph -> {
             constellationInstanceList.get(i.get()).setAttunedGlyph(glyph);
+            constellationInstanceList.get(i.get()).setOffset(random.nextFloat(360));
+            constellationInstanceList.get(i.get()).setDaysVisible(random.nextInt(6) + 1);
             i.getAndIncrement();
         });
         Star sun = new Star(5200);
         sun.setName("The Sun");
         constellationInstanceList.get(8).addStar(sun, 10, 10);
-        System.out.println(Arrays.toString(constellationInstanceList.toArray()));
         constellationInstanceList.forEach(c -> {
             System.out.println(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
+            Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
     }
 

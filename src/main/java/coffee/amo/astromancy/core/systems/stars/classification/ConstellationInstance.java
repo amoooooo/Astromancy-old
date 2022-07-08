@@ -11,6 +11,8 @@ import java.util.Map;
 public class ConstellationInstance {
     private final Constellations constellation;
     private Glyph attunedGlyph;
+    float offset;
+    int daysVisible;
     private Map<Integer, Map<Integer, Star>> starMap = new HashMap<>();
 
     public ConstellationInstance(Constellations constellation) {
@@ -52,6 +54,22 @@ public class ConstellationInstance {
         this.starMap = stars;
     }
 
+    public void setOffset(float offset) {
+        this.offset = offset;
+    }
+
+    public float getOffset() {
+        return offset;
+    }
+
+    public void setDaysVisible(int daysVisible) {
+        this.daysVisible = daysVisible;
+    }
+
+    public int getDaysVisible() {
+        return daysVisible;
+    }
+
     public CompoundTag toNbt() {
         CompoundTag tag = new CompoundTag();
         tag.putString("constellation", constellation.name());
@@ -66,6 +84,8 @@ public class ConstellationInstance {
         });
         tag.putInt("Glyph", attunedGlyph.ordinal());
         tag.put("stars", starTag);
+        tag.putFloat("offset", getOffset());
+        tag.putInt("daysVisible", daysVisible);
         return tag;
     }
 
@@ -82,6 +102,8 @@ public class ConstellationInstance {
         ConstellationInstance constellationInstance = new ConstellationInstance(Constellations.valueOf(constellationName));
         constellationInstance.setStars(starMap);
         constellationInstance.setAttunedGlyph(Glyph.values()[tag.getInt("Glyph")]);
+        constellationInstance.setOffset(tag.getFloat("offset"));
+        constellationInstance.setDaysVisible(tag.getInt("daysVisible"));
         return constellationInstance;
     }
 

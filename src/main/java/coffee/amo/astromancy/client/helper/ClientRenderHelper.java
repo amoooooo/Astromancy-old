@@ -2,12 +2,10 @@ package coffee.amo.astromancy.client.helper;
 
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
-import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.network.PacketDistributor;
 
 public class ClientRenderHelper {
     public static int tickStuff(ClientLevel level, JarBlockEntity jarBlockEntity, int clientLookAtTicks) {

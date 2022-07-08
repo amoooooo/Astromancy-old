@@ -9,6 +9,7 @@
   ],
   "client": [
     "client.ClientLevelMixin",
+    "client.LevelRendererMixin",
     "client.OverworldEffectsMixin",
     "client.RenderSystemMixin"
   ],

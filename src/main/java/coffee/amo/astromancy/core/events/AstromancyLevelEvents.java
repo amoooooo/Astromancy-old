@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
@@ -19,6 +20,7 @@ import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -53,6 +55,8 @@ import java.util.Objects;
 public class AstromancyLevelEvents {
     public static boolean setForDay = false;
     public static float pity = 0;
+    public static long cometTick;
+    public static boolean cometChanged;
 
     @SubscribeEvent
     public static void checkSolarEclipse(TickEvent.WorldTickEvent event) {

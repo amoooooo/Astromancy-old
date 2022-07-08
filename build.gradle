@@ -182,10 +182,10 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:1.19-${forgeVersion}"
 
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curiosVersion}")
-    compileOnly fg.deobf("mezz.jei:jei-1.19-forge-api:${jeiVersion}")
-    compileOnly fg.deobf("mezz.jei:jei-1.19-common-api:${jeiVersion}")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19-forge:${jeiVersion}")
+//    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curiosVersion}")
+//    compileOnly fg.deobf("mezz.jei:jei-1.19-forge-api:${jeiVersion}")
+//    compileOnly fg.deobf("mezz.jei:jei-1.19-common-api:${jeiVersion}")
+//    runtimeOnly fg.deobf("mezz.jei:jei-1.19-forge:${jeiVersion}")
 
     runtimeOnly fg.deobf("com.ldtteam:aequivaleo:${aequivaleoVersion}:universal")
     compileOnly fg.deobf("com.ldtteam:aequivaleo:${aequivaleoVersion}:api")

@@ -6,14 +6,14 @@ import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "astromancy", bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientEventsModBus {
     @SubscribeEvent
-    public static void registerItemColors(final ColorHandlerEvent.Item event){
+    public static void registerItemColors(final RegisterColorHandlersEvent.Item event){
         Astromancy.LOGGER.debug("Registering item colors");
         event.getItemColors().register((stack, tintIndex) -> {
             if(stack.hasTag()){
@@ -34,7 +34,7 @@ public class ClientEventsModBus {
     }
 
     @SubscribeEvent
-    public static void registerBlockColors(final ColorHandlerEvent.Block event){
+    public static void registerBlockColors(final RegisterColorHandlersEvent.Block event){
         Astromancy.LOGGER.debug("Registering block colors");
         event.getBlockColors().register((state, world, pos, tintIndex) -> {
             if(tintIndex == 1){

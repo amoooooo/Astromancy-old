@@ -18,8 +18,8 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.curios.api.SlotTypeMessage;
-import top.theillusivec4.curios.api.SlotTypePreset;
+//import top.theillusivec4.curios.api.SlotTypeMessage;
+//import top.theillusivec4.curios.api.SlotTypePreset;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -83,8 +83,8 @@ public class Astromancy {
             LOGGER.info("Hello world from the MDK");
             return "Hello world";
         });
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
-                () -> Arrays.stream(SlotTypePreset.values()).map(preset -> preset.getMessageBuilder().build()).collect(Collectors.toList()));
+//        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
+//                () -> Arrays.stream(SlotTypePreset.values()).map(preset -> preset.getMessageBuilder().build()).collect(Collectors.toList()));
     }
 
     private void processIMC(final InterModProcessEvent event) {

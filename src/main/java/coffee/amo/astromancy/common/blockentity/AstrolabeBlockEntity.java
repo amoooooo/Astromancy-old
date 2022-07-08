@@ -31,20 +31,6 @@ import java.util.Map;
 public class AstrolabeBlockEntity extends AstromancyBlockEntity {
     public boolean toggled = false;
     public Star star;
-//    private final Map<Lumen, LumenStackHandler> tanks = Map.of(
-//            Lumen.CONSTRUCTIVE, new LumenStackHandler(100, LumenStack::updateEmpty),
-//            Lumen.DECONSTRUCTIVE, new LumenStackHandler(100, LumenStack::updateEmpty),
-//            Lumen.EMPTY, new LumenStackHandler(100, LumenStack::updateEmpty),
-//            Lumen.PURE, new LumenStackHandler(100, LumenStack::updateEmpty),
-//            Lumen.DENATURED, new LumenStackHandler(100, LumenStack::updateEmpty)
-//    );
-//    private final Map<Lumen, LazyOptional<ILumenHandler>> holders = Map.of(
-//            Lumen.CONSTRUCTIVE, LazyOptional.of(() -> tanks.get(Lumen.CONSTRUCTIVE)),
-//            Lumen.DECONSTRUCTIVE, LazyOptional.of(() -> tanks.get(Lumen.DECONSTRUCTIVE)),
-//            Lumen.EMPTY, LazyOptional.of(() -> tanks.get(Lumen.EMPTY)),
-//            Lumen.PURE, LazyOptional.of(() -> tanks.get(Lumen.PURE)),
-//            Lumen.DENATURED, LazyOptional.of(() -> tanks.get(Lumen.DENATURED))
-//    );
     private final LumenStackHandler tank;
     private final LazyOptional<ILumenHandler> holder;
     public AstrolabeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
