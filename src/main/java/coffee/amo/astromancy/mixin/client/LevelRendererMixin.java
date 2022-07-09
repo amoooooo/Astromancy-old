@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -32,6 +33,13 @@ public class LevelRendererMixin {
     @Nullable
     private ClientLevel level;
 
+    private Matrix4f pose;
+
+    @Inject(at = @At(value = "HEAD"), method = "renderSky")
+    public void capturePose(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_, CallbackInfo ci) {
+        this.pose = p_202424_.last().pose();
+    }
+
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V", ordinal = 4, shift = At.Shift.AFTER), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
     public void renderConstellations(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_, CallbackInfo ci, FogType fogtype, Vec3 vec3, float f, float f1, float f2, BufferBuilder bufferbuilder, ShaderInstance shaderinstance, float[] afloat, float f11) {
         if (!level.dimension().equals(Level.OVERWORLD)) return;
@@ -47,11 +55,19 @@ public class LevelRendererMixin {
                     p_202424_.mulPose(Vector3f.ZN.rotationDegrees(rotFactorZ));
                     p_202424_.mulPose(Vector3f.XP.rotationDegrees(rotFactorX));
                     p_202424_.mulPose(Vector3f.YN.rotationDegrees(rotFactorY));
-                    float rotMult = Math.min(1, (rotFactorX / (rotFactorY*2)) * (rotFactorY / (rotFactorZ*2)) * (rotFactorZ / (rotFactorX*2)));
+                    float offset = 100f;
+                    var v4f = new Vector4f(new Vector3f(0f, offset, 0f));
+                    v4f.transform(this.pose);
+                    var untransformedVector = new Vector3f(v4f.x(), v4f.y(), v4f.z());
+                    var vector4f = new Vector4f(untransformedVector);
+                    vector4f.transform(p_202424_.last().pose());
+                    var transformedVector = new Vector3f(vector4f.x(), vector4f.y(), vector4f.z());
+                    transformedVector.normalize();
+                    untransformedVector.normalize();
+                    float rotMult = transformedVector.dot(untransformedVector) > 0 ? 1f : 0f;
                     RenderSystem.setShaderColor(starBrightness * rotMult, starBrightness * rotMult, starBrightness* rotMult, 1.0F);
                     Matrix4f matrix4f = p_202424_.last().pose();
                     float k = 20f;
-                    float offset = 100;
                     RenderSystem.setShader(GameRenderer::getPositionTexShader);
                     RenderSystem.setShaderTexture(0, constellationInstance.getConstellation().getIcon());
                     bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
