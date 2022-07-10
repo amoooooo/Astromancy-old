@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.packets;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
@@ -49,7 +50,7 @@ public class StarDataPacket {
                 return;
             }
             ClientConstellationHolder.constellationInstances = packet.constellationInstances;
-            System.out.println("Parsed star data");
+            Astromancy.LOGGER.info("Parsed star data");
         });
         contextSupplier.get().setPacketHandled(true);
     }

@@ -69,7 +69,7 @@ public class AstromancyLevelEvents {
             }
             float chance = event.world.random.nextInt(51) + pity;
             if (day && chance == 50) {
-                System.out.println("Solar Eclipse!");
+                Astromancy.LOGGER.info("Solar Eclipse!");
                 SolarEclipseHandler.setEnabled(se, true);
                 pity = 0;
             } else if (time >= 13500 && time < 22500) {

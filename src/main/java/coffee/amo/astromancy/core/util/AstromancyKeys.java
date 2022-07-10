@@ -12,6 +12,7 @@ public class AstromancyKeys {
     public static final String KEY_LUMEN_TAG = "Lumen";
     public static final String KEY_LUMEN_CAPACITY = "Capacity";
     public static final String KEY_LUMEN_STACK = "LumenStack";
+    public static final String KEY_LUMEN_LIST = "LumenList";
     public static final String KEY_LUMEN_TYPE = "LumenType";
     public static final String KEY_LUMEN_AMOUNT = "Amount";
 }

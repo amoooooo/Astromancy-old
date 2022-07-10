@@ -4,6 +4,8 @@ import coffee.amo.astromancy.core.handlers.CapabilityLumenHandler;
 import coffee.amo.astromancy.core.util.AstromancyKeys;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -12,6 +14,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -21,6 +26,7 @@ public class LumenStackHandler implements ILumenHandler, INBTSerializable<Compou
     private Consumer<LumenStack> updateCallback;
     private Predicate<LumenStack> validator;
     private LumenStack lumenStack = new LumenStack();
+    private List<LumenStack> lumenStacks = new ArrayList<>();
 
     public LumenStackHandler(int capacity, Consumer<LumenStack> updateCallback, Predicate<LumenStack> validator) {
         this.capacity = capacity;
@@ -88,7 +94,12 @@ public class LumenStackHandler implements ILumenHandler, INBTSerializable<Compou
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt(AstromancyKeys.KEY_LUMEN_CAPACITY, capacity);
-        tag.put(AstromancyKeys.KEY_LUMEN_STACK, lumenStack.serializeNBT());
+        //tag.put(AstromancyKeys.KEY_LUMEN_STACK, lumenStack.serializeNBT());
+        ListTag list = new ListTag();
+        for (LumenStack stack : lumenStacks) {
+            list.add(stack.serializeNBT());
+        }
+        tag.put(AstromancyKeys.KEY_LUMEN_LIST, list);
         return tag;
     }
 
@@ -97,6 +108,13 @@ public class LumenStackHandler implements ILumenHandler, INBTSerializable<Compou
         if(nbt != null){
             capacity = nbt.getInt(AstromancyKeys.KEY_LUMEN_CAPACITY);
             lumenStack.deserializeNBT(nbt.getCompound(AstromancyKeys.KEY_LUMEN_STACK));
+            lumenStacks.clear();
+            ListTag list = nbt.getList(AstromancyKeys.KEY_LUMEN_LIST, Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                LumenStack stack = new LumenStack();
+                stack.deserializeNBT(list.getCompound(i));
+                lumenStacks.add(stack);
+            }
         } else {
             capacity = 0;
             setEmpty();
@@ -128,6 +146,15 @@ public class LumenStackHandler implements ILumenHandler, INBTSerializable<Compou
     public int fill(LumenStack resource, boolean simulate) {
         if(resource.isEmpty() || !isLumenValid(resource)) return 0;
         if(!resource.isEmpty() && !lumenStack.isEmpty() && !lumenStack.isSameLumen(resource)) return 0;
+        if(!resource.isEmpty()){
+            boolean found = false;
+            for(LumenStack stack: lumenStacks){
+                if(!stack.isEmpty() && stack.isSameLumen(resource)) found = true;
+            }
+            if(!found){
+                return 0;
+            }
+        }
 
         int filled = Math.min(getSpace(), resource.getAmount());
         if(!simulate){

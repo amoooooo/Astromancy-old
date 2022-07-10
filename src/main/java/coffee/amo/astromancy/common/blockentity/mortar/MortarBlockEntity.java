@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.common.blockentity.mortar;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.item.PestleItem;
 import coffee.amo.astromancy.common.recipe.MortarRecipe;
 import coffee.amo.astromancy.core.helpers.BlockHelper;
@@ -91,7 +92,7 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
             inventory.setItem(i, entity.inventory.extractItem(i, 1, false));
         }
         Optional<MortarRecipe> match = level.getRecipeManager().getRecipeFor(MortarRecipe.Type.INSTANCE, inventory, level);
-        System.out.println(match);
+        Astromancy.LOGGER.info(match);
 
         if(match.isPresent()) {
             for(int i = 0; i < entity.inventory.nonEmptyItemAmount; i++){

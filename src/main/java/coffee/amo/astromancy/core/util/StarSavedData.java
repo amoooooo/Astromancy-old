@@ -41,7 +41,7 @@ public class StarSavedData extends SavedData {
         sun.setName("The Sun");
         constellationInstanceList.get(8).addStar(sun, 10, 10);
         constellationInstanceList.forEach(c -> {
-            System.out.println(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
+            Astromancy.LOGGER.info(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
             Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
     }

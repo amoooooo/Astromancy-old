@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.packets;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,7 +32,7 @@ public static void handle(ResearchClearPacket packet, Supplier<NetworkEvent.Cont
                 return;
             }
             ClientResearchHolder.research.clear();
-            System.out.println("Cleared star data");
+            Astromancy.LOGGER.info("Cleared star data");
         });
         contextSupplier.get().setPacketHandled(true);
     }

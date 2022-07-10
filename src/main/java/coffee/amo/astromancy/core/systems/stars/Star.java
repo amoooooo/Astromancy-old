@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.systems.stars;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.systems.lumen.Lumen;
 import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.systems.stars.types.StarType;
@@ -46,14 +47,14 @@ public class Star {
             lumenStrength -= lumenStrengthRandom;
         }
         this.lumen.put(Lumen.LIST.getRandom(RandomSource.create()).get(), lumenStrength);
-        System.out.println("Created star with spectral intensity " + spectralIntensity);
+        Astromancy.LOGGER.info("Created star with spectral intensity " + spectralIntensity);
     }
 
     public Star(int spectralIntensity, boolean a){
         this.spectralIntensity = spectralIntensity;
         this.classification = StarClass.getStarClassFromIntensity(spectralIntensity);
         if(a){
-           System.out.println("how");
+           Astromancy.LOGGER.info("how");
         }
     }
 

@@ -35,7 +35,7 @@ public class ResearchRegistry {
     public static void register(){
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         RESEARCH.register(bus);
-        System.out.println("REGISTERING" + RESEARCH.getEntries().stream().map(RegistryObject::getId).toList());
+        Astromancy.LOGGER.info("REGISTERING" + RESEARCH.getEntries().stream().map(RegistryObject::getId).toList());
     }
 
     public static void doSetup(){

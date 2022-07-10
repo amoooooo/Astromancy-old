@@ -77,11 +77,11 @@ public class ArmillarySphereCoreBlockEntity extends MultiblockCoreEntity {
         super.tick();
         if (toggled) {
             ticksActive++;
-            //System.out.println(ticksActive);
+            //Astromancy.LOGGER.info(ticksActive);
             if (ticksActive >= 300) {
                 toggled = false;
                 ticksActive = 0;
-                //System.out.println(toggled);
+                //Astromancy.LOGGER.info(toggled);
                 if (!level.isClientSide) {
                     star = StarUtils.generateStar(level);
                     AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() ->

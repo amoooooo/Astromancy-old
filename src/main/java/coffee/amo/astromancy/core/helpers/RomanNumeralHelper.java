@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.helpers;
 
+import coffee.amo.astromancy.Astromancy;
 import net.minecraft.Util;
 
 import java.util.TreeMap;
@@ -25,7 +26,7 @@ public class RomanNumeralHelper {
     });
 
     public final static String toRoman(int number){
-        System.out.println("Attempting to convert: " + number + " to roman numerals");
+        Astromancy.LOGGER.info("Attempting to convert: " + number + " to roman numerals");
         int l = map.floorKey(number);
         if (number == l) {
             return map.get(number);
