@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -79,7 +78,7 @@ public class LevelRendererMixin {
                         bufferbuilder.vertex(matrix4f, pos.getFirst() - k, offset, pos.getSecond() + k).uv(0.0f, 1.0f).endVertex();
                         BufferUploader.drawWithShader(bufferbuilder.end());
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                        drawLine(matrix4f, bufferbuilder, pos, constellationInstance.getConstellation().getPoints()[i % constellationInstance.getConstellation().getPoints().length], k);
+                        drawLine(matrix4f, bufferbuilder, pos, constellationInstance.getConstellation().getPoints()[i % constellationInstance.getConstellation().getPoints().length]);
                     }
                 }
             }
@@ -87,17 +86,16 @@ public class LevelRendererMixin {
         }
     }
 
-    private void drawLine(Matrix4f matrix4f, BufferBuilder bufferbuilder, Pair<Float, Float> star1, Pair<Float, Float> star2, float size) {
-        size *= 4f;
+    private static void drawLine(Matrix4f matrix4f, BufferBuilder bufferbuilder, Pair<Float, Float> star1, Pair<Float, Float> star2) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/constellations/line.png"));
         RenderSystem.setShaderColor(0.7f, 0.7f, 0.7f, 1.0F);
         RenderSystem.disableCull();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f, star2.getFirst() + size, 100f, star2.getSecond() - size).uv(0.0F, 1.0F).endVertex();
-        bufferbuilder.vertex(matrix4f, star2.getFirst() + size, 100f, star2.getSecond() + size).uv(1.0F, 1.0F).endVertex();
-        bufferbuilder.vertex(matrix4f, star1.getFirst() + size, 100f, star1.getSecond() - size).uv(1.0F, 0.0f).endVertex();
-        bufferbuilder.vertex(matrix4f, star1.getFirst() + size, 100f, star1.getSecond() + size).uv(0.0f, 0.0f).endVertex();
+        bufferbuilder.vertex(matrix4f, star1.getFirst(), 100f, star2.getSecond()).uv(0.0F, 1.0F).endVertex();
+        bufferbuilder.vertex(matrix4f, star2.getFirst(), 100f, star2.getSecond()).uv(1.0F, 1.0F).endVertex();
+        bufferbuilder.vertex(matrix4f, star2.getFirst(), 100f, star1.getSecond()).uv(1.0F, 0.0f).endVertex();
+        bufferbuilder.vertex(matrix4f, star1.getFirst(), 100f, star1.getSecond()).uv(0.0f, 0.0f).endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableCull();
