@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
+import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -35,6 +37,7 @@ public class StarSavedData extends SavedData {
             constellationInstanceList.get(i.get()).setAttunedGlyph(glyph);
             constellationInstanceList.get(i.get()).setOffset(random.nextFloat(360));
             constellationInstanceList.get(i.get()).setDaysVisible(random.nextInt(6) + 1);
+            constellationInstanceList.get(i.get()).setNoise(new SimplexNoise(new XoroshiroRandomSource((long) (constellationInstanceList.get(i.get()).getOffset() * 100f))));
             i.getAndIncrement();
         });
         Star sun = new Star(5200);

@@ -4,6 +4,8 @@ import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
+import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ public class ConstellationInstance {
     private Glyph attunedGlyph;
     float offset;
     int daysVisible;
+    SimplexNoise noise;
     private Map<Integer, Map<Integer, Star>> starMap = new HashMap<>();
 
     public ConstellationInstance(Constellations constellation) {
@@ -56,6 +59,14 @@ public class ConstellationInstance {
 
     public void setOffset(float offset) {
         this.offset = offset;
+    }
+
+    public SimplexNoise getNoise() {
+        return noise;
+    }
+
+    public void setNoise(SimplexNoise noise) {
+        this.noise = noise;
     }
 
     public float getOffset() {
@@ -104,6 +115,7 @@ public class ConstellationInstance {
         constellationInstance.setAttunedGlyph(Glyph.values()[tag.getInt("Glyph")]);
         constellationInstance.setOffset(tag.getFloat("offset"));
         constellationInstance.setDaysVisible(tag.getInt("daysVisible"));
+        constellationInstance.setNoise(new SimplexNoise(new XoroshiroRandomSource((long) (constellationInstance.getOffset() * 100f))));
         return constellationInstance;
     }
 

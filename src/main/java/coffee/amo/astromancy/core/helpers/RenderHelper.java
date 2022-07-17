@@ -6,11 +6,13 @@ import coffee.amo.astromancy.core.systems.stars.classification.StarColors;
 import coffee.amo.astromancy.core.systems.stars.types.StarType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -222,5 +224,45 @@ public class RenderHelper {
             default -> color;
         };
         return color;
+    }
+
+    private static void drawHorizontalLineBetween(MultiBufferSource buffer, PoseStack mstack, Vec3 local, Vec3 target, float lineWidth, int r, int g, int b, int a) {
+        VertexConsumer builder = buffer.getBuffer(RenderType.leash());
+
+        //Calculate yaw
+        float rotY = (float) Mth.atan2(target.x - local.x, target.z - local.z);
+
+        //Calculate pitch
+        double distX = target.x - local.x;
+        double distZ = target.z - local.z;
+        float rotX = (float) Mth.atan2(target.y - local.y, Mth.sqrt((float) (distX * distX + distZ * distZ)));
+
+        mstack.pushPose();
+
+        //Translate to start point
+        mstack.translate(local.x, local.y, local.z);
+        //Rotate to point towards end point
+        mstack.mulPose(Vector3f.YP.rotation(rotY));
+        mstack.mulPose(Vector3f.XN.rotation(rotX));
+
+        //Calculate distance between points -> length of the line
+        float distance = (float) local.distanceTo(target);
+
+        Matrix4f matrix = mstack.last().pose();
+        float halfWidth = lineWidth / 2F;
+
+        //Draw horizontal quad
+        builder.vertex(matrix, -halfWidth, 0, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, halfWidth, 0, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, halfWidth, 0, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, -halfWidth, 0, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+
+        //Draw vertical Quad
+        builder.vertex(matrix, 0, -halfWidth, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, halfWidth, 0).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+        builder.vertex(matrix, 0, -halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
+
+        mstack.popPose();
     }
 }

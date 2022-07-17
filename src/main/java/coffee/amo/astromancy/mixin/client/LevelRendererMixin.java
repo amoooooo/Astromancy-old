@@ -5,19 +5,22 @@ import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
+import net.minecraft.world.level.levelgen.synth.PerlinNoise;
+import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,9 +38,12 @@ public class LevelRendererMixin {
     @Nullable
     private ClientLevel level;
 
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+    private Matrix4f pose;
+
+    @Inject(at = @At(value = "HEAD"), method = "renderSky")
+    public void capturePose(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_, CallbackInfo ci) {
+        this.pose = p_202424_.last().pose();
+    }
 
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V", ordinal = 4, shift = At.Shift.AFTER), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
     public void renderConstellations(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_, CallbackInfo ci, FogType fogtype, Vec3 vec3, float f, float f1, float f2, BufferBuilder bufferbuilder, ShaderInstance shaderinstance, float[] afloat, float f11) {
@@ -46,58 +52,43 @@ public class LevelRendererMixin {
         if (starBrightness > 0.0F) {
             p_202424_.pushPose();
             for (ConstellationInstance constellationInstance : ClientConstellationHolder.getConstellationInstances()) {
-                if (Math.round((level.getGameTime() / 24000f) + 1) % constellationInstance.getDaysVisible() > 0) {
+                SimplexNoise noise = constellationInstance.getNoise();
+                if(Math.round((level.getGameTime() / 24000f)+1) % constellationInstance.getDaysVisible() == 0){
                     float dayScale = this.level.getTimeOfDay(p_202426_) * 0.8f;
-                    float rotFactorZ = (dayScale * constellationInstance.getOffset()) + 25f % 360;
-                    float rotFactorX = (dayScale * -constellationInstance.getOffset()) + 174 % 360;
-                    float rotFactorY = (dayScale * constellationInstance.getOffset()) + 248 % 360;
+                    float rotFactorZ = (dayScale * constellationInstance.getOffset())+25f %360;
+                    float rotFactorX = (dayScale * -constellationInstance.getOffset())+174 %360;
+                    float rotFactorY = (dayScale * constellationInstance.getOffset())+248 %360;
                     p_202424_.mulPose(Vector3f.ZN.rotationDegrees(rotFactorZ));
                     p_202424_.mulPose(Vector3f.XP.rotationDegrees(rotFactorX));
                     p_202424_.mulPose(Vector3f.YN.rotationDegrees(rotFactorY));
-                    float offset = 20f;
-                    RenderSystem.setShaderColor(starBrightness, starBrightness, starBrightness, 1.0F);
+                    float offset = 100f;
+                    var v4f = new Vector4f(new Vector3f(0f, offset, 0f));
+                    v4f.transform(this.pose);
+                    var untransformedVector = new Vector3f(v4f.x(), v4f.y(), v4f.z());
+                    var vector4f = new Vector4f(untransformedVector);
+                    vector4f.transform(p_202424_.last().pose());
+                    //var transformedVector = new Vector3f(vector4f.x(), vector4f.y(), vector4f.z());
+                    //transformedVector.normalize();
+                    untransformedVector.normalize();
+                    float rotMult = 1f;
+                    float testMult = (float) Math.max(0.25f,Math.sin(Minecraft.getInstance().level.getGameTime() + (constellationInstance.getOffset()*10) / 100f));
+                    testMult *= Minecraft.getInstance().level.random.nextFloat() > 0.9f ? 0.95f : 1f;
+
+                    RenderSystem.setShaderColor(starBrightness * rotMult, starBrightness * rotMult, starBrightness* rotMult, 1.0F);
                     Matrix4f matrix4f = p_202424_.last().pose();
-                    for (int i = 0; i < constellationInstance.getConstellation().getPoints().length; i++) {
-                        float k = 0.4f;
-                        Pair<Float, Float> pos = constellationInstance.getConstellation().getPoints()[i];
-                        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                        if(i % 3 == 0)
-                            RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/constellations/star_big.png"));
-                        else if(i % 3 == 1)
-                            RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/constellations/star_med.png"));
-                        else
-                            RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/constellations/star_small.png"));
-                        k *= Math.max(Math.abs(Math.cos(minecraft.level.getGameTime() / 12000f)), 0.85f);
-                        float alphaMod = Math.max(0.1f,(float)Math.sin((minecraft.level.getGameTime() / (float)(i+1%2))/30) + 0.2f);
-                        float flickerBrightness = (starBrightness * Math.max(1-minecraft.getDeltaFrameTime(), 0.9F));
-                        RenderSystem.setShaderColor(starBrightness * alphaMod, starBrightness *  alphaMod, starBrightness *  alphaMod, 1.0F);
-                        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-                        bufferbuilder.vertex(matrix4f, pos.getFirst() - k, offset, pos.getSecond() - k).uv(0.0f, 0.0f).endVertex();
-                        bufferbuilder.vertex(matrix4f, pos.getFirst() + k, offset, pos.getSecond() - k).uv(1.0f, 0.0f).endVertex();
-                        bufferbuilder.vertex(matrix4f, pos.getFirst() + k, offset, pos.getSecond() + k).uv(1.0f, 1.0f).endVertex();
-                        bufferbuilder.vertex(matrix4f, pos.getFirst() - k, offset, pos.getSecond() + k).uv(0.0f, 1.0f).endVertex();
-                        BufferUploader.drawWithShader(bufferbuilder.end());
-                        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                        drawLine(matrix4f, bufferbuilder, pos, constellationInstance.getConstellation().getPoints()[i % constellationInstance.getConstellation().getPoints().length]);
-                    }
+                    float k = 20f;
+                    RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+                    RenderSystem.setShaderTexture(0, constellationInstance.getConstellation().getIcon());
+                    bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                    bufferbuilder.vertex(matrix4f, -k, offset, -k).uv(0.0F, 0.0F).color(1f,1f,1f, (float)noise.getValue(1 + Minecraft.getInstance().level.getGameTime()/5000f,1,Minecraft.getInstance().level.getGameTime()/5000f)).endVertex();
+                    bufferbuilder.vertex(matrix4f, k, offset, -k).uv(1.0F, 0.0F).color(1,1,1, (float)noise.getValue(128,128 + Minecraft.getInstance().level.getGameTime()/5000f,Minecraft.getInstance().level.getGameTime()/5000f)).endVertex();
+                    bufferbuilder.vertex(matrix4f, k, offset, k).uv(1.0F, 1.0F).color(1,1,1, (float)noise.getValue(256 + Minecraft.getInstance().level.getGameTime()/5000f,256,Minecraft.getInstance().level.getGameTime()/5000f)).endVertex();
+                    bufferbuilder.vertex(matrix4f, -k, offset, k).uv(0.0F, 1.0F).color(1,1,1, (float)noise.getValue(512,512 + Minecraft.getInstance().level.getGameTime()/5000f,Minecraft.getInstance().level.getGameTime()/5000f)).endVertex();
+                    BufferUploader.drawWithShader(bufferbuilder.end());
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 }
             }
             p_202424_.popPose();
         }
-    }
-
-    private static void drawLine(Matrix4f matrix4f, BufferBuilder bufferbuilder, Pair<Float, Float> star1, Pair<Float, Float> star2) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/constellations/line.png"));
-        RenderSystem.setShaderColor(0.7f, 0.7f, 0.7f, 1.0F);
-        RenderSystem.disableCull();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f, star1.getFirst(), 100f, star2.getSecond()).uv(0.0F, 1.0F).endVertex();
-        bufferbuilder.vertex(matrix4f, star2.getFirst(), 100f, star2.getSecond()).uv(1.0F, 1.0F).endVertex();
-        bufferbuilder.vertex(matrix4f, star2.getFirst(), 100f, star1.getSecond()).uv(1.0F, 0.0f).endVertex();
-        bufferbuilder.vertex(matrix4f, star1.getFirst(), 100f, star1.getSecond()).uv(0.0f, 0.0f).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableCull();
     }
 }
