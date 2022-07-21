@@ -15,12 +15,11 @@ import java.util.stream.Stream;
 
 public class MortarBlock<T extends MortarBlockEntity> extends AstromancyEntityBlock<T> {
     public VoxelShape SHAPE = Stream.of(
-            Block.box(7.5, 0.5, 6, 8.5, 4.5, 7),
-            Block.box(6, 0, 6, 10, 1, 10),
-            Block.box(5, 1, 6, 6, 3, 10),
-            Block.box(10, 1, 6, 11, 3, 10),
-            Block.box(6, 1, 10, 10, 3, 11),
-            Block.box(6, 1, 5, 10, 3, 6)
+            Block.box(12, 1, 3, 13, 5, 13),
+            Block.box(4, 0, 4, 12, 2, 12),
+            Block.box(4, 1, 12, 12, 5, 13),
+            Block.box(3, 1, 3, 4, 5, 13),
+            Block.box(4, 1, 3, 12, 5, 4)
     ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     public MortarBlock(Properties properties) {
         super(properties);

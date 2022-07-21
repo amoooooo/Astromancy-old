@@ -20,8 +20,8 @@ public class GlyphHelper {
 
     public static GlyphEntry getEntry(ResourceKey<Level> levelKey, ItemStack item) {
         List<CompoundInstance> finalResults = new ArrayList<>(getResults(levelKey).dataFor(item.getItem().getDefaultInstance()));
-        if (item.hasContainerItem() && !item.getContainerItem().equals(item)){
-            Set<CompoundInstance> containerValues = getResults(levelKey).dataFor(item.getContainerItem());
+        if (item.hasCraftingRemainingItem() && !item.getCraftingRemainingItem().equals(item)){
+            Set<CompoundInstance> containerValues = getResults(levelKey).dataFor(item.getCraftingRemainingItem());
             for(CompoundInstance containerValue : containerValues) {
                 Optional<CompoundInstance> existingValue = finalResults.stream().filter(c -> c.getType().equals(containerValue.getType())).findFirst();
                 if (existingValue.isPresent()) {

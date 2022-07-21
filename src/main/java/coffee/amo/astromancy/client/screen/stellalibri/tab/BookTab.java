@@ -74,17 +74,17 @@ public class BookTab {
     public void render(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks, boolean selected) {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
-        if(isHovering && hoverAmount < 1) hoverAmount += Minecraft.getInstance().getDeltaFrameTime() / 4;
+        if(isHovering && hoverAmount < 1.5f) hoverAmount += Minecraft.getInstance().getDeltaFrameTime() / 4;
         else if (!isHovering && hoverAmount > 0) hoverAmount -= Minecraft.getInstance().getDeltaFrameTime() / 4;
-        hoverAmount = Mth.clamp(hoverAmount, 0, 1);
+        hoverAmount = Mth.clamp(hoverAmount, 0, 1.5f);
         posX -= hoverAmount * 12;
         float mult = 1;
         if(selected) mult = 1.35f;
         RenderSystem.setShaderColor((tabColor.getRed()/255f) * mult, (tabColor.getGreen()/255f)* mult, (tabColor.getBlue()/255f)* mult, 1);
-        renderTransparentTexture(BookTextures.FRAME_TEXTURE, poseStack, posX - 8, posY, 156, 232, 58, 24, 256, 256);
+        renderTransparentTexture(BookTextures.TAB, poseStack, posX, posY, 0, 0, 58, 24, 58, 24);
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        minecraft.getItemRenderer().renderAndDecorateItem(iconStack, posX + 6, posY + 4);
+        minecraft.getItemRenderer().renderAndDecorateItem(iconStack, posX + 5, posY + 4);
         poseStack.popPose();
     }
 

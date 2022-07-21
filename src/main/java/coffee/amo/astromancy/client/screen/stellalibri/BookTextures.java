@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
 public class BookTextures {
-    public static final ResourceLocation FRAME_TEXTURE = Astromancy.astromancy("textures/gui/book/frame.png");
+    public static final ResourceLocation TAB = Astromancy.astromancy("textures/gui/book/tab.png");
     public static final ResourceLocation OUTSIDE_LOC = Astromancy.astromancy("textures/gui/book/bg-scaled.png");
     public static final ResourceLocation BACKGROUND_TEXTURE = Astromancy.astromancy("textures/gui/book/bg.png");
     public static final ResourceLocation VERTICAL_LINE = Astromancy.astromancy("textures/gui/book/lines/vertical.png");

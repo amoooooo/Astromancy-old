@@ -12,6 +12,10 @@
   "item.astromancy.research_note": "Research Note",
   "item.astromancy.stellarite_dust": "Powdered Stellarite",
   "block.astromancy.stellarite": "Stellarite",
+  "item.astromancy.vellum": "Vellum Sheet",
+  "item.astromancy.feather_quill": "Feather Quill",
+  "block.astromancy.mortar": "Mortar & Pestle",
+  "block.astromancy.astrolabe": "Astrolabe",
 
   "__book__": "",
   "item.astromancy.stella_libri": "Stella Libri",
@@ -64,8 +68,7 @@
     "astromancy.gui.book.entry.page.text.solar_eclipse.a": "Okay. Something is going on. I have never seen an event like this before. First, a star fell. Now, the Sun is blocked out. What is going on?!",
 
 
-    "offset.max": "\uF820%s\uF800",
-
+  "offset.max": "\uF820%s\uF800",
   "offset.8192": "\uF83F\uF83F\uF83F\uF83F\uF83F\uF83F\uF83F\uF82F%s\uF81F\uF81F\uF81F\uF81F\uF81F\uF81F\uF81F\uF80F",
   "offset.7168": "\uF83F\uF83F\uF83F\uF83F\uF83F\uF83F\uF82F%s\uF81F\uF81F\uF81F\uF81F\uF81F\uF81F\uF80F",
   "offset.6144": "\uF83F\uF83F\uF83F\uF83F\uF83F\uF82F%s\uF81F\uF81F\uF81F\uF81F\uF81F\uF80F",
@@ -73,7 +76,6 @@
   "offset.4096": "\uF83F\uF83F\uF83F\uF82F%s\uF81F\uF81F\uF81F\uF80F",
   "offset.3072": "\uF83F\uF83F\uF82F%s\uF81F\uF81F\uF80F",
   "offset.2048": "\uF83F\uF82F%s\uF81F\uF80F",
-
   "offset.1024": "\uF82F%s\uF80F",
   "offset.1023": "\uF83E\uF83D\uF83C\uF83B\uF83A\uF839\uF838\uF827%s\uF81E\uF81D\uF81C\uF81B\uF81A\uF819\uF818\uF807",
   "offset.1022": "\uF83E\uF83D\uF83C\uF83B\uF83A\uF839\uF838\uF826%s\uF81E\uF81D\uF81C\uF81B\uF81A\uF819\uF818\uF806",

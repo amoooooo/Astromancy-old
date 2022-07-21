@@ -119,7 +119,7 @@ public class GlyphPhial extends Item {
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        GlyphStackHandler.Provider provider = new GlyphStackHandler.Provider(16, stack);
+        GlyphStackHandler.Provider provider = new GlyphStackHandler.Provider(8, stack);
         provider.readFromItemStack(stack);
         return provider;
     }
@@ -127,7 +127,7 @@ public class GlyphPhial extends Item {
     public void fillItemCategory(@Nonnull CreativeModeTab pCategory, @Nonnull NonNullList<ItemStack> pItems) {
         if (allowedIn(pCategory)) {
             for(Glyph glyph : Glyph.values())
-                pItems.add(createForGlyph(new GlyphStack(glyph, glyph == Glyph.EMPTY ? 0 : 16)));
+                pItems.add(createForGlyph(new GlyphStack(glyph, glyph == Glyph.EMPTY ? 0 : 8)));
         }
     }
 
@@ -135,7 +135,7 @@ public class GlyphPhial extends Item {
         ItemStack stack = new ItemStack(ItemRegistry.GLYPH_PHIAL.get());
         stack.getCapability(CapabilityGlyphHandler.GLYPH_HANDLER_CAPABILITY).ifPresent(handler -> {
             if(handler instanceof GlyphStackHandler ash) {
-                ash.setCapacity(16);
+                ash.setCapacity(8);
                 ash.setGlyphStack(pInstance);
                 stack.getOrCreateTag().put(AstromancyKeys.KEY_GLYPH_TAG, ash.serializeNBT());
             }

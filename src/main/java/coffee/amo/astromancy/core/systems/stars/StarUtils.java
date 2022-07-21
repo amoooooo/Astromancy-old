@@ -1,9 +1,12 @@
 package coffee.amo.astromancy.core.systems.stars;
 
+import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
+import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
+import coffee.amo.astromancy.core.systems.stars.classification.SpectralIntensityBand;
+import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;
-import coffee.amo.astromancy.core.systems.stars.classification.*;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.random.WeightedRandomList;

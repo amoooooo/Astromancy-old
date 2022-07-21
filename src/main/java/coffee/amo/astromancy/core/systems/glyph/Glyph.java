@@ -59,4 +59,15 @@ public enum Glyph {
                     .getInt(AstromancyKeys.KEY_GLYPH_TYPE));
         return EMPTY;
     }
+
+    public static Glyph fromBlockItemStack(ItemStack stack) {
+        if(stack.getOrCreateTag().contains("BlockEntityTag")){
+            return get(stack.getOrCreateTag()
+                    .getCompound("BlockEntityTag")
+                    .getCompound(AstromancyKeys.KEY_GLYPH_TAG)
+                    .getCompound(AstromancyKeys.KEY_GLYPH_STACK)
+                    .getInt(AstromancyKeys.KEY_GLYPH_TYPE));
+        }
+        return EMPTY;
+    }
 }

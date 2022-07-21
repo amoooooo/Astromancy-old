@@ -25,7 +25,7 @@ import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.isHover
 import static coffee.amo.astromancy.client.screen.stellalibri.BookScreen.renderTexture;
 
 public class EntryScreen extends Screen {
-    public static final ResourceLocation BOOK_TEXTURE = Astromancy.astromancy("textures/gui/book/entry.png");
+    public static final ResourceLocation BOOK_TEXTURE = Astromancy.astromancy("textures/gui/book/pages/entry.png");
     public static final ResourceLocation UNREAD_TEXTURE = Astromancy.astromancy("textures/gui/book/pages/unread.png");
 
     public static EntryScreen screen;

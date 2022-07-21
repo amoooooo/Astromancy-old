@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.core.systems.stars.classification;
 
-import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.stars.Star;
+import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;

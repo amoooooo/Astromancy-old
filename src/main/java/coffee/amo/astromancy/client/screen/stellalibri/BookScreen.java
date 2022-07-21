@@ -70,7 +70,7 @@ public class BookScreen extends Screen {
     public int bookWidth = 448;
     public int bookHeight = 260;
     public int bookInsideWidth = 416;
-    public int bookInsideHeight = 226;
+    public int bookInsideHeight = 256;
     public float xOffset;
     public float staticxOffset;
     public float staticyOffset;
@@ -113,6 +113,7 @@ public class BookScreen extends Screen {
                 });
                 ENTRIES.add(be);
             });
+            System.out.println("REGISTERING RESEARCH: " + object.identifier);
         }
     }
 
@@ -132,6 +133,9 @@ public class BookScreen extends Screen {
             tab.iconStack = object.icon;
             object.children.forEach(child -> {
                 OBJECTS.stream().filter(s -> s.identifier.equals(child.identifier)).findFirst().ifPresent(tab::addEntry);
+                OBJECTS.stream().filter(s -> s.identifier.equals(child.identifier)).findFirst().ifPresent(s -> {
+                    System.out.println("REGISTERING TAB: " + tab.identifier + " with entry: " + s.identifier);
+                });
             });
             TABS.add(tab);
         }
@@ -381,7 +385,6 @@ public class BookScreen extends Screen {
         int width = 40;
         int height = 48;
         for (BookEntry entry : ENTRIES) {
-
             OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.children, entry.xOffset, entry.yOffset, entry.research));
         }
         for (BookObject object : OBJECTS) {
@@ -461,7 +464,7 @@ public class BookScreen extends Screen {
             return super.mouseReleased(mouseX, mouseY, button);
         }
         for (BookObject object : OBJECTS) {
-            if(object.research.type.equals("fleeting") && !(object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) break;
+            if(object.research.type.equals("fleeting") && !(object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) continue;
             if(tab.entries.contains(object) && (object.research.locked.equals(ResearchProgress.IN_PROGRESS) || object.research.locked.equals(ResearchProgress.COMPLETED))) {
                 if (object.isHovering(xOffset, yOffset, mouseX, mouseY)) {
                     object.click(xOffset, yOffset, mouseX, mouseY);
@@ -508,7 +511,6 @@ public class BookScreen extends Screen {
                     object.isHovering = isHovering;
                     object.hover = isHovering ? Math.min(object.hover++, object.hoverCap()) : Math.max(object.hover--, 0);
                     object.render(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                    // TODO: render a basic line transparent texture FROM the child to the parent
                     if (!object.children.isEmpty() && (object.research.locked.equals(ResearchProgress.COMPLETED) || object.research.locked.equals(ResearchProgress.IN_PROGRESS))) {
                         object.children.forEach(c -> {
                             if(!c.isRendered){
@@ -581,7 +583,6 @@ public class BookScreen extends Screen {
             BookObject object = OBJECTS.get(i);
             if (ClientResearchHolder.contains(object.identifier)) {
                 object.lateRender(minecraft, stack, xOffset, yOffset, mouseX, mouseY, partialTicks);
-                // TODO: render a basic line transparent texture FROM the child to the parent
                 if (!object.children.isEmpty()) {
                     object.children.forEach(c -> {
                         if(!c.isRendered){
@@ -611,7 +612,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         int insideLeft = guiLeft + 16;
-        int insideTop = guiTop + 17;
+        int insideTop = guiTop + 4;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
@@ -630,7 +631,7 @@ public class BookScreen extends Screen {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         int insideLeft = guiLeft + 16;
-        int insideTop = guiTop + 17;
+        int insideTop = guiTop + 4;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {

@@ -59,15 +59,15 @@ public class AstromancyLevelEvents {
     public static boolean cometChanged;
 
     @SubscribeEvent
-    public static void checkSolarEclipse(TickEvent.WorldTickEvent event) {
-        if (event.world instanceof ServerLevel se) {
-            long time = event.world.getDayTime() % 24000;
+    public static void checkSolarEclipse(TickEvent.LevelTickEvent event) {
+        if (event.level instanceof ServerLevel se) {
+            long time = event.level.getDayTime() % 24000;
             boolean day = time == 22500;
             if (day && !setForDay) {
                 setForDay = true;
                 pity += 10;
             }
-            float chance = event.world.random.nextInt(51) + pity;
+            float chance = event.level.random.nextInt(51) + pity;
             if (day && chance == 50) {
                 Astromancy.LOGGER.info("Solar Eclipse!");
                 SolarEclipseHandler.setEnabled(se, true);
@@ -80,14 +80,14 @@ public class AstromancyLevelEvents {
 
     @SubscribeEvent
     public static void sendStars(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer() instanceof LocalPlayer) {
+        if (event.getEntity() instanceof LocalPlayer) {
             ClientResearchHolder.research.clear();
         }
         if (event.getEntity() instanceof ServerPlayer se) {
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get(event.getEntity().getServer()).getConstellationInstances()));
             ClientResearchHolder.research.clear();
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchClearPacket());
-            event.getPlayer().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
+            event.getEntity().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
                 CompoundTag tag = research.toNBT(new CompoundTag());
                 ListTag researchTag = (ListTag) tag.get("research");
                 if (!researchTag.isEmpty()) {
@@ -109,7 +109,7 @@ public class AstromancyLevelEvents {
     @SubscribeEvent
     public static void libriObtain(AdvancementEvent event) {
         if (event.getAdvancement().getId().equals(Astromancy.astromancy("stella_libri"))) {
-            if (event.getPlayer() instanceof ServerPlayer se) {
+            if (event.getEntity() instanceof ServerPlayer se) {
                 se.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY, null).ifPresent(research -> {
                     ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().forEach(s -> {
                         ResearchObject object = (ResearchObject) s;
@@ -184,8 +184,8 @@ public class AstromancyLevelEvents {
 
     @SubscribeEvent
     public static void wakeUp(PlayerWakeUpEvent event){
-        if(!event.getPlayer().level.isClientSide){
-            ServerPlayer player = (ServerPlayer) event.getPlayer();
+        if(!event.getEntity().level.isClientSide){
+            ServerPlayer player = (ServerPlayer) event.getEntity();
             player.getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {
                 Advancement adv = player.getLevel().getServer().getServerResources().managers().getAdvancements().getAdvancement(Astromancy.astromancy("stellarite"));
                 if(research.contains(player, "introduction") && player.getAdvancements().getOrStartProgress(adv).isDone()){

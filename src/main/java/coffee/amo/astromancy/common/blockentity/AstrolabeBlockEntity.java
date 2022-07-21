@@ -11,7 +11,6 @@ import coffee.amo.astromancy.core.systems.lumen.LumenStack;
 import coffee.amo.astromancy.core.systems.lumen.LumenStackHandler;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.util.AstromancyKeys;
-import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -25,8 +24,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class AstrolabeBlockEntity extends AstromancyBlockEntity {
     public boolean toggled = false;

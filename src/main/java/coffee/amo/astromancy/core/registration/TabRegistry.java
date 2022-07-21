@@ -15,13 +15,13 @@ public class TabRegistry {
     private static final DeferredRegister<ResearchTabObject> RESEARCH_TABS = DeferredRegister.create(ResearchTypeRegistry.tabLoc, Astromancy.MODID);
     public static final RegistryObject<ResearchTabObject> INTRODUCTION = RESEARCH_TABS.register("introduction",
             () -> new ResearchTabObject("introduction", 1, 1, BookTextures.INTRO_BACKGROUND, ItemRegistry.STELLA_LIBRI.get().getDefaultInstance())
-                    .setColor(new Color(168,231,237, 255)));
+                    .setColor(new Color(227,205,131, 255)));
     public static final RegistryObject<ResearchTabObject> ALCHEMY = RESEARCH_TABS.register("alchemy",
             () -> new ResearchTabObject("alchemy", 1, 2, Astromancy.astromancy("textures/gui/book/test/blue2.png"), ItemRegistry.CRUCIBLE.get().getDefaultInstance())
-                    .setColor(new Color(235,87,146, 255)));
+                    .setColor(new Color(242, 99, 118, 255)));
     public static final RegistryObject<ResearchTabObject> STARGAZING = RESEARCH_TABS.register("stargazing",
             () -> new ResearchTabObject("stargazing", 1, 3, Astromancy.astromancy("textures/gui/book/test/green_planets.png"), ItemRegistry.ARMILLARY_SPHERE.get().getDefaultInstance())
-                    .setColor(new Color(126,87,235, 255)));
+                    .setColor(new Color(174, 153, 232, 255)));
 
     public static void register() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

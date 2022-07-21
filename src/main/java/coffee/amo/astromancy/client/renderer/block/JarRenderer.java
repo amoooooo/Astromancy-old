@@ -97,7 +97,10 @@ public class JarRenderer implements BlockEntityRenderer<JarBlockEntity> {
         }
         ps.translate(-0.225f,-0.35f,-0.315f);
         VertexConsumer buff = pBufferSource.getBuffer(RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/block/label.png")));
-        RenderHelper.renderQuad(ps, 0.45f, 0.45f, buff, 0xFFFFFFFF);
+        ps.pushPose();
+        ps.translate(0.45f,0.45f,0);
+        RenderHelper.renderQuad(ps, -0.45f, -0.45f, buff, 0xFFFFFFFF);
+        ps.popPose();
         ps.translate(0,0,-0.0001f);
         ps.scale(0.05f, 0.05f, 0.05f);
         ps.mulPose(Vector3f.ZP.rotationDegrees(180));

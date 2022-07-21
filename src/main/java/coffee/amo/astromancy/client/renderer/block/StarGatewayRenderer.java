@@ -7,7 +7,6 @@ import coffee.amo.astromancy.core.helpers.RenderHelper;
 import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -30,9 +29,8 @@ public class StarGatewayRenderer implements BlockEntityRenderer<StarGatewayBlock
         ps.pushPose();
         ps.translate(0.07f, 1.01f, 0.07f);
         RenderHelper.renderInvertedCube(ps, pBufferSource, 4.85f, sunType);
-        VertexConsumer starBuff = pBufferSource.getBuffer(RenderType.solid());
-        ps.translate(2.5, 2.0, 2.5);
-        ps.scale(0.85f, 0.85f, 0.85f);
+        ps.translate(2.3, 1.9, 2.3);
+        ps.scale(0.8f, 0.8f, 0.8f);
         if (!ClientConstellationHolder.constellationInstances.isEmpty()) {
             for (ConstellationInstance cInst : ClientConstellationHolder.getConstellationInstances()) {
                 cInst.getStarMap().forEach((x, yMap) -> {

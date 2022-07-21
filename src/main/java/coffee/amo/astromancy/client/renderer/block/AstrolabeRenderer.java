@@ -23,19 +23,19 @@ public class AstrolabeRenderer implements BlockEntityRenderer<AstrolabeBlockEnti
     @Override
     public void render(AstrolabeBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
-        ps.translate(0, 1.5, 0);
+        ps.translate(0, 0.2, 0);
         if(pBlockEntity.star != null){
             RenderHelper.renderStar(ps, 0.3f, pBufferSource, pBlockEntity.star, pBlockEntity, pPartialTick, font, false);
         }
-        Minecraft.getInstance().getMainRenderTarget().enableStencil();
-        glEnable(GL_STENCIL_TEST);
-        RenderSystem.colorMask(false, false, false, false);
-        RenderSystem.depthMask(false);
-        RenderSystem.stencilFunc(GL_NEVER, 1, 0xFF);
-        RenderSystem.stencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);
-        RenderSystem.stencilMask(0xFF);
-        RenderSystem.clearStencil(0);
-        RenderSystem.clear(GL_STENCIL_BUFFER_BIT, true);
+//        Minecraft.getInstance().getMainRenderTarget().enableStencil();
+//        glEnable(GL_STENCIL_TEST);
+//        RenderSystem.colorMask(false, false, false, false);
+//        RenderSystem.depthMask(false);
+//        RenderSystem.stencilFunc(GL_NEVER, 1, 0xFF);
+//        RenderSystem.stencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);
+//        RenderSystem.stencilMask(0xFF);
+//        RenderSystem.clearStencil(0);
+//        RenderSystem.clear(GL_STENCIL_BUFFER_BIT, true);
         //ps.scale(1,1,0);
         ps.popPose();
     }

@@ -24,7 +24,7 @@ public class CientEventsForgeBus {
     public static void glyphTooltips(ItemTooltipEvent event){
         if(Screen.hasShiftDown()){
             if(!(event.getItemStack().getItem() instanceof GlyphPhial)){
-                Component symbols = GlyphHelper.getEntry(event.getPlayer().level.dimension(), event.getItemStack()).sort().getTooltip();
+                Component symbols = GlyphHelper.getEntry(event.getEntity().level.dimension(), event.getItemStack()).sort().getTooltip();
                 event.getToolTip().add(symbols);
             }
         }

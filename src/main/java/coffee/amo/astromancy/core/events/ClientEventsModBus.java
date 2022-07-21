@@ -26,7 +26,7 @@ public class ClientEventsModBus {
         event.getItemColors().register((stack, tintIndex) -> {
             if(stack.hasTag()){
                 if(tintIndex == 1){
-                    return Glyph.fromItemStack(stack).color().getRGB();
+                    return Glyph.fromBlockItemStack(stack).color().getRGB();
                 }
             }
             return 0xFFFFFF;

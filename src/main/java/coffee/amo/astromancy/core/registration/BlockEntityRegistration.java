@@ -29,7 +29,7 @@ public class BlockEntityRegistration {
 
 
 
-    public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Astromancy.MODID);
+    public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Astromancy.MODID);
     public static final RegistryObject<BlockEntityType<MultiblockComponentEntity>> MULTIBLOCK_COMPONENT = BLOCK_ENTITY_TYPES.register("multiblock_component", () -> BlockEntityType.Builder.of(MultiblockComponentEntity::new, getBlocks(IAstromancyMultiblockComponent.class)).build(null));
 
     public static final RegistryObject<BlockEntityType<ArmillarySphereCoreBlockEntity>> ARMILLARY_SPHERE = BLOCK_ENTITY_TYPES.register("armillary_sphere", () -> BlockEntityType.Builder.of(ArmillarySphereCoreBlockEntity::new, getBlocks(ArmillarySphereCoreBlock.class)).build(null));

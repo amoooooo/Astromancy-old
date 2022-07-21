@@ -35,9 +35,9 @@ public class AstromancyClient {
             return 0;
         });
         ItemProperties.register(ItemRegistry.JAR.get(), astromancy("jar_fill"), (pStack, pLevel, pEntity, pSeed) -> {
-            if(Glyph.fromItemStack(pStack) != Glyph.EMPTY){
+            if(Glyph.fromBlockItemStack(pStack) != Glyph.EMPTY){
                 if(pStack.getItem() instanceof JarItem){
-                    return ((CompoundTag)((CompoundTag)((CompoundTag)pStack.getTag().get("BlockEntityTag")).get("Glyph")).get("GlyphStack")).getInt("Amount") / 256.0f;
+                    return 1;
                 }
             }
             return 0;

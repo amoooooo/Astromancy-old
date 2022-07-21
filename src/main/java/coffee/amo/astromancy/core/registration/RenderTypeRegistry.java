@@ -34,7 +34,7 @@ public class RenderTypeRegistry {
             event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_astrolabe_starfield"), POSITION_COLOR_TEX), shaderInstance -> {
                 AstromancyRenderTypes.astrolabeStarfield = shaderInstance;
             });
-            event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_additive_texture"), POSITION_COLOR_TEX_LIGHTMAP), shaderInstance -> {
+            event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_additive_texture"), POSITION_COLOR_TEX), shaderInstance -> {
                 AstromancyRenderTypes.additiveTexture = shaderInstance;
             });
         }
@@ -65,7 +65,7 @@ public class RenderTypeRegistry {
                     .setLightmapState(LIGHTMAP)
                     .setOverlayState(NO_OVERLAY)
                     .createCompositeState(true);
-            return create("additive_texture", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
+            return create("additive_texture", DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
         }
 
         private static RenderType astrolabeStarfield(ResourceLocation texture) {

@@ -17,7 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = Astromancy.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContainerRegistry {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, Astromancy.MODID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Astromancy.MODID);
 
 //    public static final RegistryObject<MenuType<ResearchTableContainer>> RESEARCH_TABLE = CONTAINERS.register("research_table", () -> IForgeMenuType.create((int id, Inventory inv, FriendlyByteBuf extraData) -> { return new ResearchTableContainer(id, inv, extraData.readItem()); }));
 

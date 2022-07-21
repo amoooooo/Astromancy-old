@@ -1,3 +1,6 @@
 {
-    "parent": "astromancy:block/mortar"
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "astromancy:item/mortar_and_pestle"
+    }
 }

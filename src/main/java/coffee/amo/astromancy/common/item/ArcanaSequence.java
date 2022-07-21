@@ -16,9 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class ArcanaSequence extends Item {
     public ArcanaSequence(Properties pProperties) {

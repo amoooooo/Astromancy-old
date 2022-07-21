@@ -1,9 +1,10 @@
 package coffee.amo.astromancy.core.helpers;
 
+import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import coffee.amo.astromancy.core.systems.stars.classification.StarColors;
-import coffee.amo.astromancy.core.systems.stars.types.StarType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -124,16 +124,13 @@ public class RenderHelper {
             Vec3 offset = StarUtils.generatePosition(star, blockEntity.getLevel());
             ps.translate(offset.x / 2, (offset.y + (star.getRandomOffset() * 200)) / 1.75f + 0.05f, offset.z / 2);
         }
-        ps.translate((size) * multiplier, (size) * multiplier, (size) * multiplier);
-        //renderText(ps, star.getName(), buff, font);
-        //ps.mulPose(Vector3f.XP.rotationDegrees(fac));
+        ps.translate(0.5f, 0.5f, 0.5f);
         ps.mulPose(Vector3f.YP.rotationDegrees(fac));
         ps.mulPose(Vector3f.ZP.rotationDegrees(fac));
         ps.translate(-(size / 2) * multiplier, -(size / 2) * multiplier, -(size / 2) * multiplier);
-        RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderType.lightning(), getStarColor(star));
+        RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")), getStarColor(star));
         ps.translate((size / 5) * multiplier, (size / 5) * multiplier, (size / 5) * multiplier);
-        RenderHelper.renderInvertedCube(ps, buff, ((size / 7) * 4) * multiplier, RenderType.lightning(), getStarColor(star).brighter().brighter());
-        //renderDisc(ps, 0.1f,buff, RenderType.lightning(), pPartialTick);
+        RenderHelper.renderInvertedCube(ps, buff, ((size / 7) * 4) * multiplier, RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")), getStarColor(star).brighter().brighter());
         ps.popPose();
     }
 

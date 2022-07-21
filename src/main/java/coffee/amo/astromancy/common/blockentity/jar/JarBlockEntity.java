@@ -6,6 +6,7 @@ import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.registration.BlockEntityRegistration;
+import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.glyph.GlyphStack;
 import coffee.amo.astromancy.core.systems.glyph.GlyphStackHandler;
@@ -18,6 +19,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -67,99 +70,17 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public InteractionResult onUse(Player player, InteractionHand hand, BlockHitResult ray) {
         if(!level.isClientSide){
             ItemStack heldItem = player.getItemInHand(hand);
-            if(heldItem.getItem().equals(Items.PAPER) && !label){
+            if(heldItem.getItem().equals(ItemRegistry.VELLUM.get()) && !label){
                 label = true;
                 labelDirection = ray.getDirection();
                 heldItem.shrink(1);
                 setChanged();
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2|4|16);
+                level.playSound(null, getBlockPos(), SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1, 1);
                 return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;
-
-        /* idk what is all of this doing here
-        if(!level.isClientSide){
-            ItemStack heldItem = player.getItemInHand(hand);
-            if(heldItem.getItem().equals(Items.PAPER)){
-                if(!label){
-                    label = true;
-                    labelDirection = ray.getDirection();
-                    heldItem.shrink(1);
-                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-                            this.getBlockPos().getX(),
-                            this.getBlockPos().getY(),
-                            this.getBlockPos().getZ(),
-                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
-                }
-            }
-            if (heldItem.getItem() instanceof GlyphPhial && heldItem.hasTag()) {
-                if (count <= 240) {
-                    if (glyph == Glyph.fromNbt(heldItem.getTag()).getFirst() || glyph == Glyph.EMPTY) {
-                        heldItem.shrink(1);
-                        player.addItem(new ItemStack(ItemRegistry.Glyph_PHIAL.get(),1));
-                        BlockHelper.updateAndNotifyState(level, worldPosition);
-                        count = count == 0 ? Glyph.fromNbt(heldItem.getTag()).getSecond() : count + Glyph.fromNbt(heldItem.getTag()).getSecond();
-                        glyph = Glyph.fromNbt(heldItem.getTag()).getFirst();
-                        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-                                this.getBlockPos().getX(),
-                                this.getBlockPos().getY(),
-                                this.getBlockPos().getZ(),
-                                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
-                        return InteractionResult.SUCCESS;
-                    }
-                    return InteractionResult.PASS;
-                }
-                return InteractionResult.PASS;
-            }  else if (heldItem.getItem() instanceof GlyphPhial && !heldItem.hasTag() && this.glyph != Glyph.EMPTY && this.count > 0) {
-                CompoundTag tag = new CompoundTag();
-                tag.putInt("count", 16);
-                tag.putInt("glyph", glyph.ordinal());
-                ItemStack stack = new ItemStack(ItemRegistry.Glyph_PHIAL.get(), 1);
-                stack.getOrCreateTag().put("glyph", tag);
-                player.addItem(stack);
-                heldItem.shrink(1);
-                if (count - 16 <= 0) {
-                    this.count = 0;
-                    if(!label){
-                        this.glyph = Glyph.EMPTY;
-                    }
-                } else {
-                    this.count = count - 16;
-                }
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-                        this.getBlockPos().getX(),
-                        this.getBlockPos().getY(),
-                        this.getBlockPos().getZ(),
-                        128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
-                return InteractionResult.SUCCESS;
-            } else if (heldItem.getItem() == ItemRegistry.JAR.get() && heldItem.getTag() != null && !player.isCrouching()) {
-                if(count <= 256 && Glyph.values()[heldItem.getTag().getCompound("BlockEntityTag").getInt("glyph")] == glyph){
-                    CompoundTag tag = heldItem.getTag().getCompound("BlockEntityTag").copy();
-                    int jarCount = tag.getInt("count");
-                    int cachedJarCount = jarCount;
-                    jarCount = jarCount + count > 256 ? (jarCount + count) - 256 : 0;
-                    count = Math.min(cachedJarCount + count, 256);
-                    if(jarCount == 0){
-                        tag.putInt("count", 0);
-                        tag.putInt("glyph", 23);
-                        heldItem.getTag().put("BlockEntityTag", tag);
-                        player.setItemInHand(hand, heldItem);
-                    } else {
-                        tag.putInt("count", jarCount);
-                        heldItem.getTag().put("BlockEntityTag", tag);
-                    }
-                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-                            this.getBlockPos().getX(),
-                            this.getBlockPos().getY(),
-                            this.getBlockPos().getZ(),
-                            128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
-                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ItemSyncPacket(ItemRegistry.JAR.get().getDefaultInstance()));
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-        return InteractionResult.SUCCESS;*/
     }
 
     public Glyph getGlyph() {
@@ -205,7 +126,7 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     }
 
     public MutableComponent getGlyphComponent() {
-        return ((MutableComponent)Component.literal(""))
+        return (Component.literal(""))
                 .append(Component.literal("[").withStyle(s -> s.withFont(Astromancy.astromancy("glyph"))))
                 .append(Component.translatable("space.0").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
                 .append(Component.translatable("space.-1").withStyle(s -> s.withFont(Astromancy.astromancy("negative_space"))))
@@ -232,15 +153,11 @@ public class JarBlockEntity extends AstromancyBlockEntity {
     public void popLabel(){
         label = false;
         labelDirection = Direction.values()[5];
-        ItemEntity e = new ItemEntity(this.level, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, Items.PAPER.getDefaultInstance());
+        ItemEntity e = new ItemEntity(this.level, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, ItemRegistry.VELLUM.get().getDefaultInstance());
         level.addFreshEntity(e);
         setChanged();
+        level.playSound(null, getBlockPos(), SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1, 1.7f);
         level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2|4|16);
-//        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(
-//                this.getBlockPos().getX(),
-//                this.getBlockPos().getY(),
-//                this.getBlockPos().getZ(),
-//                128, this.level.dimension())), new JarUpdatePacket(this.getBlockPos(), count, glyph.ordinal(), label, labelDirection.ordinal()));
     }
 
     @Nonnull

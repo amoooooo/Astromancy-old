@@ -1,9 +1,10 @@
 package coffee.amo.astromancy.core.systems.stars;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.core.systems.lumen.Lumen;
-import coffee.amo.astromancy.core.systems.stars.classification.*;
+import coffee.amo.astromancy.core.systems.stars.classification.LuminosityClass;
+import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
 import coffee.amo.astromancy.core.systems.stars.types.StarType;
+import coffee.amo.astromancy.core.systems.lumen.Lumen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
