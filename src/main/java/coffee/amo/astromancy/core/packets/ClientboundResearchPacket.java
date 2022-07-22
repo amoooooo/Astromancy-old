@@ -9,37 +9,36 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ResearchPacket {
+public class ClientboundResearchPacket {
     public final String researchId;
     public final boolean silent;
     public final boolean complete;
     public final int ordinal;
 
-    public ResearchPacket(String researchId, boolean silent, boolean complete, int ordinal) {
+    public ClientboundResearchPacket(String researchId, boolean silent, boolean complete, int ordinal) {
         this.researchId = researchId;
         this.silent = silent;
         this.complete = complete;
         this.ordinal = ordinal;
     }
 
-    public static void encode(ResearchPacket packet, FriendlyByteBuf buffer){
+    public static void encode(ClientboundResearchPacket packet, FriendlyByteBuf buffer){
         buffer.writeUtf(packet.researchId);
         buffer.writeBoolean(packet.silent);
         buffer.writeBoolean(packet.complete);
         buffer.writeInt(packet.ordinal);
     }
 
-    public static ResearchPacket decode(FriendlyByteBuf buffer){
-        return new ResearchPacket(buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean(), buffer.readInt());
+    public static ClientboundResearchPacket decode(FriendlyByteBuf buffer){
+        return new ClientboundResearchPacket(buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean(), buffer.readInt());
     }
 
-    public static void handle(ResearchPacket packet, Supplier<NetworkEvent.Context> contextSupplier){
+    public static void handle(ClientboundResearchPacket packet, Supplier<NetworkEvent.Context> contextSupplier){
         contextSupplier.get().enqueueWork(() -> {
             if(!ClientResearchHolder.contains(packet.researchId)){
                 List<ResearchType> researchObjects = ResearchTypeRegistry.RESEARCH_TYPES.get().getValues().stream().toList();

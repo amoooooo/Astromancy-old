@@ -41,6 +41,7 @@ public class ResearchRegistry {
     public static void doSetup(){
         INTRODUCTION.get().addChildren(STELLARITE.get(), AURUMIC_BRASS.get(), TEST_1.get());
         STELLARITE.get().addChild(CRUCIBLE.get());
+        CRUCIBLE.get().addUnlock(GLYPH_PHIAL.get());
         AURUMIC_BRASS.get().addChild(ARMILLARY_SPHERE.get());
         GLYPH_PHIAL.get().addChild(JAR.get());
         STARGAZING.get().addChild(SOLAR_ECLIPSE.get());

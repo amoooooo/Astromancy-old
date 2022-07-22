@@ -17,6 +17,7 @@ public class BookEntry {
     public final float xOffset;
     public final float yOffset;
     public final List<BookObject> children = new ArrayList<>();
+    public final List<ResearchObject> unlocks = new ArrayList<>();
     public final ResearchObject research;
     public ArrayList<BookPage> pages = new ArrayList<>();
     public EntryObjectSupplier objectSupplier = EntryObject::new;
@@ -39,6 +40,10 @@ public class BookEntry {
 
     public void addChild(BookObject child) {
         children.add(child);
+    }
+
+    public void addUnlock(ResearchObject research) {
+        unlocks.add(research);
     }
 
     public String translationKey(){
@@ -70,6 +75,6 @@ public class BookEntry {
     }
 
     public interface EntryObjectSupplier {
-        EntryObject getBookObject(BookEntry entry, float x, float y, List<BookObject> children, float localX, float localY, ResearchObject research);
+        EntryObject getBookObject(BookEntry entry, float x, float y, List<BookObject> children, float localX, float localY, ResearchObject research, List<ResearchObject> unlocks);
     }
 }

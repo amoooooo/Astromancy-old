@@ -27,6 +27,10 @@ public class RenderTypeRegistry {
         return AstromancyRenderTypes.ADDITIVE_TEXTURE.apply(texture);
     }
 
+    public static RenderType cubemap(ResourceLocation texture){
+        return AstromancyRenderTypes.CUBEMAP.apply(texture);
+    }
+
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Astromancy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ShaderRegistryEvent{
         @SubscribeEvent
@@ -37,6 +41,9 @@ public class RenderTypeRegistry {
             event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_additive_texture"), POSITION_COLOR_TEX), shaderInstance -> {
                 AstromancyRenderTypes.additiveTexture = shaderInstance;
             });
+            event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_cubemap"), POSITION_COLOR_TEX), shaderInstance -> {
+                AstromancyRenderTypes.cubemap = shaderInstance;
+            });
         }
     }
 
@@ -44,8 +51,11 @@ public class RenderTypeRegistry {
 
         private static ShaderInstance astrolabeStarfield;
         private static ShaderInstance additiveTexture;
+        private static ShaderInstance cubemap;
 
         private static final ShaderStateShard RENDER_TYPE_ADDITIVE_TEXTURE = new ShaderStateShard(() -> additiveTexture);
+
+        private static final ShaderStateShard RENDERTYPE_CUBEMAP = new ShaderStateShard(() -> cubemap);
 
         private static final ShaderStateShard RENDERTYPE_ASTROLABE_STARFIELD = new ShaderStateShard(() -> astrolabeStarfield);
 
@@ -56,6 +66,7 @@ public class RenderTypeRegistry {
 
         public static Function<ResourceLocation, RenderType> ASTROLABE_STARFIELD = Util.memoize(AstromancyRenderTypes::astrolabeStarfield);
         public static Function<ResourceLocation, RenderType> ADDITIVE_TEXTURE = Util.memoize(AstromancyRenderTypes::additiveTexture);
+        public static Function<ResourceLocation, RenderType> CUBEMAP = Util.memoize(AstromancyRenderTypes::cubemap);
 
         private static RenderType additiveTexture(ResourceLocation texture){
             RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
@@ -77,6 +88,17 @@ public class RenderTypeRegistry {
                     .setOverlayState(NO_OVERLAY)
                     .createCompositeState(true);
             return create("astrolabe_starfield", DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
+        }
+
+        private static RenderType cubemap(ResourceLocation texture) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_CUBEMAP)
+                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                    .setTransparencyState(NO_TRANSPARENCY)
+                    .setLightmapState(NO_LIGHTMAP)
+                    .setOverlayState(NO_OVERLAY)
+                    .createCompositeState(true);
+            return create("cubemap", DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
         }
     }
 }

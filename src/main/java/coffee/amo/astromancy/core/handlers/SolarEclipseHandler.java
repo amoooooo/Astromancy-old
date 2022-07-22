@@ -1,6 +1,7 @@
 package coffee.amo.astromancy.core.handlers;
 
 import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
+import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -12,35 +13,19 @@ public class SolarEclipseHandler {
     public static boolean solarEclipseEnabledClient = false;
 
     public static boolean isEnabled(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").isEnabled();
+        return StarSavedData.get().isEclipseEnabled();
     }
 
     public static void setEnabled(ServerLevel level, boolean val) {
-        level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").setEnabled(val);
+        StarSavedData.get().setEclipseEnabled(true);
     }
 
     public static int getDaysTil(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").getDaysTil();
+        return StarSavedData.get().getDaysTilEclipse();
     }
 
     public static void setDaysTil(ServerLevel level, int val) {
-        level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").setDaysTil(val);
-    }
-
-    public static int getDaysSince(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").getDaysSince();
-    }
-
-    public static void setDaysSince(ServerLevel level, int val) {
-        level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").setDaysSince(val);
-    }
-
-    public static boolean getDayAdded(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").getDayAdded();
-    }
-
-    public static void setDayAdded(ServerLevel level, boolean val) {
-        level.getDataStorage().computeIfAbsent(SolarEclipseData::load, SolarEclipseData::create, "astromancy").setDayAdded(val);
+        StarSavedData.get().setDaysTilEclipse(val);
     }
 
     public static float getSkyDarkenClient(float in) {
@@ -61,77 +46,5 @@ public class SolarEclipseHandler {
 
     public static Vec3 getOverworldFogColor(Vec3 in) {
         return in.multiply(new Vec3(.1, .1, .1));
-    }
-
-    public static class SolarEclipseData extends SavedData {
-        private boolean eclipse = false;
-        private int daysTil = 0;
-        private int daysSince = 0;
-        private boolean dayAdded = false;
-
-        public static SolarEclipseData create() {
-            return new SolarEclipseData();
-        }
-
-        public static SolarEclipseData load(CompoundTag tag) {
-            SolarEclipseData data = new SolarEclipseData();
-            data.eclipse = tag.getBoolean("eclipse");
-            data.daysSince = tag.getInt("daysSince");
-            data.daysTil = tag.getInt("daysTil");
-            data.dayAdded = tag.getBoolean("dayAdded");
-            return data;
-        }
-
-        public int getDaysTil() {
-            return daysTil;
-        }
-
-        public void setDaysTil(int val) {
-            daysTil = val;
-        }
-
-        public int getDaysSince() {
-            return daysSince;
-        }
-
-        public void setDaysSince(int val) {
-            daysSince = val;
-        }
-
-        public boolean isEnabled() {
-            return eclipse;
-        }
-
-        public boolean getDayAdded() {
-            return dayAdded;
-        }
-
-        public void setDayAdded(boolean val) {
-            dayAdded = val;
-        }
-
-        public void setEnabled(boolean val) {
-            eclipse = val;
-            this.sendToClient();
-            this.setDirty();
-        }
-
-        public void sendToClient() {
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new SolarEclipsePacket(eclipse));
-        }
-
-        /**
-         * Used to save the {@code SavedData} to a {@code CompoundTag}
-         *
-         * @param pCompoundTag the {@code CompoundTag} to save the {@code SavedData} to
-         */
-        @Override
-        public CompoundTag save(CompoundTag pCompoundTag) {
-            pCompoundTag.putBoolean("eclipse", eclipse);
-            pCompoundTag.putInt("daysSince", daysSince);
-            pCompoundTag.putInt("daysTil", daysTil);
-            pCompoundTag.putBoolean("dayAdded", dayAdded);
-            return pCompoundTag;
-        }
     }
 }

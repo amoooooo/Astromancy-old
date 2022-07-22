@@ -140,16 +140,6 @@ public class BookScreen extends Screen {
             });
             TABS.add(tab);
         }
-//        TABS.add(new BookTab(-22,24, "introduction", 0, 0 , STELLA_LIBRI.get().getDefaultInstance(), BookTextures.TAB1_PARALLAX).addEntries(
-//                OBJECTS.stream().filter(s ->
-//                        s.identifier.equals("introduction") || s.identifier.equals("armillary_sphere")
-//                        || s.identifier.equals("aurumic_brass") || s.identifier.equals("stellarite")
-//                        || s.identifier.equals("arcana_sequence") || s.identifier.equals("crucible")
-//                ).collect(Collectors.toCollection(ArrayList::new))));
-//        TABS.add(new BookTab(-22,48, "alchemy", 1, 0 , GLYPH_PHIAL.get().getDefaultInstance(), Astromancy.astromancy("textures/gui/book/eldritch_tab_thing_inverted.png")).addEntries(
-//                OBJECTS.stream().filter(s ->
-//                        s.identifier.equals("aspecti_phial") || s.identifier.equals("jars")
-//                ).collect(Collectors.toCollection(ArrayList::new))));
         Astromancy.LOGGER.debug("Tabs: " + TABS.size());
         //aaaaaa
     }
@@ -386,7 +376,7 @@ public class BookScreen extends Screen {
         int width = 40;
         int height = 48;
         for (BookEntry entry : ENTRIES) {
-            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.children, entry.xOffset, entry.yOffset, entry.research));
+            OBJECTS.add(entry.objectSupplier.getBookObject(entry, coreX + entry.xOffset * width, coreY - entry.yOffset * height, entry.children, entry.xOffset, entry.yOffset, entry.research, entry.unlocks));
         }
         for (BookObject object : OBJECTS) {
             for(ResearchObject child : object.research.children) {

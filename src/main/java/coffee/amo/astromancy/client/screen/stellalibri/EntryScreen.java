@@ -144,6 +144,7 @@ public class EntryScreen extends Screen {
                 }
                 AstromancyPacketHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new ResearchNotePacket(openObject.identifier));
                 Minecraft.getInstance().player.playNotifySound(SoundRegistry.RESEARCH_WRITE.get(), SoundSource.MASTER, 1.0f, 1.0f);
+                return true;
             } else if (!openObject.research.locked.equals(ResearchProgress.COMPLETED)){
                 delayTime = Minecraft.getInstance().player.level.getGameTime() + 40;
                 Minecraft.getInstance().player.playNotifySound(SoundEvents.VILLAGER_NO, SoundSource.MASTER, 1.0f, 1.0f);

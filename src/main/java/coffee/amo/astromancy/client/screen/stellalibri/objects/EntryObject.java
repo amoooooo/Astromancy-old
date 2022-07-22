@@ -41,12 +41,12 @@ public class EntryObject extends BookObject {
         this.identifier = entry.identifier;
     }
 
-    public EntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research) {
+    public EntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research, List<ResearchObject> unlocks) {
         super(posX, posY, 32, 32, localX, localY, research);
         this.entry = entry;
         this.identifier = research.identifier;
         this.children = child;
-
+        this.unlocks = unlocks;
     }
 
     @Override

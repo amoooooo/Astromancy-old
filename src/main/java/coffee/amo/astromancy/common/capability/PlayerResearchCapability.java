@@ -6,13 +6,12 @@ import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.systems.research.IPlayerResearch;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.packets.ResearchPacket;
-import coffee.amo.astromancy.core.packets.ResearchRemovePacket;
+import coffee.amo.astromancy.core.packets.ClientboundResearchPacket;
+import coffee.amo.astromancy.core.packets.ClientboundResearchRemovePacket;
 import coffee.amo.astromancy.core.systems.research.ResearchObject;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +39,7 @@ public class PlayerResearchCapability implements IPlayerResearch {
                 c.locked = ResearchProgress.UNAVAILABLE;
             });
             RESEARCH.add(researchId);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), false, false, ResearchProgress.IN_PROGRESS.ordinal()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchPacket(researchId.getIdentifier(), false, false, ResearchProgress.IN_PROGRESS.ordinal()));
         }
     }
 
@@ -52,7 +51,7 @@ public class PlayerResearchCapability implements IPlayerResearch {
             researchId.children.forEach(c -> {
                 c.locked = ResearchProgress.UNAVAILABLE;
             });
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true, false, ResearchProgress.LOCKED.ordinal()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchPacket(researchId.getIdentifier(), true, false, ResearchProgress.LOCKED.ordinal()));
         }
     }
 
@@ -64,7 +63,7 @@ public class PlayerResearchCapability implements IPlayerResearch {
                 r.children.forEach(c -> {
                     c.locked = ResearchProgress.LOCKED;
                 });
-                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(r.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchPacket(r.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
             });
         } else {
             researchId.locked = ResearchProgress.COMPLETED;
@@ -72,7 +71,7 @@ public class PlayerResearchCapability implements IPlayerResearch {
                 c.locked = ResearchProgress.LOCKED;
             });
             RESEARCH.add(researchId);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(researchId.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchPacket(researchId.getIdentifier(), true, true, ResearchProgress.COMPLETED.ordinal()));
         }
         MinecraftForge.EVENT_BUS.post(new PlayerResearchCompleteEvent(player, researchId));
         onResearchCompleted(player, researchId);
@@ -82,7 +81,7 @@ public class PlayerResearchCapability implements IPlayerResearch {
     public void removeResearch(Player player, ResearchObject researchId) {
         if(RESEARCH.contains(researchId)) {
             RESEARCH.remove(researchId);
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchRemovePacket(researchId.getIdentifier()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchRemovePacket(researchId.getIdentifier()));
         }
     }
 

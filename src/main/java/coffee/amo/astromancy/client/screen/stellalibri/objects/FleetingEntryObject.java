@@ -32,8 +32,8 @@ public class FleetingEntryObject extends EntryObject {
 
     }
 
-    public FleetingEntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research) {
-        super(entry, posX, posY, child, localX, localY, research);
+    public FleetingEntryObject(BookEntry entry, float posX, float posY, List<BookObject> child, float localX, float localY, ResearchObject research, List<ResearchObject> unlocks) {
+        super(entry, posX, posY, child, localX, localY, research, unlocks);
     }
 
     @Override

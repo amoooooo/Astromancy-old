@@ -27,7 +27,9 @@ public class StarGatewayBlockEntity extends AstromancyBlockEntity {
     @Override
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if(!level.isClientSide && star == null) {
-            star = StarUtils.generateStar(level);
+            for(int i = 0; i < 50; i++){
+                star = StarUtils.generateStar(level);
+            }
             //serverLevel.getDataStorage().set(worldPosition.toString(), );
             return InteractionResult.SUCCESS;
         } else if (!level.isClientSide && star != null) {

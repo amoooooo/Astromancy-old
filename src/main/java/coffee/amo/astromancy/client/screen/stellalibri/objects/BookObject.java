@@ -17,6 +17,7 @@ public class BookObject {
     // TODO: Make this a list, check of BookObject has children in the render method, if so, render those.
     public List<BookObject> children;
     public ResearchObject research;
+    public List<ResearchObject> unlocks;
     public String identifier;
     public boolean isRendered = false;
     public float hover;

@@ -1,16 +1,14 @@
 package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
 import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.handlers.CapabilityGlyphHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchClearPacket;
-import coffee.amo.astromancy.core.packets.ResearchPacket;
+import coffee.amo.astromancy.core.packets.ClientboundResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.registration.AttributeRegistry;
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
@@ -20,18 +18,13 @@ import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import coffee.amo.astromancy.core.systems.research.ResearchTypeRegistry;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.SpyglassItem;
 import net.minecraft.world.level.Level;
@@ -39,7 +32,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -47,33 +39,24 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.Objects;
 
 @Mod.EventBusSubscriber(modid = "astromancy")
 public class AstromancyLevelEvents {
-    public static boolean setForDay = false;
-    public static float pity = 0;
     public static long cometTick;
     public static boolean cometChanged;
 
     @SubscribeEvent
     public static void checkSolarEclipse(TickEvent.LevelTickEvent event) {
+        if(event.level.getServer() == null) return;
         if (event.level instanceof ServerLevel se) {
-            long time = event.level.getDayTime() % 24000;
-            boolean day = time == 22500;
-            if (day && !setForDay) {
-                setForDay = true;
-                pity += 10;
+            int day = Math.round(se.getGameTime() / 24000f);
+            if(StarSavedData.get().lastDay + StarSavedData.get().getDaysTilEclipse() < day){
+                StarSavedData.get().setDaysTilEclipse(StarSavedData.get().getDaysTilEclipse() - 1);
             }
-            float chance = event.level.random.nextInt(51) + pity;
-            if (day && chance == 50) {
-                Astromancy.LOGGER.info("Solar Eclipse!");
-                SolarEclipseHandler.setEnabled(se, true);
-                pity = 0;
-            } else if (time >= 13500 && time < 22500) {
-                SolarEclipseHandler.setEnabled(se, false);
+            if(!StarSavedData.get().isEclipseEnabled() && StarSavedData.get(se.getServer()).getDaysTilEclipse() == 0) {
+                StarSavedData.get().setEclipseEnabled(true);
+            } else {
+                StarSavedData.get().setEclipseEnabled(false);
             }
         }
     }
@@ -94,7 +77,7 @@ public class AstromancyLevelEvents {
                     researchTag.forEach(r -> {
                         ResearchObject ro = ResearchObject.fromNBT((CompoundTag) r);
                         Astromancy.LOGGER.info("Sending " + se.getName() + " research: " + ro.getResearchName());
-                        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(ro.identifier, true, false, ro.locked.ordinal()));
+                        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ClientboundResearchPacket(ro.identifier, true, false, ro.locked.ordinal()));
                     });
                 }
             });
@@ -115,7 +98,7 @@ public class AstromancyLevelEvents {
                         ResearchObject object = (ResearchObject) s;
                         if (object.identifier.equals("introduction") || object.identifier.equals("glyph")) {
                             research.completeResearch(se, object);
-                            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchPacket(object.identifier, false, true, ResearchProgress.COMPLETED.ordinal()));
+                            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ClientboundResearchPacket(object.identifier, false, true, ResearchProgress.COMPLETED.ordinal()));
                         }
                     });
                 });
@@ -147,7 +130,7 @@ public class AstromancyLevelEvents {
                                 ResearchObject object = (ResearchObject) s;
                                 if (object.identifier.equals("stargazing")) {
                                     research.addResearch(player, object);
-                                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ResearchPacket(object.identifier, false, false, ResearchProgress.IN_PROGRESS.ordinal()));
+                                    AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new ClientboundResearchPacket(object.identifier, false, false, ResearchProgress.IN_PROGRESS.ordinal()));
                                 }
                             });
                         });

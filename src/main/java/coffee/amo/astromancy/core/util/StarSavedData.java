@@ -2,6 +2,7 @@ package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.stars.Star;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -23,6 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
+    public boolean eclipseEnabled = false;
+    public int daysTil = 0;
+    public int lastDay = 0;
     protected Random random = new Random();
 
     public StarSavedData() {
@@ -47,10 +52,11 @@ public class StarSavedData extends SavedData {
             Astromancy.LOGGER.info(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
             Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
+        setDaysTilEclipse(random.nextInt(2));
     }
 
     public static StarSavedData get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(StarSavedData::load, StarSavedData::new, "astromancy_stars");
+        return server.overworld().getDataStorage().computeIfAbsent(StarSavedData::load, StarSavedData::new, "astromancy");
     }
 
     public static StarSavedData get() {
@@ -64,6 +70,9 @@ public class StarSavedData extends SavedData {
             tag.add(constellationInstance.toNbt());
         }
         pCompoundTag.put("constellations", tag);
+        pCompoundTag.putBoolean("eclipse", eclipseEnabled);
+        pCompoundTag.putInt("daysTil", daysTil);
+        pCompoundTag.putInt("lastDay", lastDay);
         return pCompoundTag;
     }
 
@@ -76,6 +85,9 @@ public class StarSavedData extends SavedData {
         }
         StarSavedData starSavedData = new StarSavedData();
         starSavedData.constellationInstanceList = constList;
+        starSavedData.eclipseEnabled = pCompoundTag.getBoolean("eclipse");
+        starSavedData.daysTil = pCompoundTag.getInt("daysTil");
+        starSavedData.lastDay = pCompoundTag.getInt("lastDay");
         return starSavedData;
     }
 
@@ -158,6 +170,32 @@ public class StarSavedData extends SavedData {
             }
         }
         return null;
+    }
+
+    public void setEclipseEnabled(boolean enabled) {
+        eclipseEnabled = enabled;
+        this.sendToClient();
+        this.setDirty();
+    }
+
+    public void sendToClient(){
+        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new SolarEclipsePacket(eclipseEnabled));
+    }
+
+    public boolean isEclipseEnabled() {
+        return eclipseEnabled;
+    }
+
+    public void setDaysTilEclipse(int days) {
+        daysTil = days;
+    }
+
+    public void genDaysTilEclipse(ServerLevel level) {
+        daysTil = level.random.nextInt(16);
+    }
+
+    public int getDaysTilEclipse() {
+        return daysTil;
     }
 
     @Override

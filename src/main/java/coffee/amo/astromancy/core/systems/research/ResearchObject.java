@@ -13,6 +13,7 @@ import java.util.*;
 public class ResearchObject extends ResearchType {
     public final String identifier;
     public List<ResearchObject> children = new ArrayList<>();
+    public List<ResearchObject> unlocks = new ArrayList<>();
     public ResearchProgress locked = ResearchProgress.UNAVAILABLE;
     public ItemStack icon = ItemStack.EMPTY;
     public List<ItemStack> itemRequirements = new ArrayList<>();
@@ -50,6 +51,11 @@ public class ResearchObject extends ResearchType {
 
     public String getIdentifier(){
         return identifier;
+    }
+
+    public ResearchObject addUnlock(ResearchObject research){
+        unlocks.add(research);
+        return this;
     }
 
     @Override

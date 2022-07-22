@@ -5,14 +5,18 @@ import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import coffee.amo.astromancy.core.systems.stars.classification.StarColors;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -131,6 +135,7 @@ public class RenderHelper {
         RenderHelper.renderInvertedCube(ps, buff, size * multiplier, RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")), getStarColor(star));
         ps.translate((size / 5) * multiplier, (size / 5) * multiplier, (size / 5) * multiplier);
         RenderHelper.renderInvertedCube(ps, buff, ((size / 7) * 4) * multiplier, RenderTypeRegistry.additiveTexture(Astromancy.astromancy("textures/vfx/white.png")), getStarColor(star).brighter().brighter());
+        Vec3 offset = Vec3.atLowerCornerOf(blockEntity.getBlockPos().offset(ps.last().pose().m03, ps.last().pose().m13, ps.last().pose().m23));
         ps.popPose();
     }
 
@@ -261,5 +266,63 @@ public class RenderHelper {
         builder.vertex(matrix, 0, -halfWidth, distance).color(r, g, b, a).uv2(0xF000F0).endVertex();
 
         mstack.popPose();
+    }
+
+    public static boolean isLookingAt(LocalPlayer player, Vec3 target, double accuracy){
+        Vec3 diff = new Vec3(target.x - player.getX(), target.y - player.getEyeY(), target.z - player.getZ());
+        double length = diff.length();
+        double dot = player.getViewVector(1.0f).normalize().dot(diff.normalize());
+        return dot > 1.0D - accuracy / length;
+    }
+
+    public static void renderSkybox(PoseStack pPoseStack, ResourceLocation texture, float partialTick, float gameTime, float starVis) {
+        pPoseStack.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.depthMask(false);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, texture);
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferbuilder = tesselator.getBuilder();
+        pPoseStack.mulPose(Vector3f.YP.rotationDegrees((gameTime * 0.05F)));
+
+        for(int i = 0; i < 6; ++i) {
+            pPoseStack.pushPose();
+            if (i == 1) {
+                pPoseStack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+            }
+
+            if (i == 2) {
+                pPoseStack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+            }
+
+            if (i == 3) {
+                pPoseStack.mulPose(Vector3f.XP.rotationDegrees(180.0F));
+            }
+
+            if (i == 4) {
+                pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(90.0F));
+            }
+
+            if (i == 5) {
+                pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(-90.0F));
+            }
+
+            float alpha = starVis;
+
+            Matrix4f matrix4f = pPoseStack.last().pose();
+            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            bufferbuilder.vertex(matrix4f, -90.0F, -90.0F, -90.0F).uv(0.0F, 0.0F).color(0.2f, 0.2f, 0.2f, alpha).endVertex();
+            bufferbuilder.vertex(matrix4f, -90.0F, -90.0F, 90.0F).uv(0.0F, 1.0F).color(0.2f, 0.2f, 0.2f, alpha).endVertex();
+            bufferbuilder.vertex(matrix4f, 90.0F, -90.0F, 90.0F).uv(1.0F, 1.0F).color(0.2f, 0.2f, 0.2f, alpha).endVertex();
+            bufferbuilder.vertex(matrix4f, 90.0F, -90.0F, -90.0F).uv(1.0F, 0.0F).color(0.2f, 0.2f, 0.2f, alpha).endVertex();
+            tesselator.end();
+            pPoseStack.popPose();
+        }
+
+        RenderSystem.depthMask(true);
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+        pPoseStack.popPose();
     }
 }

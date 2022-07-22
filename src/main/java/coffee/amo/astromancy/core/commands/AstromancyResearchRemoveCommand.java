@@ -1,8 +1,7 @@
 package coffee.amo.astromancy.core.commands;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.packets.ResearchPacket;
-import coffee.amo.astromancy.core.packets.ResearchRemovePacket;
+import coffee.amo.astromancy.core.packets.ClientboundResearchRemovePacket;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -25,7 +24,7 @@ public class AstromancyResearchRemoveCommand implements Command<CommandSourceSta
     }
 
     public static int sendPacket(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->(ServerPlayer) context.getSource().getEntity()), new ResearchRemovePacket(StringArgumentType.getString(context, "remove")));
+        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->(ServerPlayer) context.getSource().getEntity()), new ClientboundResearchRemovePacket(StringArgumentType.getString(context, "remove")));
         return 1;
     }
 

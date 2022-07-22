@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.core.commands;
 
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
-import coffee.amo.astromancy.core.packets.ResearchPacket;
+import coffee.amo.astromancy.core.packets.ClientboundResearchPacket;
 import coffee.amo.astromancy.core.systems.research.ResearchProgress;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -25,7 +25,7 @@ public class AstromancyResearchCommand implements Command<CommandSourceStack> {
     }
 
     public static int sendPacket(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->(ServerPlayer) context.getSource().getEntity()), new ResearchPacket(StringArgumentType.getString(context, "research"), false, true, ResearchProgress.COMPLETED.ordinal()));
+        AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(()->(ServerPlayer) context.getSource().getEntity()), new ClientboundResearchPacket(StringArgumentType.getString(context, "research"), false, true, ResearchProgress.COMPLETED.ordinal()));
         return 1;
     }
 

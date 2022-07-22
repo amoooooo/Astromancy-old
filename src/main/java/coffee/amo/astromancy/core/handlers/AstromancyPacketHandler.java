@@ -36,13 +36,13 @@ public class AstromancyPacketHandler {
 //                JarUpdatePacket::decode,
 //                JarUpdatePacket::handle);
 
-        INSTANCE.registerMessage(ID++, ResearchPacket.class, ResearchPacket::encode,
-                ResearchPacket::decode,
-                ResearchPacket::handle);
+        INSTANCE.registerMessage(ID++, ClientboundResearchPacket.class, ClientboundResearchPacket::encode,
+                ClientboundResearchPacket::decode,
+                ClientboundResearchPacket::handle);
 
-        INSTANCE.registerMessage(ID++, ResearchRemovePacket.class, ResearchRemovePacket::encode,
-                ResearchRemovePacket::decode,
-                ResearchRemovePacket::handle);
+        INSTANCE.registerMessage(ID++, ClientboundResearchRemovePacket.class, ClientboundResearchRemovePacket::encode,
+                ClientboundResearchRemovePacket::decode,
+                ClientboundResearchRemovePacket::handle);
 
         INSTANCE.registerMessage(ID++, ResearchNotePacket.class, ResearchNotePacket::encode,
                 ResearchNotePacket::decode,

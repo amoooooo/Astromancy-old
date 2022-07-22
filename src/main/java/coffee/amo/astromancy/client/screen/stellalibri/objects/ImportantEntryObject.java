@@ -25,8 +25,8 @@ public class ImportantEntryObject extends EntryObject {
         super(entry, posX, posY, localX, localY, research);
     }
 
-    public ImportantEntryObject(BookEntry bookEntry, float i, float i1, List<BookObject> bookObjects, float i2, float i3, ResearchObject researchObject) {
-        super(bookEntry, i, i1, bookObjects, i2, i3, researchObject);
+    public ImportantEntryObject(BookEntry bookEntry, float i, float i1, List<BookObject> bookObjects, float i2, float i3, ResearchObject researchObject, List<ResearchObject> unlocks) {
+        super(bookEntry, i, i1, bookObjects, i2, i3, researchObject, unlocks);
     }
 
     @Override
