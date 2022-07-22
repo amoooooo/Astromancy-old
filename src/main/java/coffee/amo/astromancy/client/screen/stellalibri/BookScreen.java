@@ -18,6 +18,7 @@ import coffee.amo.astromancy.core.packets.BookStatePacket;
 import coffee.amo.astromancy.core.systems.recipe.IRecipeComponent;
 import coffee.amo.astromancy.core.systems.rendering.VFXBuilders;
 import coffee.amo.astromancy.core.systems.research.*;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -69,8 +70,8 @@ public class BookScreen extends Screen {
     private final MutableComponent unlockedComponent = Component.translatable("astromancy.gui.book.entry.none");
     public int bookWidth = 448;
     public int bookHeight = 260;
-    public int bookInsideWidth = 416;
-    public int bookInsideHeight = 256;
+    public int bookInsideWidth = 418;
+    public int bookInsideHeight = 233;
     public float xOffset;
     public float staticxOffset;
     public float staticyOffset;
@@ -425,7 +426,10 @@ public class BookScreen extends Screen {
         cut();
         renderEntries(poseStack, mouseX, mouseY, partialTicks);
         GL11.glDisable(GL_SCISSOR_TEST);
+        poseStack.pushPose();
+        poseStack.translate(0,0,500);
         renderTransparentTexture(BookTextures.OUTSIDE_LOC, poseStack, guiLeft, guiTop, 0, 0, bookWidth, bookHeight, 448, 260);
+        poseStack.popPose();
         lateTabRender(poseStack, mouseX, mouseY, partialTicks, guiLeft, guiTop);
         lateEntryRender(poseStack, mouseX, mouseY, partialTicks);
     }
@@ -611,8 +615,8 @@ public class BookScreen extends Screen {
     public void renderBackground(ResourceLocation texture, PoseStack poseStack, float xModifier, float yModifier) {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        int insideLeft = guiLeft + 16;
-        int insideTop = guiTop + 4;
+        int insideLeft = guiLeft + 13;
+        int insideTop = guiTop + 12;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
@@ -630,8 +634,8 @@ public class BookScreen extends Screen {
     public void renderBackground(List<ResourceLocation> textures, PoseStack poseStack, float xModifier, float yModifier) {
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        int insideLeft = guiLeft + 16;
-        int insideTop = guiTop + 4;
+        int insideLeft = guiLeft + 13;
+        int insideTop = guiTop + 12;
         float uOffset = (parallax_width - xOffset) * xModifier;
         float vOffset = Math.min(parallax_height - bookInsideHeight, (parallax_height - bookInsideHeight - yOffset * yModifier));
         if (vOffset <= parallax_height / 2f) {
@@ -658,8 +662,8 @@ public class BookScreen extends Screen {
         int scale = (int) getMinecraft().getWindow().getGuiScale();
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        int insideLeft = guiLeft + 17;
-        int insideTop = guiTop + 18;
+        int insideLeft = guiLeft + 13;
+        int insideTop = guiTop + 12;
         GL11.glScissor(insideLeft * scale, insideTop * scale, bookInsideWidth * scale, (bookInsideHeight + 1) * scale); // do not ask why the 1 is needed please
     }
 

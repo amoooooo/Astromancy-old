@@ -142,7 +142,10 @@ public class FleetingEntryObject extends EntryObject {
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         if (isHovering)
         {
+            poseStack.pushPose();
+            poseStack.translate(0,0,550);
             screen.renderComponentTooltip(poseStack, Arrays.asList(Component.translatable(entry.translationKey()), Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)), mouseX, mouseY, minecraft.font);
+            poseStack.popPose();
         }
     }
 }

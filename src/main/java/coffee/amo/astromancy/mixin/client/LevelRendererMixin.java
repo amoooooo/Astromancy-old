@@ -58,57 +58,58 @@ public class LevelRendererMixin {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getStarBrightness(F)F", shift = At.Shift.AFTER), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
     public void renderNewStars(PoseStack poseStack, Matrix4f pProjectionMatrix, float pPartialTick, Camera pCamera, boolean p_202428_, Runnable pSkyFogSetup, CallbackInfo ci, FogType fogtype, Vec3 vec3, float f, float f1, float f2, BufferBuilder bufferbuilder, ShaderInstance shaderinstance, float[] afloat, float f11, Matrix4f matrix4f1, float f12, int k, int l, int i1, float f13, float f14, float f15, float f16){
-        float f10 = this.level.getStarBrightness(pPartialTick) * f11;
-        if (f10 > 0){
-            FogRenderer.setupNoFog();
-            RandomSource random = RandomSource.create(10842L);
-            float time = level.getGameTime() + pPartialTick;
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            RenderSystem.disableTexture();
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.depthMask(false);
+
+        FogRenderer.setupNoFog();
+        RandomSource random = RandomSource.create(10842L);
+        float starDistance = 120.0F;
+        float starRadius = 10F;
+        float starVariance = 10.0F;
+        float time = level.getGameTime() + pPartialTick;
+        int starCount = 1024;
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.depthMask(false);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        for(int star = 0; star <= starCount; ++star) {
             poseStack.pushPose();
+            float sDist = starDistance + (float)(random.nextGaussian() * starVariance);
+            float distanceFactor = (starDistance / sDist);
+            float size = random.nextFloat();
+            float sRad = Math.min(starRadius * size, 0.65F);
 
-            float starDistance = 120.0F;
-            float starRadius = 0.5F;
-            float starVariance = 10.0F;
-            int starCount = 1024;
+            float xRot = (random.nextFloat() * 2) - 1;
+            float zRot = (random.nextFloat() * 2) - 1;
 
-            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            poseStack.mulPose(Vector3f.YP.rotationDegrees(time * distanceFactor * 0.01F));
+            poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot * 180.0F));
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(zRot * 180.0F));
 
-            for(int star = 0; star <= starCount; ++star) {
-                poseStack.pushPose();
-                float sDist = starDistance + (float)(random.nextGaussian() * starVariance);
-                float distanceFactor = (starDistance / sDist);
-                float size = random.nextFloat();
-                float sRad = Math.min(starRadius * size, 0.2F);
+            Matrix4f m2 = poseStack.last().pose();
+            distanceFactor = (sDist / starDistance) * (1 - Math.abs(xRot)) * (1 - Math.abs(zRot));
 
-                float xRot = (random.nextFloat() * 2) - 1;
-                float zRot = (random.nextFloat() * 2) - 1;
+            Color color = Color.getHSBColor((float) Math.abs(random.nextGaussian()), 0.3F, 1.0F);
 
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(time * distanceFactor * 0.01F));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot * 90.0F));
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees(zRot * 90.0F));
 
-                Matrix4f m2 = poseStack.last().pose();
-                distanceFactor = (sDist / starDistance) * (1 - Math.abs(xRot)) * (1 - Math.abs(zRot));
-
-                Color color = Color.getHSBColor((float) Math.abs(random.nextGaussian()), 0.3F, 1.0F);
-                //RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/star.png"));
-                bufferbuilder.vertex(m2, -sRad, sDist, -sRad).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
-                bufferbuilder.vertex(m2, sRad, sDist, -sRad).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
-                bufferbuilder.vertex(m2, sRad, sDist, sRad).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
-                bufferbuilder.vertex(m2, -sRad, sDist, sRad).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
-
-                poseStack.popPose();
+            if(star % 2 == 0){
+                RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/star_med.png"));
+            } else if (star % 3 == 0){
+                RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/star_large.png"));
+            } else {
+                RenderSystem.setShaderTexture(0, Astromancy.astromancy("textures/environment/star_small.png"));
             }
-            BufferUploader.drawWithShader(bufferbuilder.end());
+
+            bufferbuilder.vertex(m2, -sRad, sDist, -sRad).uv(0,0).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
+            bufferbuilder.vertex(m2, sRad, sDist, -sRad).uv(1,0).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
+            bufferbuilder.vertex(m2, sRad, sDist, sRad).uv(1,1).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
+            bufferbuilder.vertex(m2, -sRad, sDist, sRad).uv(0,1).color(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, distanceFactor).endVertex();
+
             poseStack.popPose();
-            RenderSystem.depthMask(true);
-            pSkyFogSetup.run();
         }
+        BufferUploader.drawWithShader(bufferbuilder.end());
+        RenderSystem.depthMask(true);
+        pSkyFogSetup.run();
+//        }
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V", ordinal = 4, shift = At.Shift.AFTER), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
@@ -128,18 +129,7 @@ public class LevelRendererMixin {
                     p_202424_.mulPose(Vector3f.XP.rotationDegrees(rotFactorX));
                     p_202424_.mulPose(Vector3f.YN.rotationDegrees(rotFactorY));
                     float offset = 100f;
-                    var v4f = new Vector4f(new Vector3f(0f, offset, 0f));
-                    v4f.transform(this.pose);
-                    var untransformedVector = new Vector3f(v4f.x(), v4f.y(), v4f.z());
-                    var vector4f = new Vector4f(untransformedVector);
-                    vector4f.transform(p_202424_.last().pose());
-                    //var transformedVector = new Vector3f(vector4f.x(), vector4f.y(), vector4f.z());
-                    //transformedVector.normalize();
-                    untransformedVector.normalize();
                     float rotMult = 1f;
-                    float testMult = (float) Math.max(0.25f, Math.sin(Minecraft.getInstance().level.getGameTime() + (constellationInstance.getOffset() * 10) / 100f));
-                    testMult *= Minecraft.getInstance().level.random.nextFloat() > 0.9f ? 0.95f : 1f;
-
                     RenderSystem.setShaderColor(starBrightness * rotMult, starBrightness * rotMult, starBrightness * rotMult, 1.0F);
                     Matrix4f matrix4f = p_202424_.last().pose();
                     float k = 20f;

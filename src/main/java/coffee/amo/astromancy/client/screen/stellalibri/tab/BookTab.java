@@ -95,7 +95,10 @@ public class BookTab {
     public void lateRender(Minecraft minecraft, PoseStack poseStack, float xOffset, float yOffset, int mouseX, int mouseY, float partialTicks) {
         if (isHovering)
         {
+            poseStack.pushPose();
+            poseStack.translate(0,0,550);
             screen.renderComponentTooltip(poseStack, List.of(Component.translatable(translationKey())), mouseX, mouseY, minecraft.font);
+            poseStack.popPose();
         }
     }
     public boolean isHovering(float xOffset, float yOffset, double mouseX, double mouseY)
