@@ -19,6 +19,7 @@ public class LevelMixin {
     public void updateSkyBrightnessForEclipse(CallbackInfo ci){
         Level world = (Level) (Object) this;
         if(world.getServer() == null) return;
+        if(world.isClientSide) return;
         if(world instanceof ServerLevel se){
             if(SolarEclipseHandler.isEnabled(se) && world.dimension().equals(Level.OVERWORLD)){
                 skyDarken = SolarEclipseHandler.getSkyDarken();

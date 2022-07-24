@@ -13,19 +13,19 @@ public class SolarEclipseHandler {
     public static boolean solarEclipseEnabledClient = false;
 
     public static boolean isEnabled(ServerLevel level) {
-        return StarSavedData.get().isEclipseEnabled();
+        return StarSavedData.get(level.getServer()).isEclipseEnabled();
     }
 
     public static void setEnabled(ServerLevel level, boolean val) {
-        StarSavedData.get().setEclipseEnabled(true);
+        StarSavedData.get(level.getServer()).setEclipseEnabled(true);
     }
 
     public static int getDaysTil(ServerLevel level) {
-        return StarSavedData.get().getDaysTilEclipse();
+        return StarSavedData.get(level.getServer()).getDaysTilEclipse();
     }
 
     public static void setDaysTil(ServerLevel level, int val) {
-        StarSavedData.get().setDaysTilEclipse(val);
+        StarSavedData.get(level.getServer()).setDaysTilEclipse(val);
     }
 
     public static float getSkyDarkenClient(float in) {

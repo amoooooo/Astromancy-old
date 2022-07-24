@@ -21,6 +21,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -49,14 +50,15 @@ public class AstromancyLevelEvents {
     public static void checkSolarEclipse(TickEvent.LevelTickEvent event) {
         if(event.level.getServer() == null) return;
         if (event.level instanceof ServerLevel se) {
+            MinecraftServer s = se.getServer();
             int day = Math.round(se.getGameTime() / 24000f);
-            if(StarSavedData.get().lastDay + StarSavedData.get().getDaysTilEclipse() < day){
-                StarSavedData.get().setDaysTilEclipse(StarSavedData.get().getDaysTilEclipse() - 1);
+            if(StarSavedData.get(s).lastDay + StarSavedData.get(s).getDaysTilEclipse() < day){
+                StarSavedData.get(s).setDaysTilEclipse(StarSavedData.get(s).getDaysTilEclipse() - 1);
             }
-            if(!StarSavedData.get().isEclipseEnabled() && StarSavedData.get(se.getServer()).getDaysTilEclipse() == 0) {
-                StarSavedData.get().setEclipseEnabled(true);
+            if(!StarSavedData.get(s).isEclipseEnabled() && StarSavedData.get(s).getDaysTilEclipse() == 0) {
+                StarSavedData.get(s).setEclipseEnabled(true);
             } else {
-                StarSavedData.get().setEclipseEnabled(false);
+                StarSavedData.get(s).setEclipseEnabled(false);
             }
         }
     }
