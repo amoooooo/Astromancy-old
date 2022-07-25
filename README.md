@@ -1,0 +1,2 @@
+# Astromancy
+some magic thing
