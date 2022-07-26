@@ -18,19 +18,20 @@ import static com.mojang.blaze3d.systems.RenderSystem.*;
 @Mixin(RenderSystem.class)
 public abstract class RenderSystemMixin {
 
-    private static final ResourceLocation SUN = Astromancy.astromancy("textures/environment/sun.png");
-
-    @Inject(at = @At("HEAD"), method = "setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V", cancellable = true)
-    private static void setShaderTextureForEclipse(int i, ResourceLocation texture, CallbackInfo ci){
-        if(SolarEclipseHandler.solarEclipseEnabledClient && Objects.equals(texture, new ResourceLocation("textures/environment/sun.png"))) {
-            if (!isOnRenderThread()){
-                recordRenderCall(() -> {
-                    _setShaderTexture(i, SUN);
-                });
-            } else {
-                _setShaderTexture(i, SUN);
-            }
-            ci.cancel();
-        }
-    }
+//    private static final ResourceLocation SUN = Astromancy.astromancy("textures/environment/sun.png");
+//    private static final ResourceLocation[] TEXTURES = {Astromancy.astromancy("textures/environment/sun.png"), Astromancy.astromancy("textures/environment/sun.png")};
+//
+//    @Inject(at = @At("HEAD"), method = "setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V", cancellable = true)
+//    private static void setShaderTextureForEclipse(int i, ResourceLocation texture, CallbackInfo ci){
+//        if(SolarEclipseHandler.solarEclipseEnabledClient && Objects.equals(texture, new ResourceLocation("textures/environment/sun.png"))) {
+//            if (!isOnRenderThread()){
+//                recordRenderCall(() -> {
+//                    _setShaderTexture(i, SUN);
+//                });
+//            } else {
+//                _setShaderTexture(i, SUN);
+//            }
+//            ci.cancel();
+//        }
+//    }
 }

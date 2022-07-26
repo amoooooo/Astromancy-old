@@ -1,7 +1,9 @@
 package coffee.amo.astromancy.core.util;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
+import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
@@ -28,6 +30,8 @@ public class StarSavedData extends SavedData {
     public boolean eclipseEnabled = false;
     public int daysTil = 0;
     public int lastDay = 0;
+    public int day;
+    public boolean dirtyEclipse = false;
     protected Random random = new Random();
 
     public StarSavedData() {
@@ -52,7 +56,7 @@ public class StarSavedData extends SavedData {
             Astromancy.LOGGER.info(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
             Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
-        setDaysTilEclipse(random.nextInt(2));
+        setDaysTilEclipse(0);
     }
 
     public static StarSavedData get(MinecraftServer server) {
@@ -73,6 +77,8 @@ public class StarSavedData extends SavedData {
         pCompoundTag.putBoolean("eclipse", eclipseEnabled);
         pCompoundTag.putInt("daysTil", daysTil);
         pCompoundTag.putInt("lastDay", lastDay);
+        pCompoundTag.putInt("day", day);
+        pCompoundTag.putBoolean("dirtyEclipse", dirtyEclipse);
         return pCompoundTag;
     }
 
@@ -88,6 +94,10 @@ public class StarSavedData extends SavedData {
         starSavedData.eclipseEnabled = pCompoundTag.getBoolean("eclipse");
         starSavedData.daysTil = pCompoundTag.getInt("daysTil");
         starSavedData.lastDay = pCompoundTag.getInt("lastDay");
+        starSavedData.day = pCompoundTag.getInt("day");
+        starSavedData.dirtyEclipse = pCompoundTag.getBoolean("dirtyEclipse");
+        ClientRenderHelper.isSolarEclipse = starSavedData.eclipseEnabled;
+        SolarEclipseHandler.solarEclipseEnabledClient = starSavedData.eclipseEnabled;
         return starSavedData;
     }
 
@@ -174,6 +184,8 @@ public class StarSavedData extends SavedData {
 
     public void setEclipseEnabled(boolean enabled) {
         eclipseEnabled = enabled;
+        ClientRenderHelper.setIsSolarEclipse(enabled);
+        SolarEclipseHandler.solarEclipseEnabledClient = enabled;
         this.sendToClient();
         this.setDirty();
     }

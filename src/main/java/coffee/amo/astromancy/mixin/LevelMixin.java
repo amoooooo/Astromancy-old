@@ -21,6 +21,10 @@ public class LevelMixin {
         if(world.getServer() == null) return;
         if(world.isClientSide) return;
         if(world instanceof ServerLevel se){
+            /*
+            * This has to be the Overworld.
+            */
+            if(se.getServer().getLevel(Level.OVERWORLD) == null) return;
             if(SolarEclipseHandler.isEnabled(se) && world.dimension().equals(Level.OVERWORLD)){
                 skyDarken = SolarEclipseHandler.getSkyDarken();
             }

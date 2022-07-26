@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.common.item;
 
+import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
@@ -7,6 +8,7 @@ import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -34,13 +36,7 @@ public class ArcanaSequence extends Item {
                     }
                     return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
                 } else if(pPlayer.isShiftKeyDown()){
-                    for(ConstellationInstance q : StarSavedData.get(pLevel.getServer()).getConstellationInstances()){
-                        q.getStarMap().forEach((x, yMap) -> {
-                            yMap.forEach((y, star) -> {
-                                pPlayer.sendSystemMessage(Component.literal(star.getType().toString() + " " + star.getSpectralClass()));
-                            });
-                        });
-                    }
+                    pPlayer.sendSystemMessage(Component.literal("Day: " + pLevel.getGameTime() / 24000f + " " + SolarEclipseHandler.isEnabled((ServerLevel) pLevel) + " " + StarSavedData.get(((ServerLevel) pLevel).getServer()).getDaysTilEclipse()));
                 }
             }
         }

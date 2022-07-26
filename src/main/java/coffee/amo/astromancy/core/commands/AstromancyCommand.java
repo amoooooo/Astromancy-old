@@ -18,7 +18,8 @@ public class AstromancyCommand {
     public static void registerSubCommands(CommandDispatcher<CommandSourceStack> dispatcher){
         LiteralArgumentBuilder<CommandSourceStack> cmd = Commands.literal("astromancy")
                 .then(AstromancyResearchCommand.register(dispatcher))
-                .then(AstromancyResearchRemoveCommand.register(dispatcher));
+                .then(AstromancyResearchRemoveCommand.register(dispatcher))
+                .then(AstromancyEclipseCommand.register(dispatcher));
                 dispatcher.register(cmd);
     }
 

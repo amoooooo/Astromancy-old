@@ -6,7 +6,6 @@ import coffee.amo.astromancy.common.capability.PlayerResearchProvider;
 import coffee.amo.astromancy.core.commands.AstromancyCommand;
 import coffee.amo.astromancy.core.handlers.AstromancyPacketHandler;
 import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
-import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.packets.ResearchClearPacket;
 import coffee.amo.astromancy.core.packets.ClientboundResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
@@ -21,6 +20,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,14 +51,27 @@ public class AstromancyLevelEvents {
         if(event.level.getServer() == null) return;
         if (event.level instanceof ServerLevel se) {
             MinecraftServer s = se.getServer();
-            int day = Math.round(se.getGameTime() / 24000f);
-            if(StarSavedData.get(s).lastDay + StarSavedData.get(s).getDaysTilEclipse() < day){
-                StarSavedData.get(s).setDaysTilEclipse(StarSavedData.get(s).getDaysTilEclipse() - 1);
+            int day = ((int) se.getGameTime() / 24000);
+            StarSavedData data = StarSavedData.get(s);
+            if(data.lastDay != day && data.isEclipseEnabled()){
+                data.setEclipseEnabled(false);
+                data.genDaysTilEclipse(s.overworld());
             }
-            if(!StarSavedData.get(s).isEclipseEnabled() && StarSavedData.get(s).getDaysTilEclipse() == 0) {
-                StarSavedData.get(s).setEclipseEnabled(true);
-            } else {
-                StarSavedData.get(s).setEclipseEnabled(false);
+            if(data.day != day){
+                data.day = day;
+                data.dirtyEclipse = false;
+            }
+            if(data.lastDay + data.getDaysTilEclipse() != day && !data.dirtyEclipse){
+                data.setDaysTilEclipse(data.getDaysTilEclipse() - 1);
+                data.dirtyEclipse = true;
+                event.level.getServer().sendSystemMessage(Component.literal("Day " + day + ", " + data.getDaysTilEclipse() + " days til eclipse."));
+            }
+            if(!data.isEclipseEnabled() && data.getDaysTilEclipse() <= 0) {
+                data.setEclipseEnabled(true);
+                data.lastDay = day;
+            }
+            if(data.getDaysTilEclipse() <= -1) {
+                data.setDaysTilEclipse(0);
             }
         }
     }
