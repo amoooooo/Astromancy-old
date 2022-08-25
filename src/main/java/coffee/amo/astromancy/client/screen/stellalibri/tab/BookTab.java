@@ -77,7 +77,7 @@ public class BookTab {
         if(isHovering && hoverAmount < 1.5f) hoverAmount += Minecraft.getInstance().getDeltaFrameTime() / 4;
         else if (!isHovering && hoverAmount > 0) hoverAmount -= Minecraft.getInstance().getDeltaFrameTime() / 4;
         hoverAmount = Mth.clamp(hoverAmount, 0, 1.5f);
-        posX -= hoverAmount * 12;
+        posX -= MathHelper.ease(hoverAmount, MathHelper.Easing.easeOutCubic) * 18;
         float mult = 1;
         if(selected) mult = 1.35f;
         RenderSystem.setShaderColor((tabColor.getRed()/255f) * mult, (tabColor.getGreen()/255f)* mult, (tabColor.getBlue()/255f)* mult, 1);

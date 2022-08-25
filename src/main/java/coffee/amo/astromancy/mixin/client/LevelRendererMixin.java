@@ -144,9 +144,14 @@ public class LevelRendererMixin {
         BufferUploader.drawWithShader(bufferbuilder.end());
     }
 
+    @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;disableTexture()V"), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
+    public void renderWaypointStars(PoseStack poseStack, Matrix4f pProjectionMatrix, float pPartialTick, Camera pCamera, boolean p_202428_, Runnable pSkyFogSetup, CallbackInfo ci){
+    }
+
     @Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPose(Lcom/mojang/math/Quaternion;)V", ordinal = 4, shift = At.Shift.AFTER), method = "renderSky", locals = LocalCapture.CAPTURE_FAILHARD)
     public void renderConstellations(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_, CallbackInfo ci, FogType fogtype, Vec3 vec3, float f, float f1, float f2, BufferBuilder bufferbuilder, ShaderInstance shaderinstance, float[] afloat, float f11) {
         if (!level.dimension().equals(Level.OVERWORLD)) return;
+        ClientRenderHelper.renderWaypointStars(p_202424_, p_202425_, p_202426_, p_202427_, p_202428_, p_202429_, ci, bufferbuilder);
         float starBrightness = level.getStarBrightness(p_202426_) * f11;
         starBrightness = ClientRenderHelper.isSolarEclipse ? 10F : starBrightness;
         if (starBrightness > 0.0F) {

@@ -56,7 +56,8 @@ public class StarSavedData extends SavedData {
             Astromancy.LOGGER.info(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
             Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
-        setDaysTilEclipse(0);
+        setDaysTilEclipse(random.nextInt(9)+1);
+        setEclipseEnabled(false);
     }
 
     public static StarSavedData get(MinecraftServer server) {

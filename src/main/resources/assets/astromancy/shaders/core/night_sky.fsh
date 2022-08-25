@@ -2,7 +2,8 @@
 
 uniform float GameTime;
 uniform vec2 InSize;
-in vec2 UV0;
+
+in vec4 vertexColor;
 in vec2 texCoord0;
 
 float rand(vec2 co){
@@ -94,12 +95,14 @@ float pnoise(vec2 co, float freq, int steps, float persistence)
 out vec4 fragColor;
 
 void main(){
-    vec2 position = texCoord0 * (InSize * vec2(2,2));
-    float colorNoise = pnoise(vec3(position, GameTime), 10.0, 5, 0.5);
+    float time = GameTime * 120.0F;
+    vec2 inSize = vec2(1.0, 1.0);
+    vec2 position = texCoord0 * (inSize * vec2(2.,2.));
+    float colorNoise = pnoise(vec3(position, time), 10.0, 5, 0.5);
     vec4 mainCol = vec4(colorNoise * 0.42424, colorNoise * 0.124, colorNoise * 0.59153, colorNoise);
 
-    vec2 modPos = texCoord0 * (InSize * vec2(-2,-2));
-    float modNoise = pnoise(vec3(modPos, GameTime), 7.0, 2, 0.8);
+    vec2 modPos = texCoord0 * (inSize * vec2(-2.,-2.));
+    float modNoise = pnoise(vec3(modPos, time), 7.0, 2, 0.8);
     vec4 modCol = vec4(modNoise* 0.0, modNoise* 0.324, modNoise* 0.69153, 0.2);
     mainCol = mix(mainCol, modCol, modNoise);
     mainCol = mix(mainCol * 0.15, mainCol, colorNoise);

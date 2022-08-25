@@ -34,6 +34,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> GLYPH_RESEARCH_ICON = ITEMS.register("glyph_research_icon", () -> new GlyphEntryItem(ICON_PROPERTIES().stacksTo(1)));
     public static final RegistryObject<Item> VELLUM = ITEMS.register("vellum", () -> new Item(DEFAULT_PROPERTIES()));
     public static final RegistryObject<Item> FEATHER_QUILL = ITEMS.register("feather_quill", () -> new Item(DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> SKYWATCHERS_LOOKING_GLASS = ITEMS.register("skywatchers_looking_glass", () -> new SkywatchersLookingGlass(DEFAULT_PROPERTIES()));
+    public static final RegistryObject<Item> STONE_TABLET = ITEMS.register("stone_tablet", () -> new StoneTabletItem(DEFAULT_PROPERTIES()));
 //    public static final RegistryObject<Item> TEST_RING = ITEMS.register("test_ring", () -> new TestRing(DEFAULT_PROPERTIES().stacksTo(1)));
 //    public static final RegistryObject<BlockItem> RESEARCH_TABLE = ITEMS.register("research_table", () -> new BlockItem(BlockRegistration.RESEARCH_TABLE.get(), DEFAULT_PROPERTIES()));
 

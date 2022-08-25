@@ -5,10 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "astromancy.refmap.json",
   "mixins": [
-    "LevelMixin"
+    "LevelMixin",
+    "PlayerMixin"
   ],
   "client": [
     "client.ClientLevelMixin",
+    "client.GuiMixin",
     "client.LevelRendererMixin",
     "client.OverworldEffectsMixin",
     "client.RenderSystemMixin"

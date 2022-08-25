@@ -181,7 +181,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.19-${forgeVersion}"
+    minecraft "net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}"
 
 //    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curiosVersion}")
 

@@ -1,12 +1,16 @@
 package coffee.amo.astromancy.core.events;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.helper.ClientRenderHelper;
 import coffee.amo.astromancy.common.blockentity.jar.JarBlockEntity;
+import coffee.amo.astromancy.common.item.SkywatchersLookingGlass;
 import coffee.amo.astromancy.core.registration.BlockRegistration;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
