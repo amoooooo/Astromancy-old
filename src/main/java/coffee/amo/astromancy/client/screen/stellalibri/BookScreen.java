@@ -22,6 +22,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import mezz.jei.api.helpers.IColorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -318,6 +319,25 @@ public class BookScreen extends Screen {
         }
     }
 
+    public static void renderWrappingText(PoseStack mStack, String text, int x, int y, int w, boolean shadow, Color color) {
+        Font font = Minecraft.getInstance().font;
+        text = Component.translatable(text).getString();
+        List<String> lines = new ArrayList<>();
+        String[] words = text.split(" ");
+        String line = "";
+        for (String s : words) {
+            if (font.width(line) + font.width(s) > w) {
+                lines.add(line);
+                line = s + " ";
+            } else line += s + " ";
+        }
+        if (!line.isEmpty()) lines.add(line);
+        for (int i = 0; i < lines.size(); i++) {
+            String currentLine = lines.get(i);
+            renderRawText(mStack, currentLine, x, y + i * (font.lineHeight + 1), getTextGlow(i / 4f), shadow, color);
+        }
+    }
+
     public static void renderText(PoseStack stack, String text, int x, int y) {
         renderText(stack, Component.translatable(text), x, y, getTextGlow(0));
     }
@@ -346,6 +366,21 @@ public class BookScreen extends Screen {
         font.draw(stack, text, x - 1, y - 1, color(96, 255, 255, 255));
 
         font.draw(stack, text, x, y, color(255, r, g, b));
+    }
+
+    private static void renderRawText(PoseStack stack, String text, int x, int y, float glow, boolean shadow, Color color) {
+        Font font = Minecraft.getInstance().font;
+        //182, 61, 183  227, 39, 228
+        int r = (int) Mth.lerp(glow, 2, 16);
+        int g = (int) Mth.lerp(glow, 2, 16);
+        int b = (int) Mth.lerp(glow, 2, 16);
+        Color shade = new Color(Integer.parseInt("888888", 16));
+        font.draw(stack, text, x + 1, y + 1, color(254, shade.getRed(), shade.getGreen(), shade.getBlue()));
+        stack.translate(0,0,-0.01f);
+        //font.draw(stack, text, x - 1, y - 1, color(96, 255, 255, 255));
+
+        font.draw(stack, text, x, y, color(255, color.getRed(), color.getGreen(), color.getBlue()));
+
     }
 
     public static float getTextGlow(float offset) {

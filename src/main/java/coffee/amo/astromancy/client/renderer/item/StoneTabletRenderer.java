@@ -1,8 +1,10 @@
 package coffee.amo.astromancy.client.renderer.item;
 
 import coffee.amo.astromancy.Astromancy;
+import coffee.amo.astromancy.client.screen.stellalibri.BookScreen;
 import coffee.amo.astromancy.common.item.StoneTabletItem;
 import coffee.amo.astromancy.core.helpers.MathHelper;
+import coffee.amo.astromancy.core.helpers.RenderHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,13 +29,14 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Astromancy.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class StoneTabletRenderer {
     public static final StoneTabletModel bookModel = new StoneTabletModel();
-    public static final ResourceLocation bookTexture = Astromancy.astromancy("textures/block/stellarite.png");
+    public static final ResourceLocation bookTexture = Astromancy.astromancy("textures/item/stone_tablet_hand.png");
     private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
@@ -96,7 +99,15 @@ public class StoneTabletRenderer {
             bookModel.tablet.x = 24.5F;
             bookModel.renderToBuffer(stack, event.getMultiBufferSource().getBuffer(RenderType.entitySolid(bookTexture)), event.getPackedLight(), OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             stack.translate(1,0,0);
-            Minecraft.getInstance().font.draw(stack, "Stone Tablet", 0,0, 0xFFFFFF);
+
+            stack.pushPose();
+            stack.mulPose(Vector3f.YP.rotationDegrees(90));
+            stack.translate(-0.85f,0.1575f,0.4f);
+            stack.scale(0.005f, 0.005f, 0.005f);
+            float height = Minecraft.getInstance().font.lineHeight/10.3f;
+            stack.scale(height, height, height);
+            BookScreen.renderWrappingText(stack, " ", 0 ,0, 107, true, new Color(Integer.parseInt("adb0ba", 16)));
+            stack.popPose();
             stack.popPose();
         }
     }
@@ -131,7 +142,7 @@ public class StoneTabletRenderer {
         public StoneTabletModel() {
             super(RenderType::entitySolid);
             List<ModelPart.Cube> cubes = List.of(
-                    new ModelPart.Cube(0, 0, 4, 0, 0, 12, 16, 1, 0, 0, 0, false, 8, 8)
+                    new ModelPart.Cube(0, 0, 4, 0, 0, 12, 16, 1, 0, 0, 0, false, 32, 32)
             );
             this.tablet = new ModelPart(cubes, Map.of());
         }
