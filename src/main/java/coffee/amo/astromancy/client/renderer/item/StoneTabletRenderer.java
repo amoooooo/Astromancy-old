@@ -106,7 +106,7 @@ public class StoneTabletRenderer {
             stack.scale(0.005f, 0.005f, 0.005f);
             float height = Minecraft.getInstance().font.lineHeight/10.3f;
             stack.scale(height, height, height);
-            BookScreen.renderWrappingText(stack, " ", 0 ,0, 107, true, new Color(Integer.parseInt("adb0ba", 16)));
+            BookScreen.renderWrappingText(stack, "wa, la wu bovo rexu, ke xi wevy hywapu ge quwu wuji gakede fisy dy? du quma bydi gunywo hy tido vuly tozy? kidi su! lady lu fi dihi cojyqu, sevyme xa, ho sy jyka, kyge tosali lyza du gy tipy wokydo ryfu quhi pe! nesi xa jy ga dikipe se! roqu ri? lemo kawa li wy sapusy vu tu wybi zaca qu ly japu zacu fu jilowe", 0 ,0, 107, true, new Color(Integer.parseInt("e6b029", 16)));
             stack.popPose();
             stack.popPose();
         }

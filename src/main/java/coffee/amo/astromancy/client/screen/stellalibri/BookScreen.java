@@ -374,7 +374,7 @@ public class BookScreen extends Screen {
         int r = (int) Mth.lerp(glow, 2, 16);
         int g = (int) Mth.lerp(glow, 2, 16);
         int b = (int) Mth.lerp(glow, 2, 16);
-        Color shade = new Color(Integer.parseInt("888888", 16));
+        Color shade = new Color(Integer.parseInt("333333", 16));
         font.draw(stack, text, x + 1, y + 1, color(254, shade.getRed(), shade.getGreen(), shade.getBlue()));
         stack.translate(0,0,-0.01f);
         //font.draw(stack, text, x - 1, y - 1, color(96, 255, 255, 255));
