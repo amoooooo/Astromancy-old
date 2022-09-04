@@ -2,8 +2,9 @@ package coffee.amo.astromancy.core.systems.stars.types;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.systems.lumen.Lumen;
-import coffee.amo.astromancy.core.systems.stars.classification.LuminosityClass;
-import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
+import coffee.amo.astromancy.core.systems.stars.classification.star.LuminosityClass;
+import coffee.amo.astromancy.core.systems.stars.classification.star.StarClass;
+import coffee.amo.astromancy.core.systems.stars.classification.star.StarType;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -26,8 +27,8 @@ public class Star extends AstralObject {
         this.starType = type;
     }
 
-    public Star(String name, UUID uuid, StarClass starClass, StarType type) {
-        super(name, uuid);
+    public Star(String name, UUID uuid, StarClass starClass, StarType type, int size) {
+        super(name, uuid, size);
         this.starClass = starClass;
         this.starType = type;
     }
@@ -134,11 +135,12 @@ public class Star extends AstralObject {
             lumenTag.putFloat(entry.getKey().toString(), entry.getValue());
         }
         tag.put("lumen", lumenTag);
+        tag.putInt("size", this.getSize());
         return tag;
     }
 
     public static Star fromNbt(CompoundTag tag){
-        Star star = new Star(tag.getString("name"), UUID.fromString(tag.getString("uuid")), StarClass.valueOf(tag.getString("starClass")), StarType.valueOf(tag.getString("starType")));
+        Star star = new Star(tag.getString("name"), UUID.fromString(tag.getString("uuid")), StarClass.valueOf(tag.getString("starClass")), StarType.valueOf(tag.getString("starType")), tag.getInt("size"));
         star.luminosity = Pair.of(tag.getFloat("luminosity"), star.starClass.getLuminosityClass());
         star.mass = tag.getFloat("mass");
         star.spectralClass = Pair.of(tag.getInt("spectralIntensity"), tag.getString("spectralClass").charAt(0));

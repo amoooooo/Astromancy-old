@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.stars.classification;
+package coffee.amo.astromancy.core.systems.stars.classification.constellation;
 
 public class Constellation {
     // Star names are the quadrant suits + number

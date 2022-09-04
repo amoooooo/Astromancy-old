@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.stars.classification;
+package coffee.amo.astromancy.core.systems.stars.classification.constellation;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;

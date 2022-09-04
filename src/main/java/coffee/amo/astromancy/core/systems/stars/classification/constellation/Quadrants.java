@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.stars.classification;
+package coffee.amo.astromancy.core.systems.stars.classification.constellation;
 
 public enum Quadrants {
     CUPS(Constellations.THE_FOOL, Constellations.THE_MAGICIAN, Constellations.THE_HERMIT, Constellations.WHEEL_OF_FORTUNE, Constellations.TEMPERANCE, Constellations.THE_WORLD),

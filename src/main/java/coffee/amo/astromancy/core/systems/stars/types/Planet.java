@@ -4,14 +4,17 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Planet extends AstralObject {
-    private Color skyColor;
-    private Color landColor;
-    private Color oceanColor;
+    private Color skyColor = Color.BLACK;
+    private Color landColor = Color.BLACK;
+    private Color oceanColor = Color.BLACK;
     private boolean hasOcean;
     private boolean hasLand;
     private boolean hasAtmosphere;
@@ -28,14 +31,15 @@ public class Planet extends AstralObject {
     private float orbitSpeed;
     private float orbitRadius;
     private float orbitAngle;
-    private Attribute attribute;
+    private Attribute attribute = Attributes.MAX_HEALTH;
+    private List<Moon> moons = new ArrayList<>();
 
     public Planet(String name) {
         super(name);
     }
     
-    public Planet(String name, UUID uuid) {
-        super(name, uuid);
+    public Planet(String name, UUID uuid, int size) {
+        super(name, uuid, size);
     }
     
     public Planet(String name, UUID uuid, Color skyColor, Color landColor, Color oceanColor, boolean hasOcean, boolean hasLand, int mass, float axisTilt, float rotationSpeed, float orbitSpeed, float orbitRadius, float orbitAngle) {
@@ -248,7 +252,7 @@ public class Planet extends AstralObject {
         return nbt;
     }
 
-    public Planet fromNbt(CompoundTag tag){
+    public static Planet fromNbt(CompoundTag tag){
         Planet planet = new Planet();
         planet.setName(tag.getString("name"));
         planet.setUuid(tag.getUUID("uuid"));
@@ -273,5 +277,32 @@ public class Planet extends AstralObject {
         planet.setHasLand(tag.getBoolean("hasLand"));
         planet.setAttribute(Registry.ATTRIBUTE.get(new ResourceLocation(tag.getString("attribute"))));
         return planet;
+    }
+
+    @Override
+    public String toString() {
+        return "Planet{" +
+                "skyColor=" + skyColor +
+                ", landColor=" + landColor +
+                ", oceanColor=" + oceanColor +
+                ", hasOcean=" + hasOcean +
+                ", hasLand=" + hasLand +
+                ", hasAtmosphere=" + hasAtmosphere +
+                ", hasRings=" + hasRings +
+                ", hasClouds=" + hasClouds +
+                ", hasMoon=" + hasMoon +
+                ", ringCount=" + ringCount +
+                ", moonCount=" + moonCount +
+                ", atmosphereThickness=" + atmosphereThickness +
+                ", atmosphereDensity=" + atmosphereDensity +
+                ", mass=" + mass +
+                ", axisTilt=" + axisTilt +
+                ", rotationSpeed=" + rotationSpeed +
+                ", orbitSpeed=" + orbitSpeed +
+                ", orbitRadius=" + orbitRadius +
+                ", orbitAngle=" + orbitAngle +
+                ", attribute=" + attribute +
+                ", moons=" + moons +
+                '}';
     }
 }

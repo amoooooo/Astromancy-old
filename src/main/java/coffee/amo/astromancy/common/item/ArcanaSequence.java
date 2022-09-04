@@ -3,7 +3,6 @@ package coffee.amo.astromancy.common.item;
 import coffee.amo.astromancy.core.handlers.SolarEclipseHandler;
 import coffee.amo.astromancy.core.registration.ItemRegistry;
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
 import coffee.amo.astromancy.core.util.StarSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;

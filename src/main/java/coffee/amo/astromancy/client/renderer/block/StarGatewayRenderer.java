@@ -5,7 +5,7 @@ import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.common.blockentity.StarGatewayBlockEntity;
 import coffee.amo.astromancy.core.helpers.RenderHelper;
 import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
-import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;

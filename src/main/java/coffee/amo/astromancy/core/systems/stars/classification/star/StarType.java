@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.stars.types;
+package coffee.amo.astromancy.core.systems.stars.classification.star;
 
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;

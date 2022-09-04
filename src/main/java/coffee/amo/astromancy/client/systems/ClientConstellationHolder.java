@@ -1,8 +1,8 @@
 package coffee.amo.astromancy.client.systems;
 
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
-import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.Constellations;
 
 import java.util.ArrayList;
 import java.util.List;

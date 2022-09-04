@@ -1,9 +1,9 @@
 package coffee.amo.astromancy.core.systems.stars;
 
-import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
-import coffee.amo.astromancy.core.systems.stars.classification.Quadrants;
-import coffee.amo.astromancy.core.systems.stars.classification.SpectralIntensityBand;
-import coffee.amo.astromancy.core.systems.stars.classification.StarClass;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.Constellations;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.Quadrants;
+import coffee.amo.astromancy.core.systems.stars.classification.star.SpectralIntensityBand;
+import coffee.amo.astromancy.core.systems.stars.classification.star.StarClass;
 import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;

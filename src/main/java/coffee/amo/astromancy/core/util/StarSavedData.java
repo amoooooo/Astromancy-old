@@ -8,8 +8,9 @@ import coffee.amo.astromancy.core.packets.SolarEclipsePacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
 import coffee.amo.astromancy.core.systems.glyph.Glyph;
 import coffee.amo.astromancy.core.systems.stars.Star;
-import coffee.amo.astromancy.core.systems.stars.classification.ConstellationInstance;
-import coffee.amo.astromancy.core.systems.stars.classification.Constellations;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
+import coffee.amo.astromancy.core.systems.stars.classification.constellation.Constellations;
+import coffee.amo.astromancy.core.systems.stars.systems.Universe;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
+    private Universe universe;
     public boolean eclipseEnabled = false;
     public int daysTil = 0;
     public int lastDay = 0;
@@ -51,11 +53,21 @@ public class StarSavedData extends SavedData {
         });
         Star sun = new Star(5200);
         sun.setName("The Sun");
+        universe = new Universe();
         constellationInstanceList.get(8).addStar(sun, 10, 10);
         constellationInstanceList.forEach(c -> {
             Astromancy.LOGGER.info(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name());
             Astromancy.LOGGER.debug(c.getConstellation().getName() + ": " + c.getAttunedGlyph().name() + ", Offset: " + c.getOffset() + ", Visible every " + c.getDaysVisible() + " days.");
         });
+        universe.setConstellations(constellationInstanceList);
+        universe.setSuperclusters(UniverseUtil.generateSuperclusters());
+        try {
+            Universe.printLog(universe);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Astromancy.LOGGER.info(e.getMessage());
+        }
+
         setDaysTilEclipse(random.nextInt(9)+1);
         setEclipseEnabled(false);
     }

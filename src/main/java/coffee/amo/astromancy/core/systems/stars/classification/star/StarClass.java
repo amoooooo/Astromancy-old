@@ -1,4 +1,4 @@
-package coffee.amo.astromancy.core.systems.stars.classification;
+package coffee.amo.astromancy.core.systems.stars.classification.star;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.util.random.Weight;
