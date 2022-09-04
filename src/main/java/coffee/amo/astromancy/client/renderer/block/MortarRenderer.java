@@ -15,9 +15,9 @@ public class MortarRenderer implements BlockEntityRenderer<MortarBlockEntity> {
     @Override
     public void render(MortarBlockEntity pBlockEntity, float pPartialTick, PoseStack ps, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         ps.pushPose();
-        ps.translate(0.5,0.015,0.5);
+        ps.translate(0.5,0.1,0.5);
         ps.scale(0.4f, 0.4f, 0.4f);
-        ps.mulPose(Vector3f.YP.rotationDegrees(100f/(pBlockEntity.spins * 5) * 360));
+        ps.mulPose(Vector3f.YP.rotationDegrees(((pBlockEntity.spinning > 0 ? 1 : 0)* pPartialTick) * 360));
         if(!pBlockEntity.inventory.isEmpty()){
             for(int i = 0; i < pBlockEntity.inventory.nonEmptyItemAmount; i++){
                 ps.mulPose(Vector3f.YP.rotationDegrees((i/5f)*360));

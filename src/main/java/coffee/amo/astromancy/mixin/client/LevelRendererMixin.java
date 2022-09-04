@@ -2,7 +2,7 @@ package coffee.amo.astromancy.mixin.client;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.helper.ClientRenderHelper;
-import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
+import coffee.amo.astromancy.client.systems.ClientUniverseHolder;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -149,7 +149,7 @@ public class LevelRendererMixin {
         starBrightness = ClientRenderHelper.isSolarEclipse ? 10F : starBrightness;
         if (starBrightness > 0.0F) {
             p_202424_.pushPose();
-            for (ConstellationInstance constellationInstance : ClientConstellationHolder.getConstellationInstances()) {
+            for (ConstellationInstance constellationInstance : ClientUniverseHolder.getConstellationInstances()) {
                 SimplexNoise noise = constellationInstance.getNoise();
                 if (Math.round((level.getGameTime() / 24000f) + 1) % constellationInstance.getDaysVisible() == 0) {
                     float dayScale = level.getTimeOfDay(p_202426_) * 0.8f;

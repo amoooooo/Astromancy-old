@@ -2,9 +2,9 @@ package coffee.amo.astromancy.core.helpers;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.registration.RenderTypeRegistry;
-import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.StarUtils;
 import coffee.amo.astromancy.core.systems.stars.classification.star.StarColors;
+import coffee.amo.astromancy.core.systems.stars.types.Star;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
@@ -45,6 +45,42 @@ public class RenderHelper {
         ps.mulPose(Vector3f.YP.rotationDegrees(180));
         ps.translate(-size, 0, size);
         renderQuad(ps, size, buff);
+        ps.popPose();
+    }
+
+    public static void renderTexturedCube(PoseStack ps, VertexConsumer buff, float size){
+        ps.pushPose();
+        renderTexturedQuad(ps, size, buff);
+        ps.mulPose(Vector3f.YP.rotationDegrees(90));
+        ps.translate(0, 0, size);
+        renderTexturedQuad(ps, size, buff);
+        ps.mulPose(Vector3f.YP.rotationDegrees(90));
+        ps.translate(0, 0, size);
+        renderTexturedQuad(ps, size, buff);
+        ps.mulPose(Vector3f.YP.rotationDegrees(90));
+        ps.translate(0, 0, size);
+        renderTexturedQuad(ps, size, buff);
+        ps.mulPose(Vector3f.XP.rotationDegrees(90));
+        ps.translate(0, 0, size);
+        renderTexturedQuad(ps, size, buff);
+        ps.mulPose(Vector3f.XP.rotationDegrees(180));
+        ps.translate(0, size, size);
+        renderTexturedQuad(ps, size, buff);
+
+        ps.popPose();
+    }
+
+    public static void renderTexturedQuad(PoseStack ps, float size, VertexConsumer buff){
+        ps.pushPose();
+        ps.translate(0, 0, 0);
+        ps.mulPose(Vector3f.YP.rotationDegrees(180));
+        ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.scale(size, size, size);
+        Matrix4f matrix = ps.last().pose();
+        buff.vertex(matrix, 0, 0, 0).color(1, 1, 1, 1f).uv(0, 0).uv2(0,0).endVertex();
+        buff.vertex(matrix, 0, 1, 0).color(1,1,1,1f).uv(0, 1).uv2(0,1).endVertex();
+        buff.vertex(matrix, 1, 1, 0).color(1,1,1,1f).uv(1, 1).uv2(1,1).endVertex();
+        buff.vertex(matrix, 1, 0, 0).color(1,1,1,1f).uv(1, 0).uv2(1,0).endVertex();
         ps.popPose();
     }
 
@@ -123,10 +159,10 @@ public class RenderHelper {
         float multiplier = Math.max(massMult, 0.5f);
         float fac = (blockEntity.getLevel().getGameTime() + pPartialTick) * multiplier;
         ps.pushPose();
-        if (offsets) {
-            Vec3 offset = StarUtils.generatePosition(star, blockEntity.getLevel());
-            ps.translate(offset.x / 2, (offset.y + (star.getRandomOffset() * 200)) / 1.75f + 0.05f, offset.z / 2);
-        }
+//        if (offsets) {
+//            Vec3 offset = StarUtils.generatePosition(star, blockEntity.getLevel());
+//            ps.translate(offset.x / 2, (offset.y + (star.getRandomOffset() * 200)) / 1.75f + 0.05f, offset.z / 2);
+//        }
         ps.translate(0.5f, 0.5f, 0.5f);
         ps.mulPose(Vector3f.YP.rotationDegrees(fac));
         ps.mulPose(Vector3f.ZP.rotationDegrees(fac));
@@ -207,7 +243,7 @@ public class RenderHelper {
 
     private static Color getStarColor(Star star) {
         Color color = new Color(0,0,0,255);
-        color = switch (star.getSpectralClass()) {
+        color = switch (star.getSpectralClass().getSecond()) {
             case 'O' -> StarColors.O.getColor();
             case 'B' -> StarColors.B.getColor();
             case 'A' -> StarColors.A.getColor();
@@ -217,7 +253,7 @@ public class RenderHelper {
             case 'M' -> StarColors.M.getColor();
             default -> new Color(0, 0, 0, 255);
         };
-        color = switch (star.getType()) {
+        color = switch (star.getStarType()) {
             case EXOTIC -> StarColors.EXOTIC.getColor();
             case EMPTY -> StarColors.EMPTY.getColor();
             case PURE -> StarColors.PURE.getColor();

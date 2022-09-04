@@ -29,6 +29,7 @@ public class Star {
 //    private Pair<Integer, Integer> quadrantCoordinates;
     private float randomOffset;
 
+
     public Star(int spectralIntensity) {
         Random random = new Random();
         this.spectralIntensity = spectralIntensity;

@@ -4,7 +4,7 @@ import coffee.amo.astromancy.core.systems.stars.classification.constellation.Con
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.Quadrants;
 import coffee.amo.astromancy.core.systems.stars.classification.star.SpectralIntensityBand;
 import coffee.amo.astromancy.core.systems.stars.classification.star.StarClass;
-import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
+import coffee.amo.astromancy.client.systems.ClientUniverseHolder;
 import coffee.amo.astromancy.core.helpers.RomanNumeralHelper;
 import coffee.amo.astromancy.core.helpers.StringHelper;
 import coffee.amo.astromancy.core.util.StarSavedData;
@@ -71,11 +71,11 @@ public class StarUtils {
 
     public static Vec3 generatePosition(Star star, Level level){
         AtomicReference<Vec3> pos = new AtomicReference<>(new Vec3(0, 0, 0));
-        ClientConstellationHolder.constellationInstances.forEach(constellationInstance -> {
+        ClientUniverseHolder.constellationInstances.forEach(constellationInstance -> {
             constellationInstance.getStarMap().forEach((x, yMap) -> {
                 yMap.forEach((y, star1) -> {
                     if(star1.getName().equals(star.getName())){
-                        pos.set(pos.get().add(x - 10, ClientConstellationHolder.findConstellationFromStar(star).getConstellation().getHeight(), y - 10));
+                        pos.set(pos.get().add(x - 10, ClientUniverseHolder.findConstellationFromStar(star).getConstellation().getHeight(), y - 10));
                     }
                 });
             });

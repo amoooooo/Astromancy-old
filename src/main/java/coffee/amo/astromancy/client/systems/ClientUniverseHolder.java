@@ -3,15 +3,25 @@ package coffee.amo.astromancy.client.systems;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.Constellations;
+import coffee.amo.astromancy.core.systems.stars.systems.Universe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientConstellationHolder {
+public class ClientUniverseHolder {
+    public static Universe universe = new Universe();
     public static List<ConstellationInstance> constellationInstances = new ArrayList<>();
 
     public static void setConstellationInstances(List<ConstellationInstance> constellationInstances) {
-        ClientConstellationHolder.constellationInstances = constellationInstances;
+        ClientUniverseHolder.constellationInstances = constellationInstances;
+    }
+
+    public static Universe getUniverse(){
+        return universe;
+    }
+
+    public static void setUniverse(Universe universe){
+        ClientUniverseHolder.universe = universe;
     }
 
     public static List<ConstellationInstance> getConstellationInstances() {

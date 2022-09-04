@@ -4,6 +4,7 @@ import coffee.amo.astromancy.Astromancy;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -35,6 +36,10 @@ public class RenderTypeRegistry {
         return AstromancyRenderTypes.NIGHTSKY.apply(texture);
     }
 
+    public static RenderType solid(ResourceLocation texture) {
+        return AstromancyRenderTypes.SOLID.apply(texture);
+    }
+
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Astromancy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ShaderRegistryEvent{
         @SubscribeEvent
@@ -51,6 +56,9 @@ public class RenderTypeRegistry {
             event.registerShader(new ShaderInstance(event.getResourceManager(), Astromancy.astromancy("rendertype_night_sky"), POSITION_COLOR_TEX), shaderInstance -> {
                 AstromancyRenderTypes.nightSky = shaderInstance;
             });
+            event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceLocation.tryParse("minecraft:rendertype_solid"), POSITION_COLOR_TEX_LIGHTMAP), shaderInstance -> {
+                AstromancyRenderTypes.solid = shaderInstance;
+            });
         }
     }
 
@@ -60,6 +68,7 @@ public class RenderTypeRegistry {
         private static ShaderInstance additiveTexture;
         private static ShaderInstance cubemap;
         private static ShaderInstance nightSky;
+        private static ShaderInstance solid;
 
         public static ShaderInstance getNightSky(){
             return nightSky;
@@ -73,6 +82,8 @@ public class RenderTypeRegistry {
 
         private static final ShaderStateShard RENDERTYPE_NIGHTSKY = new ShaderStateShard(() -> nightSky);
 
+        private static final ShaderStateShard RENDERTYPE_SOLID_ASTRO = new ShaderStateShard(() -> solid);
+
         private AstromancyRenderTypes(String s, VertexFormat v, VertexFormat.Mode m, int i, boolean b, boolean b2, Runnable r, Runnable r2) {
             super(s, v, m, i, b, b2, r, r2);
             throw new IllegalStateException("This class is not meant to be constructed!");
@@ -82,6 +93,18 @@ public class RenderTypeRegistry {
         public static Function<ResourceLocation, RenderType> ADDITIVE_TEXTURE = Util.memoize(AstromancyRenderTypes::additiveTexture);
         public static Function<ResourceLocation, RenderType> CUBEMAP = Util.memoize(AstromancyRenderTypes::cubemap);
         public static Function<ResourceLocation, RenderType> NIGHTSKY = Util.memoize(AstromancyRenderTypes::nightSky);
+        public static Function<ResourceLocation, RenderType> SOLID = Util.memoize(AstromancyRenderTypes::astromancySolid);
+
+        private static RenderType astromancySolid(ResourceLocation texture){
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_SOLID_ASTRO)
+                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(NO_OVERLAY)
+                    .createCompositeState(true);
+            return create("astromancy_solid", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state);
+        }
 
         private static RenderType additiveTexture(ResourceLocation texture){
             RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()

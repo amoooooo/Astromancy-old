@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.systems.stars.systems;
 
+import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -21,6 +22,7 @@ public class Universe {
 
     public Universe() {
         this.superclusters = new ArrayList<>();
+        Astromancy.LOGGER.info("Created empty universe");
     }
 
     public List<Supercluster> getSuperclusters() {

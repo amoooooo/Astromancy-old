@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 public class StarSystem {
     private String name;
     private Star[] stars = new Star[2];
-    private Planet[] planets;
-    private List<AstralObject> solarSystemObjects;
+    private Planet[] planets = new Planet[8];
+    private List<AstralObject> solarSystemObjects = new ArrayList<>();
     public Vec3 position = Vec3.ZERO;
 
     public StarSystem() {

@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarSavedData extends SavedData {
     private List<ConstellationInstance> constellationInstanceList = new ArrayList<>();
-    private Universe universe;
+    private Universe universe = new Universe();
     public boolean eclipseEnabled = false;
     public int daysTil = 0;
     public int lastDay = 0;
@@ -61,13 +61,6 @@ public class StarSavedData extends SavedData {
         });
         universe.setConstellations(constellationInstanceList);
         universe.setSuperclusters(UniverseUtil.generateSuperclusters());
-        try {
-            Universe.printLog(universe);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Astromancy.LOGGER.info(e.getMessage());
-        }
-
         setDaysTilEclipse(random.nextInt(9)+1);
         setEclipseEnabled(false);
     }
@@ -92,6 +85,7 @@ public class StarSavedData extends SavedData {
         pCompoundTag.putInt("lastDay", lastDay);
         pCompoundTag.putInt("day", day);
         pCompoundTag.putBoolean("dirtyEclipse", dirtyEclipse);
+        pCompoundTag.put("universe", universe.toNbt());
         return pCompoundTag;
     }
 
@@ -109,6 +103,8 @@ public class StarSavedData extends SavedData {
         starSavedData.lastDay = pCompoundTag.getInt("lastDay");
         starSavedData.day = pCompoundTag.getInt("day");
         starSavedData.dirtyEclipse = pCompoundTag.getBoolean("dirtyEclipse");
+        starSavedData.universe = Universe.fromNbt(pCompoundTag.getCompound("universe"));
+        starSavedData.constellationInstanceList = constList;
         ClientRenderHelper.isSolarEclipse = starSavedData.eclipseEnabled;
         SolarEclipseHandler.solarEclipseEnabledClient = starSavedData.eclipseEnabled;
         return starSavedData;
@@ -122,6 +118,10 @@ public class StarSavedData extends SavedData {
                 return;
             }
         }
+    }
+
+    public Universe getUniverse() {
+        return universe;
     }
 
     public Star getStar(int x, int y, Constellations constel) {

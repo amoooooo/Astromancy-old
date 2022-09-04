@@ -29,6 +29,7 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
     public int progress;
     public int cooldown;
     public int spins;
+    public int spinning = 0;
 
     public MortarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistration.MORTAR.get(), pos, state);
@@ -57,6 +58,7 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
     public InteractionResult onUse(Player player, InteractionHand hand) {
         if(player.getItemInHand(hand).isEmpty() && !player.isCrouching() && output.isEmpty() && !inventory.isEmpty()){
             level.playSound(null, worldPosition, SoundRegistry.GRIND.get(), SoundSource.BLOCKS, 1f, 1f);
+            spinning = 1;
             if(spins < 5){
                 spins++;
             } else {
@@ -108,6 +110,7 @@ public class MortarBlockEntity extends ItemHolderBlockEntity {
     @Override
     public void tick() {
         super.tick();
+        spinning = 0;
         if(cooldown < 10 && spins > 1){
             cooldown++;
         }

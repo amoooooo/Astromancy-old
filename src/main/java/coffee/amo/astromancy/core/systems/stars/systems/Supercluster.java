@@ -4,12 +4,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Supercluster {
     private String name;
-    private List<Galaxy> galaxies;
+    private List<Galaxy> galaxies = new ArrayList<>();
     public Vec3 position = Vec3.ZERO;
 
     public Supercluster(String name) {

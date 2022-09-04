@@ -1,7 +1,7 @@
 package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.Astromancy;
-import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
+import coffee.amo.astromancy.client.systems.ClientUniverseHolder;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
@@ -48,7 +48,7 @@ public class StarDataPacket {
             if (clientWorld.isEmpty()) {
                 return;
             }
-            ClientConstellationHolder.constellationInstances = packet.constellationInstances;
+            ClientUniverseHolder.constellationInstances = packet.constellationInstances;
             Astromancy.LOGGER.info("Parsed star data");
         });
         contextSupplier.get().setPacketHandled(true);

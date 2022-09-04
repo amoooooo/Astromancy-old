@@ -9,6 +9,7 @@ import coffee.amo.astromancy.core.handlers.PlayerResearchHandler;
 import coffee.amo.astromancy.core.packets.ResearchClearPacket;
 import coffee.amo.astromancy.core.packets.ClientboundResearchPacket;
 import coffee.amo.astromancy.core.packets.StarDataPacket;
+import coffee.amo.astromancy.core.packets.UniverseNBTPacket;
 import coffee.amo.astromancy.core.registration.AttributeRegistry;
 import coffee.amo.astromancy.core.registration.ResearchRegistry;
 import coffee.amo.astromancy.core.systems.damage.AstromancyDamageSource;
@@ -83,6 +84,7 @@ public class AstromancyLevelEvents {
         }
         if (event.getEntity() instanceof ServerPlayer se) {
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get(event.getEntity().getServer()).getConstellationInstances()));
+            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new UniverseNBTPacket(StarSavedData.get(event.getEntity().getServer()).getUniverse().toNbt()));
             ClientResearchHolder.research.clear();
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchClearPacket());
             event.getEntity().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {

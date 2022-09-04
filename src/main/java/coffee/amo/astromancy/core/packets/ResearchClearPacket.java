@@ -2,7 +2,6 @@ package coffee.amo.astromancy.core.packets;
 
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.client.research.ClientResearchHolder;
-import coffee.amo.astromancy.client.systems.ClientConstellationHolder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LogicalSidedProvider;
