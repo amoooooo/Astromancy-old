@@ -9,6 +9,7 @@ public class AstralObject {
     private UUID uuid;
     private String name;
     private int size;
+    private float axisTilt;
     public Vec3 position = Vec3.ZERO;
 
     public AstralObject(String name) {
@@ -65,6 +66,14 @@ public class AstralObject {
         return "Astral Object";
     }
 
+    public void setAxisTilt(float axisTilt) {
+        this.axisTilt = axisTilt;
+    }
+
+    public float getAxisTilt() {
+        return axisTilt;
+    }
+
     @Override
     public String toString() {
         return "AstralObject{" +
@@ -80,6 +89,10 @@ public class AstralObject {
         tag.putString("name", this.name);
         tag.putUUID("uuid", this.uuid);
         tag.putInt("size", this.size);
+        tag.putDouble("x", this.position.x);
+        tag.putDouble("y", this.position.y);
+        tag.putDouble("z", this.position.z);
+        tag.putFloat("axisTilt", this.axisTilt);
         return tag;
     }
 
@@ -88,6 +101,8 @@ public class AstralObject {
         object.name = tag.getString("name");
         object.uuid = tag.getUUID("uuid");
         object.size = tag.getInt("size");
+        object.position = new Vec3(tag.getDouble("x"), tag.getDouble("y"), tag.getDouble("z"));
+        object.axisTilt = tag.getFloat("axisTilt");
         return object;
     }
 

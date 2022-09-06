@@ -8,6 +8,7 @@ import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCompon
 import coffee.amo.astromancy.common.block.armillary_sphere.ArmillarySphereCoreBlock;
 import coffee.amo.astromancy.common.block.jar.JarBlock;
 import coffee.amo.astromancy.common.block.mortar.MortarBlock;
+import coffee.amo.astromancy.common.blockentity.AstrolabeBlockEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

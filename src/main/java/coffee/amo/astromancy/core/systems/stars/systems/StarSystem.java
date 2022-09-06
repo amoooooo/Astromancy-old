@@ -1,5 +1,6 @@
 package coffee.amo.astromancy.core.systems.stars.systems;
 
+import coffee.amo.astromancy.core.systems.math.UniversalConstants;
 import coffee.amo.astromancy.core.systems.stars.types.AstralObject;
 import coffee.amo.astromancy.core.systems.stars.types.Planet;
 import coffee.amo.astromancy.core.systems.stars.types.Star;
@@ -19,6 +20,7 @@ public class StarSystem {
     private Planet[] planets = new Planet[8];
     private List<AstralObject> solarSystemObjects = new ArrayList<>();
     public Vec3 position = Vec3.ZERO;
+    public double starOrbitSpeed = 0;
 
     public StarSystem() {
         this.name = "Unnamed Star System";
@@ -154,6 +156,7 @@ public class StarSystem {
             objects.add(object.toNbt());
         }
         tag.put("objects", objects);
+        tag.putDouble("starOrbitSpeed", this.starOrbitSpeed);
         return tag;
     }
 
@@ -178,7 +181,13 @@ public class StarSystem {
             objectList.add(AstralObject.fromNbt(objects.getCompound(i)));
         }
         system.setSolarSystemObjects(objectList);
+        system.setPosition(new Vec3(tag.getCompound("position").getDouble("x"), tag.getCompound("position").getDouble("y"), tag.getCompound("position").getDouble("z")));
+        system.setStarOrbitSpeed(tag.getDouble("starOrbitSpeed"));
         return system;
+    }
+
+    public void setStarOrbitSpeed(double starOrbitSpeed) {
+        this.starOrbitSpeed = starOrbitSpeed;
     }
 
     @Override
@@ -190,5 +199,30 @@ public class StarSystem {
                 ", solarSystemObjects=" + Arrays.toString(solarSystemObjects.stream().map(AstralObject::toString).toArray()) +
                 ", position=" + position +
                 '}';
+    }
+
+    public void init(){
+        for(int i = 0; i < this.planets.length; i++){
+            if(this.planets[i] == null) continue;
+            this.planets[i].position.add(i, 0, 0);
+        }
+        if(this.stars[1] != null) {
+            double a1 = UniversalConstants.binaryStarCenterOfMass(this.stars[0].getMass(), this.stars[1].getMass(), 1).getFirst();
+            double a2 = UniversalConstants.binaryStarCenterOfMass(this.stars[0].getMass(), this.stars[1].getMass(), 2).getSecond();
+            this.starOrbitSpeed = UniversalConstants.binaryStarOrbitSpeed(this.stars[0].getMass(), this.stars[1].getMass(), a1 + a2);
+            this.stars[0].position.add(a1, 0, 0);
+            this.stars[1].position.add(-a2, 0, 0);
+        }
+    }
+
+    public void tick(){
+        if(this.stars[1] != null) {
+            this.stars[0].position.yRot((float) this.starOrbitSpeed);
+            this.stars[1].position.yRot((float) -this.starOrbitSpeed);
+        }
+        for(Planet planet : this.planets){
+            if(planet == null) continue;
+            planet.position.yRot(planet.getOrbitSpeed());
+        }
     }
 }

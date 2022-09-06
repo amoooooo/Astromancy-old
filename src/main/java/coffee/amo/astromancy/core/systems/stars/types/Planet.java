@@ -193,6 +193,14 @@ public class Planet extends AstralObject {
         this.hasMoon = hasMoon;
     }
 
+    public Moon getMoon(int index) {
+        return moons.get(index);
+    }
+
+    public List<Moon> getMoons() {
+        return moons;
+    }
+
     public int getRingCount() {
         return ringCount;
     }

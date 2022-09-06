@@ -84,7 +84,9 @@ public class AstromancyLevelEvents {
         }
         if (event.getEntity() instanceof ServerPlayer se) {
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new StarDataPacket(StarSavedData.get(event.getEntity().getServer()).getConstellationInstances()));
-            AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new UniverseNBTPacket(StarSavedData.get(event.getEntity().getServer()).getUniverse().toNbt()));
+            for(int i = 0; i < StarSavedData.get(event.getEntity().getServer()).getUniverse().getSuperclusters().size(); i++){
+                AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new UniverseNBTPacket(StarSavedData.get(event.getEntity().getServer()).getUniverse().getSuperclusters().get(i).toNbt(), i));
+            }
             ClientResearchHolder.research.clear();
             AstromancyPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> se), new ResearchClearPacket());
             event.getEntity().getCapability(PlayerResearchHandler.RESEARCH_CAPABILITY).ifPresent(research -> {

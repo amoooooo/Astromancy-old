@@ -3,6 +3,9 @@ package coffee.amo.astromancy.client.renderer.block;
 import coffee.amo.astromancy.Astromancy;
 import coffee.amo.astromancy.common.blockentity.AstrolabeBlockEntity;
 import coffee.amo.astromancy.core.helpers.RenderHelper;
+import coffee.amo.astromancy.core.systems.math.UniversalConstants;
+import coffee.amo.astromancy.core.systems.stars.types.AstralObject;
+import coffee.amo.astromancy.core.systems.stars.types.Moon;
 import coffee.amo.astromancy.core.systems.stars.types.Planet;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -37,17 +40,25 @@ public class AstrolabeRenderer implements BlockEntityRenderer<AstrolabeBlockEnti
         if(pBlockEntity.star.getStars()[1] != null){
             ps.pushPose();
             ps.translate(0.5, 0.5, 0.5);
-            ps.mulPose(Vector3f.YP.rotationDegrees(((Minecraft.getInstance().level.getGameTime()+pPartialTick) * 4f)));
+            double a1 = UniversalConstants.binaryStarCenterOfMass(pBlockEntity.star.getStars()[0].getMass(), pBlockEntity.star.getStars()[1].getMass(), 0.5f).getFirst();
+            double a2 = UniversalConstants.binaryStarCenterOfMass(pBlockEntity.star.getStars()[0].getMass(), pBlockEntity.star.getStars()[1].getMass(), 0.5f).getSecond();
+            double orbitSpeed = UniversalConstants.binaryStarOrbitSpeed(pBlockEntity.star.getStars()[0].getMass(), pBlockEntity.star.getStars()[1].getMass(), a1 + a2) * Math.pow(10f, 3.5);
+            ps.mulPose(Vector3f.YP.rotationDegrees(((Minecraft.getInstance().level.getGameTime()+pPartialTick) * (float)orbitSpeed)));
             ps.translate(-0.5, -0.5, -0.5);
-            ps.translate(0, 0, 0.25);
-            RenderHelper.renderStar(ps, 0.15f, pBufferSource, pBlockEntity.star.getStars()[0], pBlockEntity, pPartialTick, font, true);
-            ps.translate(0, 0, -0.5);
-            RenderHelper.renderStar(ps, 0.15f, pBufferSource, pBlockEntity.star.getStars()[1], pBlockEntity, pPartialTick, font, true);
+            ps.pushPose();
+            ps.translate(0, 0, a1);
+            RenderHelper.renderStar(ps, Math.min(0.2f, pBlockEntity.star.getStars()[0].getMass()/10000f), pBufferSource, pBlockEntity.star.getStars()[0], pBlockEntity, pPartialTick, font, true);
+            ps.popPose();
+
+            ps.pushPose();
+            ps.translate(0, 0, -a2);
+            RenderHelper.renderStar(ps, Math.min(0.2f, pBlockEntity.star.getStars()[1].getMass()/10000f), pBufferSource, pBlockEntity.star.getStars()[1], pBlockEntity, pPartialTick, font, true);
+            ps.popPose();
             ps.popPose();
         } else {
             ps.pushPose();
             if(pBlockEntity.star.getStars()[0] != null){
-                RenderHelper.renderStar(ps, 0.3f, pBufferSource, pBlockEntity.star.getStars()[0], pBlockEntity, pPartialTick, font, true);
+                RenderHelper.renderStar(ps, Math.min(0.3f, pBlockEntity.star.getStars()[0].getMass()/10000f), pBufferSource, pBlockEntity.star.getStars()[0], pBlockEntity, pPartialTick, font, true);
             }
             ps.popPose();
         }
@@ -56,18 +67,49 @@ public class AstrolabeRenderer implements BlockEntityRenderer<AstrolabeBlockEnti
             Planet planet = pBlockEntity.star.getPlanets()[i];
             if(planet == null) continue;
             ps.pushPose();
-            ps.mulPose(Vector3f.YP.rotationDegrees((planet.getMass() /1000f * ((Minecraft.getInstance().level.getGameTime()+pPartialTick)/10f) % 360)));
-            ps.translate(1.5+i, 0, 0);
+            float starMass = pBlockEntity.star.getStars()[1] == null ? pBlockEntity.star.getStars()[0].getMass() : pBlockEntity.star.getStars()[0].getMass() + pBlockEntity.star.getStars()[1].getMass();
+            double orbitSpeed = UniversalConstants.calculateOrbitSpeed(starMass, (1.5+i) * Math.pow(10, 6)) * Math.pow(10f, 7.5f);
+            ps.mulPose(Vector3f.ZP.rotationDegrees(planet.getOrbitAngle()));
+            ps.mulPose(Vector3f.YP.rotationDegrees((float) ((orbitSpeed/i) * ((Minecraft.getInstance().level.getGameTime()+pPartialTick)/10f) % 360)));
+            ps.translate(0.5+(i), 0, 0);
             ps.scale(planet.getMass()/10000f, planet.getMass()/10000f, planet.getMass()/10000f);
             ps.translate(-planet.getMass()/10000f, -planet.getMass()/10000f, -planet.getMass()/10000f);
-            renderPlanet(ps, pBufferSource, 15728640, pPackedOverlay, font, planet, pPartialTick);
+            renderPlanet(ps, pBufferSource, pPackedLight, pPackedOverlay, font, planet, pPartialTick);
             ps.popPose();
         }
         ps.pushPose();
 
+        for(int i = 0; i < pBlockEntity.star.getSolarSystemObjects().size(); i++){
+            ps.pushPose();
+            ps.translate(0.5, 0, -0.5);
+            AstralObject object = pBlockEntity.star.getSolarSystemObjects().get(i);
+            float starMass = pBlockEntity.star.getStars()[1] == null ? pBlockEntity.star.getStars()[0].getMass() : pBlockEntity.star.getStars()[0].getMass() + pBlockEntity.star.getStars()[1].getMass();
+            double a1 = UniversalConstants.binaryStarCenterOfMass(starMass, object.getSize(), i+1).getFirst();
+            double a2 = UniversalConstants.binaryStarCenterOfMass(starMass, object.getSize(), i+1).getSecond();
+            double orbitSpeed = UniversalConstants.binaryStarOrbitSpeed(starMass, object.getSize(), a1 + a2) * Math.pow(10f, 4);
+            ps.mulPose(Vector3f.ZP.rotationDegrees(object.getAxisTilt()));
+            ps.mulPose(Vector3f.YP.rotationDegrees(((Minecraft.getInstance().level.getGameTime()+pPartialTick) * (float)orbitSpeed)));
+            ps.translate(0, 0, a1 * 2500* (i/2f));
+            ps.scale(object.getSize()/10f, object.getSize()/10f, object.getSize()/10f);
+            ps.translate(-object.getSize()/10f, 0, -object.getSize()/10f);
+            renderAstralObject(ps, pBufferSource, pPackedLight, pPackedOverlay, font, object, pPartialTick);
+            ps.popPose();
+        }
+
         ps.popPose();
 
 
+        ps.popPose();
+    }
+
+    public static void renderAstralObject(PoseStack ps, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Font font, AstralObject object, float pTick){
+        ps.pushPose();
+        PlanetModelLand planetModel = new PlanetModelLand();
+        PlanetModelOcean planetModelOcean = new PlanetModelOcean();
+        VertexConsumer water = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/water.png")));
+        planetModelOcean.renderToBuffer(ps, water, packedLight, packedOverlay, 0.5f, 0.5f, 0.5f, 1);
+        VertexConsumer land = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/land.png")));
+        planetModel.renderToBuffer(ps, land, packedLight, packedOverlay, 0.5f, 0.5f, 0.5f, 1);
         ps.popPose();
     }
 
@@ -90,19 +132,45 @@ public class AstrolabeRenderer implements BlockEntityRenderer<AstrolabeBlockEnti
         ps.translate(-0.25,-0.25,-0.25);
         ps.scale(4,4,4);
         VertexConsumer water = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/water.png")));
-        planetModelOcean.renderToBuffer(ps, water, packedLight, packedOverlay, planet.getOceanColor().getRed(), planet.getOceanColor().getGreen(), planet.getOceanColor().getBlue(), 1);
+        if(planet.hasOcean()) planetModelOcean.renderToBuffer(ps, water, packedLight, packedOverlay, planet.getOceanColor().getRed(), planet.getOceanColor().getGreen(), planet.getOceanColor().getBlue(), 1);
+        else planetModel.renderToBuffer(ps, water, packedLight, packedOverlay, planet.getLandColor().getRed(), planet.getLandColor().getGreen(), planet.getLandColor().getBlue(), 1);
         VertexConsumer land = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/land.png")));
-        planetModel.renderToBuffer(ps, land, packedLight, packedOverlay, 1, 1, 1, 1);
+        if(planet.hasLand()) planetModel.renderToBuffer(ps, land, packedLight, packedOverlay, 1, 1, 1, 1);
         VertexConsumer clouds = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/clouds.png")));
-        planetModelClouds.renderToBuffer(ps, clouds, packedLight, packedOverlay, planet.getSkyColor().darker().getRed(), planet.getSkyColor().darker().getGreen(), planet.getSkyColor().darker().getBlue(), 1);
+        if(planet.hasClouds()) planetModelClouds.renderToBuffer(ps, clouds, packedLight, packedOverlay, planet.getSkyColor().darker().getRed(), planet.getSkyColor().darker().getGreen(), planet.getSkyColor().darker().getBlue(), 1);
         VertexConsumer atmosphere = bufferSource.getBuffer(RenderType.entityTranslucent(Astromancy.astromancy("textures/vfx/white.png")));
-        planetModelAtmosphere.renderToBuffer(ps, atmosphere, packedLight, packedOverlay,  planet.getSkyColor().getRed(), planet.getSkyColor().getGreen(), planet.getSkyColor().getBlue(), 0.25f);
+        if(planet.hasAtmosphere()) planetModelAtmosphere.renderToBuffer(ps, atmosphere, packedLight, packedOverlay,  planet.getSkyColor().getRed(), planet.getSkyColor().getGreen(), planet.getSkyColor().getBlue(), 0.25f);
         VertexConsumer ring = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/rings.png")));
         if(planet.getRingCount() > 0) planetModelRing.renderToBuffer(ps, ring, packedLight, packedOverlay, planet.getLandColor().getRed(), planet.getLandColor().getGreen(), planet.getLandColor().getBlue(), 1);
+
+        if(!planet.getMoons().isEmpty()){
+            ps.pushPose();
+            ps.scale(0.1f, 0.1f, 0.1f);
+            for(int i = 0; i < planet.getMoonCount(); i++){
+                Moon moon = planet.getMoon(i);
+                ps.pushPose();
+                ps.translate(0.5, 0.5f, 0.5);
+                ps.mulPose(Vector3f.ZP.rotationDegrees(moon.getAxisTilt()));
+                ps.mulPose(Vector3f.YP.rotationDegrees((float) ((UniversalConstants.calculateOrbitSpeed(moon.getMass(), 10000) * Math.pow(10f, 7.5f)) * ((Minecraft.getInstance().level.getGameTime()+pPartialTick)/10f) % 360)));
+                ps.translate(2.5f+(i/10f), 0, 0);
+                ps.scale(moon.getMass()/500f, moon.getMass()/500f, moon.getMass()/500f);
+                ps.translate(-moon.getMass()/700f, 0,-moon.getMass()/700f);
+                water = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/water.png")));
+                planetModelOcean.renderToBuffer(ps, water, packedLight, packedOverlay, 0.5f, 0.5f, 0.5f, 1);
+                land = bufferSource.getBuffer(RenderType.entityCutout(Astromancy.astromancy("textures/planet/land.png")));
+                planetModel.renderToBuffer(ps, land, packedLight, packedOverlay, 0.5f, 0.5f, 0.5f, 1);
+                ps.popPose();
+            }
+
+            ps.popPose();
+        }
+
+
         ps.popPose();
         ps.pushPose();
         ps.scale(0.009f,0.009f,0.009f);
         ps.mulPose(Vector3f.ZP.rotationDegrees(180));
+        ps.mulPose(Vector3f.YN.rotationDegrees(90));
         font.draw(ps, planet.getName(), -0.5f, 0.5f, 0xFFFFFF);
         ps.popPose();
     }

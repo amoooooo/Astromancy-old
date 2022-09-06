@@ -19,6 +19,7 @@ public class Star extends AstralObject {
     private Pair<Integer, Character> spectralClass;
     private Map<Lumen, Float> lumen = new HashMap<>();
     private float renderOffset;
+    public float orbitSpeed;
     private static Random random = new Random();
 
     public Star(String name, StarClass starClass, StarType type) {
@@ -123,8 +124,8 @@ public class Star extends AstralObject {
         CompoundTag tag = new CompoundTag();
         tag.putString("name", this.getName());
         tag.putUUID("uuid", this.getUuid());
-        tag.putString("starClass", this.starClass.toString());
-        tag.putString("starType", this.starType.toString());
+        tag.putInt("starClass", this.starClass.ordinal());
+        tag.putInt("starType", this.starType.ordinal());
         tag.putFloat("luminosity", this.luminosity.getFirst());
         tag.putFloat("mass", this.mass);
         tag.putInt("spectralIntensity", this.spectralClass.getFirst());
@@ -136,11 +137,12 @@ public class Star extends AstralObject {
         }
         tag.put("lumen", lumenTag);
         tag.putInt("size", this.getSize());
+        tag.putFloat("orbitSpeed", this.orbitSpeed);
         return tag;
     }
 
     public static Star fromNbt(CompoundTag tag){
-        Star star = new Star(tag.getString("name"), UUID.fromString(tag.getString("uuid")), StarClass.valueOf(tag.getString("starClass")), StarType.valueOf(tag.getString("starType")), tag.getInt("size"));
+        Star star = new Star(tag.getString("name"), UUID.fromString(tag.getString("uuid")), StarClass.values()[tag.getInt("starClass")], StarType.values()[tag.getInt("starType")], tag.getInt("size"));
         star.luminosity = Pair.of(tag.getFloat("luminosity"), star.starClass.getLuminosityClass());
         star.mass = tag.getFloat("mass");
         star.spectralClass = Pair.of(tag.getInt("spectralIntensity"), tag.getString("spectralClass").charAt(0));
@@ -149,6 +151,7 @@ public class Star extends AstralObject {
         for(String key : lumenTag.getAllKeys()){
             star.lumen.put(Lumen.valueOf(key), lumenTag.getFloat(key));
         }
+        star.orbitSpeed = tag.getFloat("orbitSpeed");
         return star;
     }
 

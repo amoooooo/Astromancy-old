@@ -27,6 +27,18 @@ public class Astrolabe<T extends AstrolabeBlockEntity> extends AstromancyEntityB
     }
 
     @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        if(level.getBlockEntity(pos) instanceof AstrolabeBlockEntity abe) {
+            if(abe.star.getStars()[1] != null){
+                return (int) Math.min(15,(abe.star.getStars()[0].getMass()/5000 + abe.star.getStars()[1].getMass()/5000));
+            } else {
+                return (int) Math.min(15,(abe.star.getStars()[0].getMass()/5000));
+            }
+        }
+        return super.getLightEmission(state, level, pos);
+    }
+
+    @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
         return SHAPE;
     }

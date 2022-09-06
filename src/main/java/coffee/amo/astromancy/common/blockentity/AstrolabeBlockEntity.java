@@ -41,7 +41,10 @@ public class AstrolabeBlockEntity extends AstromancyBlockEntity {
         Random rand = new Random();
         this.tank = new LumenStackHandler(1000, LumenStack::updateEmpty);
         this.holder = LazyOptional.of(() -> tank);
-        this.star = StarSavedData.get().getUniverse().getSuperclusters().get(0).getGalaxies().get(0).getStarSystems().get(rand.nextInt(StarSavedData.get().getUniverse().getSuperclusters().get(0).getGalaxies().get(0).getStarSystems().size()-1));
+        int randSuperCluster = rand.nextInt(StarSavedData.get().getUniverse().getSuperclusters().size()-1);
+        int randGalaxy = rand.nextInt(StarSavedData.get().getUniverse().getSuperclusters().get(randSuperCluster).getGalaxies().size()-1);
+        int randStarSystem = rand.nextInt(StarSavedData.get().getUniverse().getSuperclusters().get(randSuperCluster).getGalaxies().get(randGalaxy).getStarSystems().size()-1);
+        this.star = StarSavedData.get().getUniverse().getSuperclusters().get(randSuperCluster).getGalaxies().get(randGalaxy).getStarSystems().get(randStarSystem);
     }
 
     public AstrolabeBlockEntity(BlockPos pos, BlockState state){

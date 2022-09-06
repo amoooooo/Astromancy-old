@@ -3,6 +3,7 @@ package coffee.amo.astromancy.client.systems;
 import coffee.amo.astromancy.core.systems.stars.Star;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.ConstellationInstance;
 import coffee.amo.astromancy.core.systems.stars.classification.constellation.Constellations;
+import coffee.amo.astromancy.core.systems.stars.systems.Supercluster;
 import coffee.amo.astromancy.core.systems.stars.systems.Universe;
 
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ public class ClientUniverseHolder {
 
     public static void setUniverse(Universe universe){
         ClientUniverseHolder.universe = universe;
+    }
+
+    public static void addSupercluster(Supercluster supercluster, int index){
+        universe.superclusters.add(index, supercluster);
     }
 
     public static List<ConstellationInstance> getConstellationInstances() {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Universe {
-    private List<Supercluster> superclusters;
+    public List<Supercluster> superclusters;
     private List<ConstellationInstance> constellations = new ArrayList<>();
 
     public Universe(List<Supercluster> superclusters) {
