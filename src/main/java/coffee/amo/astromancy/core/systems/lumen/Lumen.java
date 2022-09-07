@@ -1,25 +1,30 @@
 package coffee.amo.astromancy.core.systems.lumen;
 
+import coffee.amo.astromancy.core.systems.stars.classification.star.StarType;
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandomList;
 
 public enum Lumen implements WeightedEntry {
-    NONE("None", 0, 1),
-    DECONSTRUCTIVE("Deconstructive", 45, 1),
-    CONSTRUCTIVE("Constructive", 35, 1),
-    PURE("Pure", 10, 1.3f),
-    DENATURED("Denatured", 10, 1.5f),
-    EMPTY("Null", 5, 2.0f);
+    NONE("None", 0, 1, StarType.NORMAL),
+    DECONSTRUCTIVE("Deconstructive", 45, 1, StarType.NORMAL),
+    CONSTRUCTIVE("Constructive", 35, 1, StarType.NORMAL),
+    PURE("Pure", 10, 1.3f, StarType.PURE),
+    HELL("Hell", 5, 1.5f, StarType.HELL),
+    EXOTIC("Exotic", 5, 1.5f, StarType.EXOTIC),
+    DENATURED("Denatured", 10, 1.5f, StarType.NORMAL),
+    EMPTY("Null", 5, 2.0f, StarType.EMPTY);
 
     private final String type;
     private final int chance;
     private final float powerMultiplier;
+    private final StarType starType;
 
-    Lumen(String type, int chance, float powerMultiplier) {
+    Lumen(String type, int chance, float powerMultiplier, StarType starType) {
         this.type = type;
         this.chance = chance;
         this.powerMultiplier = powerMultiplier;
+        this.starType = starType;
     }
 
     public static Lumen getLumenTypeFromString(String type) {
@@ -53,4 +58,8 @@ public enum Lumen implements WeightedEntry {
     }
 
     public static final WeightedRandomList<Lumen> LIST = WeightedRandomList.create(Lumen.values());
+
+    public StarType getStarType() {
+        return starType;
+    }
 }

@@ -42,7 +42,6 @@ public class Star extends AstralObject {
         this.luminosity = Pair.of(random.nextFloat(luminosityClass.getLuminosityRange().getFirst(), luminosityClass.getLuminosityRange().getSecond()) + luminosityClass.getLuminosityRange().getFirst(), luminosityClass);
         this.mass = 1000 * random.nextFloat(starClass.getMassRange().getFirst(), starClass.getMassRange().getSecond());
         this.renderOffset = random.nextFloat(0.01f)-0.005f;
-        this.starType = StarType.list.getRandom(RandomSource.create()).isPresent() ? StarType.list.getRandom(RandomSource.create()).get() : StarType.NORMAL;
         int lumenCount = random.nextInt(3) + 1;
         float lumenStrength = 1;
         for( int i = 0; i < lumenCount - 1; i++){
@@ -51,6 +50,7 @@ public class Star extends AstralObject {
             lumenStrength -= lumenStrengthRandom;
         }
         this.lumen.put(Lumen.LIST.getRandom(RandomSource.create()).get(), lumenStrength);
+        this.starType = starTypeFromHighestLumen(this.lumen);
         Astromancy.LOGGER.info("Created star: " + this.toString());
     }
 
@@ -167,6 +167,21 @@ public class Star extends AstralObject {
         description.add("Lumen: " + this.lumen.toString());
         description.add("Render Offset: " + this.renderOffset);
         return description;
+    }
+
+    public StarType starTypeFromHighestLumen(Map<Lumen, Float> lumenMap){
+        Lumen highestLumen = null;
+        float highestLumenStrength = 0;
+        for(Map.Entry<Lumen, Float> entry : lumenMap.entrySet()){
+            if(entry.getValue() > highestLumenStrength){
+                highestLumen = entry.getKey();
+                highestLumenStrength = entry.getValue();
+            }
+        }
+        if(highestLumen == null){
+            return StarType.NORMAL;
+        }
+        return highestLumen.getStarType();
     }
 
 }

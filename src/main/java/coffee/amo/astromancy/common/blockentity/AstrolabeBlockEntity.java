@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Random;
 
 public class AstrolabeBlockEntity extends AstromancyBlockEntity {
@@ -89,7 +90,16 @@ public class AstrolabeBlockEntity extends AstromancyBlockEntity {
             BlockHelper.updateAndNotifyState(level, worldPosition);
         }
         if(level.isClientSide){
-            player.sendSystemMessage(Component.literal("Tank: " + tank.getLumenStack().getLumen().getType() + " [" + tank.getLumenStack().getAmount() + "]"));
+            String starTypes = star.getStars()[1] == null ? star.getStars()[0].starType.getType() : star.getStars()[0].starType.getType() + " and " + star.getStars()[1].starType.getType();
+            StringBuilder starNames = new StringBuilder();
+            for(Star star : star.getStars()){
+                if(star == null) continue;
+                star.getLumen().forEach((lumen, integer) -> {
+                    starNames.append(Math.round(integer * 100)).append("% ").append(lumen.getType()).append(" Lumen | ");
+                });
+            }
+            Component stuff = Component.literal("Star Type: " + starTypes + " | Star Lumen: " + starNames);
+            player.sendSystemMessage(stuff);
         }
         return InteractionResult.SUCCESS;
     }
